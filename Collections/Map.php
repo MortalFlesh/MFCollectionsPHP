@@ -254,4 +254,22 @@ class Map implements MapInterface
     {
         return ListCollection::createFromArray(array_values($this->mapArray));
     }
+
+    /**
+     * @param callable (value:mixed,index:int):mixed $reducer
+     * @param mixed|null $initialValue
+     * @return mixed
+     */
+    public function reduce($reducer, $initialValue = null)
+    {
+        $this->assertCallback($reducer);
+
+        $total = $initialValue;
+
+        foreach ($this->mapArray as $key => $value) {
+            $total = $reducer($total, $value, $key, $this);
+        }
+
+        return $total;
+    }
 }

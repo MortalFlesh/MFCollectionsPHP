@@ -15,11 +15,10 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
         $this->listEnhanced = ListCollection::createFromArray(['one', 'two', 3]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->listEnhanced->each('($k, $v) => {}');
     }
 
@@ -47,5 +46,82 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
 
         $this->assertNotEquals($this->listEnhanced, $newListCollection);
         $this->assertEquals([0 => '0two', 1 => '13'], $newListCollection->toArray());
+    }
+
+    /**
+     * @param callable|string $reducer
+     * @param array $values
+     * @param mixed $expected
+     *
+     * @dataProvider reduceByArrowFunctionProvider
+     */
+    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected)
+    {
+        $this->listEnhanced = new ListCollection();
+
+        foreach ($values as $value) {
+            $this->listEnhanced->add($value);
+        }
+
+        $this->assertEquals($expected, $this->listEnhanced->reduce($reducer));
+    }
+
+    public function reduceByArrowFunctionProvider()
+    {
+        return [
+            'total count' => [
+                '($total, $current) => $total + $current',
+                [1, 2, 3, 4, 5],
+                15,
+            ],
+            'concat strings with indexes' => [
+                '($total, $current, $index, $list) => $total . $current . "_" . $index . "|"',
+                ['one', 'two', 'three'],
+                'one_0|two_1|three_2|',
+            ],
+        ];
+    }
+
+    /**
+     * @param callable|string $reducer
+     * @param array $values
+     * @param mixed $initialValue
+     * @param mixed $expected
+     *
+     * @dataProvider reduceInitialByArrowFunctionProvider
+     */
+    public function testeShouldReduceListWithInitialValueByArrowFunction($reducer, array $values, $initialValue, $expected)
+    {
+        $this->listEnhanced = new ListCollection();
+
+        foreach ($values as $value) {
+            $this->listEnhanced->add($value);
+        }
+
+        $this->assertEquals($expected, $this->listEnhanced->reduce($reducer, $initialValue));
+    }
+
+    public function reduceInitialByArrowFunctionProvider()
+    {
+        return [
+            'total count' => [
+                '($total, $current) => $total + $current',
+                [1, 2, 3, 4, 5],
+                10,
+                25,
+            ],
+            'total count with empty list' => [
+                '($total, $current) => $total + $current',
+                [],
+                10,
+                10,
+            ],
+            'concat strings with indexes' => [
+                '($total, $current, $index, $list) => $total . $current . "_" . $index . "|"',
+                ['one', 'two', 'three'],
+                'initial-',
+                'initial-one_0|two_1|three_2|',
+            ],
+        ];
     }
 }

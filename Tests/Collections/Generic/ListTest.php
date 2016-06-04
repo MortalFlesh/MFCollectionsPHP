@@ -2,8 +2,10 @@
 
 namespace MFCollections\Tests\Collections\Generic;
 
+use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
+use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
-use MFCollections\Collections\Map;
+use MFCollections\Collections\ListInterface;
 use MFCollections\Services\Validators\TypeValidator;
 
 class ListTest extends \PHPUnit_Framework_TestCase
@@ -14,6 +16,15 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->list = new ListCollection('string');
+    }
+
+    public function testShouldImplementsInterfaces()
+    {
+        $this->assertInstanceOf(ListInterface::class, $this->list);
+        $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
+        $this->assertInstanceOf(CollectionInterface::class, $this->list);
+        $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
+        $this->assertInstanceOf(\Countable::class, $this->list);
     }
 
     /**
@@ -57,7 +68,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowBadMethodUseExceptionWhenCreatingGenericCollection()
     {
         $this->setExpectedException(\BadMethodCallException::class);
-        
+
         ListCollection::createGenericFromArray('string', 'int', []);
     }
 
@@ -70,7 +81,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values)
     {
         $this->setExpectedException(\InvalidArgumentException::class);
-        
+
         ListCollection::createGenericListFromArray($valueType, $values);
     }
 
@@ -241,5 +252,25 @@ class ListTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals(['key', 'key2'], $array);
+    }
+
+    public function testShouldReduceGenericList()
+    {
+        $this->list->add('key');
+        $this->list->add('key2');
+
+        $this->assertEquals('key|key2|', $this->list->reduce('($t, $c) => $t . $c . "|"'));
+    }
+
+    public function testShouldReduceGenericListOfListCounts()
+    {
+        $list1 = \MFCollections\Collections\ListCollection::createFromArray([1, 2, 3]);
+        $list2 = \MFCollections\Collections\ListCollection::createFromArray(['one', 'two']);
+
+        $list = new ListCollection('instance_of_' . \MFCollections\Collections\ListCollection::class);
+        $list->add($list1);
+        $list->add($list2);
+
+        $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
     }
 }

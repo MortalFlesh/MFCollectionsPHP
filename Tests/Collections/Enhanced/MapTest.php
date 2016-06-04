@@ -15,11 +15,10 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
         $this->mapEnhanced = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowExceptionWhenForeachItemInMapWithArrowFunction()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->mapEnhanced->each('($k, $v) => {}');
     }
 
@@ -47,5 +46,86 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
 
         $this->assertNotEquals($this->mapEnhanced, $newMap);
         $this->assertEquals([1 => '1one', 2 => '2two'], $newMap->toArray());
+    }
+
+    /**
+     * @param callable|string $reducer
+     * @param array $values
+     * @param mixed $expected
+     *
+     * @dataProvider reduceByArrowFunctionProvider
+     */
+    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected)
+    {
+        $this->mapEnhanced = new Map();
+
+        foreach ($values as $key => $value) {
+            $this->mapEnhanced->set($key, $value);
+        }
+
+        $this->assertEquals($expected, $this->mapEnhanced->reduce($reducer));
+    }
+
+    public function reduceByArrowFunctionProvider()
+    {
+        return [
+            'total count' => [
+                '($total, $current) => $total + $current',
+                ['one' => 1, 'two' => 2, 'three' => 3],
+                6,
+            ],
+            'concat strings with indexes' => [
+                '($total, $current, $index, $map) => $total . $current . "_" . $index . "|"',
+                [1 => 'one', 2 => 'two', 3 => 'three'],
+                'one_1|two_2|three_3|',
+            ],
+        ];
+    }
+
+    /**
+     * @param callable|string $reducer
+     * @param array $values
+     * @param mixed $initialValue
+     * @param mixed $expected
+     *
+     * @dataProvider reduceInitialByArrowFunctionProvider
+     */
+    public function testeShouldReduceListWithInitialValueByArrowFunction(
+        $reducer,
+        array $values,
+        $initialValue,
+        $expected
+    ) {
+        $this->mapEnhanced = new Map();
+
+        foreach ($values as $key => $value) {
+            $this->mapEnhanced->set($key, $value);
+        }
+
+        $this->assertEquals($expected, $this->mapEnhanced->reduce($reducer, $initialValue));
+    }
+
+    public function reduceInitialByArrowFunctionProvider()
+    {
+        return [
+            'total count' => [
+                '($total, $current) => $total + $current',
+                ['one' => 1, 'two' => 2, 'three' => 3],
+                10,
+                16,
+            ],
+            'total count with empty map' => [
+                '($total, $current) => $total + $current',
+                [],
+                10,
+                10,
+            ],
+            'concat strings with indexes' => [
+                '($total, $current, $index, $map) => $total . $current . "_" . $index . "|"',
+                [1 => 'one', 2 => 'two', 3 => 'three'],
+                'initial-',
+                'initial-one_1|two_2|three_3|',
+            ],
+        ];
     }
 }

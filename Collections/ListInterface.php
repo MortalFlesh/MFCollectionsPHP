@@ -2,7 +2,7 @@
 
 namespace MFCollections\Collections;
 
-interface ListInterface extends CollectionInterface, \IteratorAggregate, \Countable
+interface ListInterface extends CollectionInterface
 {
     /** @param mixed $value */
     public function add($value);

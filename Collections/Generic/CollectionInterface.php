@@ -2,9 +2,9 @@
 
 namespace MFCollections\Collections\Generic;
 
-use MFCollections\Collections\CollectionInterface;
+use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
 
-interface CollectionGenericInterface extends CollectionInterface
+interface CollectionInterface extends BaseCollectionInterface
 {
     /**
      * @param string $keyType

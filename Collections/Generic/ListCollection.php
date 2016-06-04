@@ -6,7 +6,7 @@ use MFCollections\Collections\ListCollection as BaseListCollection;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class ListCollection extends BaseListCollection implements CollectionGenericInterface
+class ListCollection extends BaseListCollection implements CollectionInterface
 {
     /** @var array */
     private $allowedValueTypes = [
@@ -130,7 +130,7 @@ class ListCollection extends BaseListCollection implements CollectionGenericInte
     }
 
     /**
-     * @param callable $callback
+     * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
      * @return static
      */
     public function map($callback)
@@ -142,7 +142,7 @@ class ListCollection extends BaseListCollection implements CollectionGenericInte
     }
 
     /**
-     * @param callable $callback
+     * @param callable (value:<TValue>,index:<TKey>):bool $callback
      * @return static
      */
     public function filter($callback)
@@ -151,5 +151,21 @@ class ListCollection extends BaseListCollection implements CollectionGenericInte
         $list = new static($this->typeValidator->getValueType());
 
         return $this->filterList($list, $callback);
+    }
+
+    /**
+     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue> $reducer
+     * @param null|<TValue> $initialValue
+     * @return mixed
+     */
+    public function reduce($reducer, $initialValue = null)
+    {
+        if (!is_null($initialValue)) {
+            $this->typeValidator->assertValueType($initialValue);
+        }
+
+        $reducer = $this->callbackParser->parseArrowFunction($reducer);
+        
+        return parent::reduce($reducer, $initialValue);
     }
 }

@@ -326,27 +326,129 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->list->each(1);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->list->map(1);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->list->filter(1);
+    }
+
+    public function testShouldCallReducerCorrectly()
+    {
+        $this->list->add('value');
+
+        $reduced = $this->list->reduce(function ($total, $current, $key, $map) {
+            $this->assertEquals('initial', $total);
+            $this->assertEquals('value', $current);
+            $this->assertEquals(0, $key);
+            $this->assertSame($this->list, $map);
+
+            return $total . $current . $key;
+        }, 'initial');
+
+        $this->assertEquals('initialvalue0', $reduced);
+    }
+
+    /**
+     * @param callable $reducer
+     * @param array $values
+     * @param mixed $expected
+     *
+     * @dataProvider reduceProvider
+     */
+    public function testShouldReduceList(callable $reducer, array $values, $expected)
+    {
+        foreach ($values as $value) {
+            $this->list->add($value);
+        }
+
+        $this->assertEquals($expected, $this->list->reduce($reducer));
+    }
+    
+    public function reduceProvider()
+    {
+        return [
+            'total count' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                [1, 2, 3, 4, 5],
+                15,
+            ],
+            'concat strings with indexes' => [
+                function ($total, $current, $index, $list) {
+                    $next = sprintf('%s_%d', $current, $index);
+                    $delimeter = count($list) - 1 === $index ? '' : '|';
+
+                    return $total . $next . $delimeter;
+                },
+                ['one', 'two', 'three'],
+                'one_0|two_1|three_2',
+            ],
+        ];
+    }
+
+    /**
+     * @param callable $reducer
+     * @param array $values
+     * @param mixed $initialValue
+     * @param mixed $expected
+     *
+     * @dataProvider reduceInitialProvider
+     */
+    public function testeShouldReduceListWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
+    {
+        foreach ($values as $value) {
+            $this->list->add($value);
+        }
+
+        $this->assertEquals($expected, $this->list->reduce($reducer, $initialValue));
+    }
+
+    public function reduceInitialProvider()
+    {
+        return [
+            'total count' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                [1, 2, 3, 4, 5],
+                10,
+                25,
+            ],
+            'total count with empty list' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                [],
+                10,
+                10,
+            ],
+            'concat strings with indexes' => [
+                function ($total, $current, $index, ListCollection $list) {
+                    $next = sprintf('%s_%d', $current, $index);
+                    $delimeter = $list->count() - 1 === $index ? '' : '|';
+
+                    return $total . $next . $delimeter;
+                },
+                ['one', 'two', 'three'],
+                'initial-',
+                'initial-one_0|two_1|three_2',
+            ],
+        ];
     }
 }
