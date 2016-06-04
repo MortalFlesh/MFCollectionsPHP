@@ -2,8 +2,8 @@
 
 namespace MFCollections\Tests\Collections\Generic;
 
-use MFCollections\Collections\CollectionInterface;
-use MFCollections\Collections\Generic\CollectionGenericInterface;
+use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
+use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
 use MFCollections\Collections\Generic\Map;
 use MFCollections\Collections\MapInterface;
@@ -21,8 +21,8 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(MapInterface::class, $this->map);
+        $this->assertInstanceOf(BaseCollectionInterface::class, $this->map);
         $this->assertInstanceOf(CollectionInterface::class, $this->map);
-        $this->assertInstanceOf(CollectionGenericInterface::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->map);
         $this->assertInstanceOf(\Countable::class, $this->map);
@@ -31,14 +31,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed()
     {
         $this->setExpectedException(\BadMethodCallException::class);
-        
+
         Map::createFromArray([]);
     }
-    
+
     public function testShouldThrowExceptionWhenBadCreateGenericFunctionIsUsed()
     {
         $this->setExpectedException(\BadMethodCallException::class);
-        
+
         Map::createGenericListFromArray('string', []);
     }
 
@@ -412,7 +412,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ListCollection::class, $keys);
         $this->assertEquals(['key', 'key2'], $keys->toArray());
     }
-    
+
     public function testShouldGetValuesInGenericList()
     {
         $this->map->set('key', 1);
@@ -421,5 +421,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $values = $this->map->values();
         $this->assertInstanceOf(ListCollection::class, $values);
         $this->assertEquals([1, 2], $values->toArray());
+    }
+
+    public function testShouldReduceMap()
+    {
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
+        $this->map->set('key3', 3);
+
+        $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
     }
 }

@@ -195,7 +195,7 @@ class ListCollection implements ListInterface
         }
     }
 
-    /** @param callable(value:mixed,index:int):void $callback */
+    /** @param callable (value:mixed,index:int):void $callback */
     public function each($callback)
     {
         $this->assertCallback($callback);
@@ -216,7 +216,7 @@ class ListCollection implements ListInterface
     }
 
     /**
-     * @param callable(value:mixed,index:int):mixed $callback
+     * @param callable (value:mixed,index:int):mixed $callback
      * @return static
      */
     public function map($callback)
@@ -243,7 +243,7 @@ class ListCollection implements ListInterface
     }
 
     /**
-     * @param callable(value:mixed,index:int):bool $callback
+     * @param callable (value:mixed,index:int):bool $callback
      * @return static
      */
     public function filter($callback)
@@ -269,5 +269,23 @@ class ListCollection implements ListInterface
         }
 
         return $list;
+    }
+
+    /**
+     * @param callable (total:mixed,value:mixed,index:int,list:List):mixed $reducer
+     * @param mixed|null $initialValue
+     * @return mixed
+     */
+    public function reduce($reducer, $initialValue = null)
+    {
+        $this->assertCallback($reducer);
+
+        $total = $initialValue;
+
+        foreach ($this->listArray as $i => $value) {
+            $total = $reducer($total, $value, $i, $this);
+        }
+
+        return $total;
     }
 }

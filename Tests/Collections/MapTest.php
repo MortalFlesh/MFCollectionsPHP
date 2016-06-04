@@ -364,4 +364,107 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ListInterface::class, $values);
         $this->assertEquals(['one', 'two', 3], $values->toArray());
     }
+
+    public function testShouldCallReducerCorrectly()
+    {
+        $this->map->set('key', 'value');
+
+        $reduced = $this->map->reduce(function ($total, $current, $key, $map) {
+            $this->assertEquals('initial', $total);
+            $this->assertEquals('value', $current);
+            $this->assertEquals('key', $key);
+            $this->assertSame($this->map, $map);
+
+            return $total . $current . $key;
+        }, 'initial');
+
+        $this->assertEquals('initialvaluekey', $reduced);
+    }
+
+    /**
+     * @param callable $reducer
+     * @param array $values
+     * @param mixed $expected
+     *
+     * @dataProvider reduceProvider
+     */
+    public function testShouldReduceMap(callable $reducer, array $values, $expected)
+    {
+        foreach ($values as $key => $value) {
+            $this->map->set($key, $value);
+        }
+
+        $this->assertEquals($expected, $this->map->reduce($reducer));
+    }
+
+    public function reduceProvider()
+    {
+        return [
+            'total count' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                ['one' => 1, 'two' => 2, 'three' => 3],
+                6,
+            ],
+            'concat strings with indexes' => [
+                function ($total, $current, $index, Map $map) {
+                    $next = sprintf('%s_%d', $current, $index);
+
+                    return $total . $next . '|';
+                },
+                [1 => 'one', 2 => 'two', 3 => 'three'],
+                'one_1|two_2|three_3|',
+            ],
+        ];
+    }
+
+    /**
+     * @param callable $reducer
+     * @param array $values
+     * @param mixed $initialValue
+     * @param mixed $expected
+     *
+     * @dataProvider reduceInitialProvider
+     */
+    public function testeShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
+    {
+        foreach ($values as $key => $value) {
+            $this->map->set($key, $value);
+        }
+
+        $this->assertEquals($expected, $this->map->reduce($reducer, $initialValue));
+    }
+
+    public function reduceInitialProvider()
+    {
+        return [
+            'total count' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                ['one' => 1, 'two' => 2, 'three' => 3],
+                10,
+                16,
+            ],
+            'total count with empty list' => [
+                function ($total, $current) {
+                    return $total + $current;
+                },
+                [],
+                10,
+                10,
+            ],
+            'concat strings with indexes' => [
+                function ($total, $current, $index, Map $map) {
+                    $next = sprintf('%s_%d', $current, $index);
+
+                    return $total . $next . '|';
+                },
+                [1 => 'one', 2 => 'two', 3 => 'three'],
+                'initial-',
+                'initial-one_1|two_2|three_3|',
+            ],
+        ];
+    }
 }

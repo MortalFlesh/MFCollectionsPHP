@@ -6,7 +6,7 @@ use MFCollections\Collections\Map as BaseMap;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class Map extends BaseMap implements CollectionGenericInterface
+class Map extends BaseMap implements CollectionInterface
 {
     /** @var array */
     private $allowedKeyTypes = [
@@ -196,5 +196,21 @@ class Map extends BaseMap implements CollectionGenericInterface
             $this->typeValidator->getValueType(),
             array_values($this->mapArray)
         );
+    }
+
+    /**
+     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue> $reducer
+     * @param null|<TValue> $initialValue
+     * @return mixed
+     */
+    public function reduce($reducer, $initialValue = null)
+    {
+        if (!is_null($initialValue)) {
+            $this->typeValidator->assertValueType($initialValue);
+        }
+
+        $reducer = $this->callbackParser->parseArrowFunction($reducer);
+
+        return parent::reduce($reducer, $initialValue);
     }
 }

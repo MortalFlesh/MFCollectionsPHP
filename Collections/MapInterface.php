@@ -2,7 +2,7 @@
 
 namespace MFCollections\Collections;
 
-interface MapInterface extends CollectionInterface, \ArrayAccess, \IteratorAggregate, \Countable
+interface MapInterface extends CollectionInterface, \ArrayAccess
 {
     /**
      * @param mixed $key
