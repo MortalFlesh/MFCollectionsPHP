@@ -1,0 +1,2 @@
+# MFCollectionsPHP
+Collections for PHP
