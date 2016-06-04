@@ -3,15 +3,16 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 
 ## CollectionInterface
 - basic interface for Collections
+- extends `IteratorAggregate, Countable`
 
 
-## CollectionGenericInterface
+## Generic CollectionInterface
 - extends CollectionInterface
 - adds generic functionality to Collections, which will validate types
 
 
 ## MapInterface
-- implements: `CollectionInterface, ArrayAccess, IteratorAggregate, Countable`
+- implements: `CollectionInterface, ArrayAccess`
 - can have associated keys
 
 ### Map
@@ -19,17 +20,17 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 
 ### Enhanced Map
 - extends Map
-- adds possibility of usage `Arrow Functions` in map() and filter() methods
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 ### Generic Map
-- implements `CollectionGenericInterface`
+- implements `Generic\CollectionInterface`
 - extends Map
 - has defined key and value type and validates it
-- adds possibility of usage `Arrow Functions` in map() and filter() methods
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
 ## ListInterface
-- implements: `CollectionInterface, IteratorAggregate, Countable`
+- implements: `CollectionInterface`
 - has just values
 
 ### ListCollection
@@ -37,7 +38,13 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 
 ### Enhanced ListCollection
 - extends ListCollection
-- adds possibility of usage `Arrow Functions` in map() and filter() methods
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+### Generic ListCollection
+- implements `Generic\CollectionInterface`
+- extends ListCollection
+- has defined value type and validates it
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
 ## Instalation:
