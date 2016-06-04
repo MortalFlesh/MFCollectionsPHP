@@ -90,8 +90,12 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
      *
      * @dataProvider reduceInitialByArrowFunctionProvider
      */
-    public function testeShouldReduceListWithInitialValueByArrowFunction($reducer, array $values, $initialValue, $expected)
-    {
+    public function testShouldReduceListWithInitialValueByArrowFunction(
+        $reducer,
+        array $values,
+        $initialValue,
+        $expected
+    ) {
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
@@ -123,5 +127,18 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
                 'initial-one_0|two_1|three_2|',
             ],
         ];
+    }
+
+    public function testShouldGetMutableEnhancedListAsImmutableEnhanced()
+    {
+        $this->markTestIncomplete('Immutable\Enhanced\ListCollection is not implemented yet.');
+        $this->listEnhanced->add('value');
+
+        $immutable = $this->listEnhanced->asImmutable();
+        
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Enhanced\ListCollection::class, $immutable);
+
+        $this->assertEquals($this->listEnhanced->toArray(), $immutable->toArray());
     }
 }

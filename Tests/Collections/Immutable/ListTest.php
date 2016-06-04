@@ -1,11 +1,14 @@
 <?php
 
-namespace MFCollections\Tests\Collections;
+namespace MFCollections\Tests\Collections\Immutable;
 
 use MFCollections\Collections\CollectionInterface;
-use MFCollections\Collections\ListCollection;
-use MFCollections\Collections\ListInterface;
+use MFCollections\Collections\Immutable\ListCollection;
+use MFCollections\Collections\Immutable\ListInterface;
 
+/**
+ * @group unit
+ */
 class ListTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ListCollection */
@@ -101,9 +104,10 @@ class ListTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldAddItemsToMap($value)
     {
-        $this->list->add($value);
+        $newList = $this->list->add($value);
 
-        $this->assertEquals($value, $this->list->pop());
+        $this->assertNotEquals($this->list, $newList);
+        $this->assertEquals(1, $newList->count());
     }
 
     public function addItemsProvider()
@@ -146,8 +150,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount($originalCount, $list);
 
-        $list->add('value');
-        $this->assertCount($originalCount + 1, $list);
+        $newList = $list->add('value');
+        $this->assertCount($originalCount, $list);
+        $this->assertCount($originalCount + 1, $newList);
     }
 
     public function testShouldHasValue()
@@ -155,7 +160,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $valueExists = 'has-value';
         $valueDoesntExist = 'has-no-value';
 
-        $this->list->add($valueExists);
+        $this->list = $this->list->add($valueExists);
 
         $this->assertContains($valueExists, $this->list);
         $this->assertNotContains($valueDoesntExist, $this->list);
@@ -164,36 +169,32 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->list->contains($valueDoesntExist));
     }
 
-    public function testShouldGetFirstValue()
-    {
-        $this->list->add('first');
-        $this->list->add('second');
-
-        $this->assertEquals('first', $this->list->first());
-
-        foreach ($this->list as $value) {
-            $this->assertEquals('first', $this->list->first());
-        }
-    }
-
     public function testShouldRemoveFirst()
     {
         $value = 'value';
 
-        $this->list->add($value);
-        $this->list->add($value);
+        $this->list = $this->list->add($value);
+        $this->list = $this->list->add($value);
 
         $this->assertCount(2, $this->list);
         $this->assertEquals(2, $this->list->count());
         $this->assertTrue($this->list->contains($value));
 
-        $this->list->removeFirst($value);
+        $listWithoutValue = $this->list->removeFirst($value);
 
-        $this->assertCount(1, $this->list);
-        $this->assertEquals(1, $this->list->count());
+        $this->assertCount(2, $this->list);
+        $this->assertCount(1, $listWithoutValue);
+
+        $this->assertEquals(2, $this->list->count());
+        $this->assertEquals(1, $listWithoutValue->count());
+
         $this->assertTrue($this->list->contains($value));
+        $this->assertTrue($listWithoutValue->contains($value));
 
         $this->assertEquals($value, $this->list->first());
+        $this->assertEquals($value, $listWithoutValue->first());
+
+
     }
 
     public function testShouldRemoveAll()
@@ -201,21 +202,25 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $value = 'value';
         $value2 = 'value2';
 
-        $this->list->add($value);
-        $this->list->add($value2);
-        $this->list->add($value);
+        $this->list = $this->list->add($value);
+        $this->list = $this->list->add($value2);
+        $this->list = $this->list->add($value);
 
         $this->assertCount(3, $this->list);
         $this->assertEquals(3, $this->list->count());
         $this->assertTrue($this->list->contains($value));
         $this->assertTrue($this->list->contains($value2));
 
-        $this->list->removeAll($value);
+        $listWithoutValue = $this->list->removeAll($value);
 
-        $this->assertCount(1, $this->list);
-        $this->assertEquals(1, $this->list->count());
-        $this->assertFalse($this->list->contains($value));
+        $this->assertCount(3, $this->list);
+        $this->assertCount(1, $listWithoutValue);
+
+        $this->assertTrue($this->list->contains($value));
+        $this->assertFalse($listWithoutValue->contains($value));
+
         $this->assertTrue($this->list->contains($value2));
+        $this->assertTrue($listWithoutValue->contains($value2));
     }
 
     public function testShouldAddValueToEndOfList()
@@ -223,10 +228,10 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $value = 'value';
         $value2 = 'value2';
 
-        $this->list->add($value);
+        $this->list = $this->list->add($value);
         $this->assertEquals($value, $this->list->last());
 
-        $this->list->add($value2);
+        $this->list = $this->list->add($value2);
         $this->assertEquals($value2, $this->list->last());
     }
 
@@ -236,42 +241,15 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $value2 = 'value2';
         $valueToUnshift = 'valueToUnshift';
 
-        $this->list->add($value);
+        $this->list = $this->list->add($value);
         $this->assertEquals($value, $this->list->first());
 
-        $this->list->add($value2);
+        $this->list = $this->list->add($value2);
         $this->assertEquals($value, $this->list->first());
 
-        $this->list->unshift($valueToUnshift);
-        $this->assertEquals($valueToUnshift, $this->list->first());
-    }
-
-    public function testShouldShiftValueFromStart()
-    {
-        $firstValue = 'value';
-        $value2 = 'value2';
-
-        $this->list->add($firstValue);
-        $this->list->add($value2);
-        $this->assertCount(2, $this->list);
-
-        $result = $this->list->shift();
-        $this->assertCount(1, $this->list);
-        $this->assertEquals($firstValue, $result);
-    }
-
-    public function testShouldPopValueFromEnd()
-    {
-        $value = 'value';
-        $lastValue = 'value2';
-
-        $this->list->add($value);
-        $this->list->add($lastValue);
-        $this->assertCount(2, $this->list);
-
-        $result = $this->list->pop();
-        $this->assertCount(1, $this->list);
-        $this->assertEquals($lastValue, $result);
+        $newList = $this->list->unshift($valueToUnshift);
+        $this->assertNotEquals($this->list, $newList);
+        $this->assertEquals($valueToUnshift, $newList->first());
     }
 
     public function testShouldSortValues()
@@ -361,7 +339,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCallReducerCorrectly()
     {
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
 
         $reduced = $this->list->reduce(function ($total, $current, $key, $list) {
             $this->assertEquals('initial', $total);
@@ -385,7 +363,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldReduceList(callable $reducer, array $values, $expected)
     {
         foreach ($values as $value) {
-            $this->list->add($value);
+            $this->list = $this->list->add($value);
         }
 
         $this->assertEquals($expected, $this->list->reduce($reducer));
@@ -425,7 +403,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldReduceListWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
     {
         foreach ($values as $value) {
-            $this->list->add($value);
+            $this->list = $this->list->add($value);
         }
 
         $this->assertEquals($expected, $this->list->reduce($reducer, $initialValue));
@@ -464,15 +442,15 @@ class ListTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testShouldGetMutableListAsImmutable()
+    public function testShouldGetImmtuableListAsMutable()
     {
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
 
-        $immutable = $this->list->asImmutable();
+        $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MFCollections\Collections\ListCollection::class, $mutable);
 
-        $this->assertEquals($this->list->toArray(), $immutable->toArray());
+        $this->assertEquals($this->list->toArray(), $mutable->toArray());
     }
 }

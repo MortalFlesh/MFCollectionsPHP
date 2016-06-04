@@ -271,7 +271,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     {
         $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
 
-        $map->each(function ($key, $value) {
+        $map->each(function ($value, $key) {
             if ($key === 1) {
                 $this->assertEquals('one', $value);
             } elseif ($key === 2) {
@@ -427,7 +427,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider reduceInitialProvider
      */
-    public function testeShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
+    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
     {
         foreach ($values as $key => $value) {
             $this->map->set($key, $value);

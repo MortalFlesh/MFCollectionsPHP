@@ -6,45 +6,50 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - extends `IteratorAggregate, Countable`
 
 
-## Generic CollectionInterface
-- extends CollectionInterface
-- adds generic functionality to Collections, which will validate types
-
-
-## MapInterface
-- implements: `CollectionInterface, ArrayAccess`
-- can have associated keys
-
-### Map
-- it's basic Map Collection
-
-### Enhanced Map
-- extends Map
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
-
-### Generic Map
-- implements `Generic\CollectionInterface`
-- extends Map
-- has defined key and value type and validates it
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
-
-
 ## ListInterface
-- implements: `CollectionInterface`
-- has just values
+- extends `CollectionInterface`
 
 ### ListCollection
 - it's basic List Collection
 
 ### Enhanced ListCollection
-- extends ListCollection
+- extends `ListCollection`
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+
+## MapInterface
+- extends `CollectionInterface, ArrayAccess`
+
+### Map
+- it's basic Map Collection
+
+### Enhanced Map
+- extends `Map`
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+
+## Generic CollectionInterface
+- extends `CollectionInterface`
+- adds generic functionality to Collections, which will validate types
 
 ### Generic ListCollection
 - implements `Generic\CollectionInterface`
-- extends ListCollection
+- extends `ListCollection`
 - has defined value type and validates it
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+### Generic Map
+- implements `Generic\CollectionInterface`
+- extends `Map`
+- has defined key and value type and validates it
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+
+## ImmutableListInterface
+- extends `CollectionInterface`
+
+### Immutable List
+- it's basic Immutable List Collection
 
 
 ## Instalation:

@@ -2,11 +2,10 @@
 
 namespace MFCollections\Collections\Generic;
 
-use MFCollections\Collections\ListCollection as BaseListCollection;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class ListCollection extends BaseListCollection implements CollectionInterface
+class ListCollection extends \MFCollections\Collections\ListCollection implements CollectionInterface
 {
     /** @var array */
     private $allowedValueTypes = [

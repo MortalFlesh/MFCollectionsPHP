@@ -13,7 +13,7 @@ interface CollectionInterface extends \IteratorAggregate, \Countable
     /** @return array */
     public function toArray();
 
-    /** @param callable $callback */
+    /** @param callable (value:mixed,index:mixed):void $callback */
     public function each($callback);
 
     /**

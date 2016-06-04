@@ -1,6 +1,8 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MFCollections\Collections\Immutable;
+
+use MFCollections\Collections\CollectionInterface;
 
 class ListCollection implements ListInterface
 {
@@ -23,9 +25,9 @@ class ListCollection implements ListInterface
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $list->add(static::createFromArray($value, true));
+                $list = $list->add(static::createFromArray($value, true));
             } else {
-                $list->add($value);
+                $list = $list->add($value);
             }
         }
 
@@ -58,34 +60,28 @@ class ListCollection implements ListInterface
 
     /**
      * @param mixed $value
+     * @return static
      */
     public function add($value)
     {
-        $this->listArray[] = $value;
+        $list = clone $this;
+
+        $list->listArray[] = $value;
+
+        return $list;
     }
 
     /**
      * @param mixed $value
+     * @return static
      */
     public function unshift($value)
     {
-        array_unshift($this->listArray, $value);
-    }
+        $list = clone $this;
 
-    /**
-     * @return mixed
-     */
-    public function pop()
-    {
-        return array_pop($this->listArray);
-    }
+        array_unshift($list->listArray, $value);
 
-    /**
-     * @return mixed
-     */
-    public function shift()
-    {
-        return array_shift($this->listArray);
+        return $list;
     }
 
     /**
@@ -145,52 +141,46 @@ class ListCollection implements ListInterface
 
     /**
      * @param mixed $value
+     * @return static
      */
     public function removeFirst($value)
     {
         $index = $this->find($value);
 
         if ($index !== false) {
-            $this->removeIndex($index);
+            return $this->removeIndex($index);
         }
+
+        return $this;
     }
 
     /**
      * @param int $index
      * @param bool $normalize
+     * @return static
      */
     private function removeIndex($index, $normalize = true)
     {
-        unset($this->listArray[$index]);
+        $list = clone $this;
+
+        unset($list->listArray[$index]);
 
         if ($normalize) {
-            $this->normalize();
+            return static::createFromArray($list->listArray);
         }
-    }
 
-    private function normalize()
-    {
-        $list = $this->listArray;
-        $this->listArray = [];
-
-        foreach ($list as $value) {
-            $this->listArray[] = $value;
-        }
+        return $list;
     }
 
     /**
      * @param mixed $value
+     * @return static
      */
     public function removeAll($value)
     {
-        $list = $this->listArray;
-        $this->listArray = [];
-
-        foreach ($list as $key => $val) {
-            if ($value !== $val) {
-                $this->listArray[] = $val;
-            }
-        }
+        return $this->filter(function ($item) use ($value) {
+            return $item !== $value;
+        });
     }
 
     /** @param callable (value:mixed,index:int):void $callback */
@@ -227,14 +217,14 @@ class ListCollection implements ListInterface
     /**
      * @param ListInterface $list
      * @param callable $callback
-     * @return ListInterface
+     * @return static
      */
     protected function mapList(ListInterface $list, $callback)
     {
         $this->assertCallback($callback);
 
         foreach ($this->listArray as $i => $value) {
-            $list->add($callback($value, $i));
+            $list = $list->add($callback($value, $i));
         }
 
         return $list;
@@ -254,7 +244,7 @@ class ListCollection implements ListInterface
     /**
      * @param ListInterface $list
      * @param callable $callback
-     * @return ListInterface
+     * @return static
      */
     protected function filterList(ListInterface $list, $callback)
     {
@@ -262,7 +252,7 @@ class ListCollection implements ListInterface
 
         foreach ($this->listArray as $i => $value) {
             if ($callback($value, $i)) {
-                $list->add($value);
+                $list = $list->add($value);
             }
         }
 
@@ -287,9 +277,9 @@ class ListCollection implements ListInterface
         return $total;
     }
 
-    /** @return \MFCollections\Collections\Immutable\ListInterface */
-    public function asImmutable()
+    /** @return \MFCollections\Collections\ListInterface */
+    public function asMutable()
     {
-        return \MFCollections\Collections\Immutable\ListCollection::createFromArray($this->listArray);
+        return \MFCollections\Collections\ListCollection::createFromArray($this->listArray);
     }
 }
