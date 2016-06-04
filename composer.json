@@ -1,0 +1,21 @@
+{
+    "name": "mf/collections-php",
+    "type": "bundle",
+    "license": "MIT",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Petr Chromec",
+            "email": "mortal_flesh@seznam.cz"
+        }
+    ],
+    "require": {
+        "php": ">=5.5"
+    },
+    "autoload": {
+        "psr-4": { "MFCollections\\": "" }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7"
+    }
+}

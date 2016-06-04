@@ -1,0 +1,4 @@
+.idea/
+/vendor/
+/code-coverage/
+composer.lock
