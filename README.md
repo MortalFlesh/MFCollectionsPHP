@@ -113,8 +113,8 @@ $map[2] = 'two';
 $map->toArray(); // [1 => 'one', 2 => 'two']
 
 $map
-    ->filter('($k, $v) => $k > 1')
-    ->map('($k, $v) => $k . " - " . $v')
+    ->filter('($v, $k) => $k > 1')
+    ->map('($v, $k) => $k . " - " . $v')
     ->toArray(); // [2 => '2 - two']
 
 //against classic PHP
