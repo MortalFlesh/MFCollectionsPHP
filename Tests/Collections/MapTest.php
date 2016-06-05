@@ -153,11 +153,11 @@ class MapTest extends \PHPUnit_Framework_TestCase
      * @param object|array $key
      *
      * @dataProvider invalidKeyProvider
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key)
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+        
         $this->map->set($key, 'value');
     }
 
@@ -165,11 +165,11 @@ class MapTest extends \PHPUnit_Framework_TestCase
      * @param object|array $key
      *
      * @dataProvider invalidKeyProvider
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key)
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+        
         $this->map[$key] = 'value';
     }
 
@@ -321,27 +321,24 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['three' => 3], $newMap->toArray());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+        
         $this->map->each(1);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+        
         $this->map->map(1);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+        
         $this->map->filter(1);
     }
 

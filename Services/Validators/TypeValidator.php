@@ -12,6 +12,16 @@ class TypeValidator
     const TYPE_OBJECT = 'object';
     const TYPE_INSTANCE_OF = 'instance_of_';
 
+    private static $types = [
+        self::TYPE_STRING,
+        self::TYPE_INT,
+        self::TYPE_FLOAT,
+        self::TYPE_BOOL,
+        self::TYPE_ARRAY,
+        self::TYPE_OBJECT,
+        self::TYPE_INSTANCE_OF,
+    ];
+
     /** @var string */
     private $keyType;
 
@@ -26,11 +36,27 @@ class TypeValidator
      */
     public function __construct($keyType, $valueType, array $allowedKeyTypes, array $allowedValueTypes)
     {
+        $keyType = $this->normalizeType($keyType);
+        $valueType = $this->normalizeType($valueType);
+
         $this->assertValidType($keyType, 'key', $allowedKeyTypes);
         $this->assertValidType($valueType, 'value', $allowedValueTypes);
 
         $this->keyType = $keyType;
         $this->valueType = $valueType;
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    private function normalizeType($type)
+    {
+        if (!$this->isInstanceOfType($type) && !in_array($type, self::$types, true)) {
+            return self::TYPE_INSTANCE_OF . $type;
+        }
+
+        return $type;
     }
 
     /**
@@ -88,7 +114,16 @@ class TypeValidator
      */
     public function getKeyType()
     {
-        return $this->keyType;
+        return $this->stripInstanceOfPrefix($this->keyType);
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    private function stripInstanceOfPrefix($type)
+    {
+        return str_replace(self::TYPE_INSTANCE_OF, '', $type);
     }
 
     /**
@@ -96,7 +131,7 @@ class TypeValidator
      */
     public function getValueType()
     {
-        return $this->valueType;
+        return $this->stripInstanceOfPrefix($this->valueType);
     }
 
     /**

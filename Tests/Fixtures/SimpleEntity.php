@@ -2,7 +2,7 @@
 
 namespace MFCollections\Tests\Fixtures;
 
-class SimpleEntity
+class SimpleEntity implements EntityInterface
 {
     /** @var int */
     private $id;
