@@ -2,10 +2,9 @@
 
 namespace MFCollections\Collections\Enhanced;
 
-use MFCollections\Collections\Map as BaseMap;
 use MFCollections\Services\Parsers\CallbackParser;
 
-class Map extends BaseMap
+class Map extends \MFCollections\Collections\Map
 {
     /** @var CallbackParser */
     private $callbackParser;

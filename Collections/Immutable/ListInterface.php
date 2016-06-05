@@ -1,20 +1,22 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MFCollections\Collections\Immutable;
+
+use MFCollections\Collections\CollectionInterface;
 
 interface ListInterface extends CollectionInterface
 {
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return static
+     */
     public function add($value);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return static
+     */
     public function unshift($value);
-
-    /** @return mixed */
-    public function shift();
-
-    /** @return mixed */
-    public function pop();
 
     /** @return mixed */
     public function first();
@@ -31,12 +33,18 @@ interface ListInterface extends CollectionInterface
      */
     public function contains($value);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return static
+     */
     public function removeFirst($value);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return static
+     */
     public function removeAll($value);
 
-    /** @return \MFCollections\Collections\Immutable\ListInterface */
-    public function asImmutable();
+    /** @return \MFCollections\Collections\ListInterface */
+    public function asMutable();
 }

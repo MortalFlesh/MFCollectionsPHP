@@ -2,11 +2,10 @@
 
 namespace MFCollections\Collections\Generic;
 
-use MFCollections\Collections\Map as BaseMap;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class Map extends BaseMap implements CollectionInterface
+class Map extends \MFCollections\Collections\Map implements CollectionInterface
 {
     /** @var array */
     private $allowedKeyTypes = [

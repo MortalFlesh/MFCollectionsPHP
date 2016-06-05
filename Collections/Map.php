@@ -162,14 +162,14 @@ class Map implements MapInterface
     }
 
     /**
-     * @param callable (key:mixed,value:mixed):void $callback
+     * @param callable (value:mixed,index:mixed):void $callback
      */
     public function each($callback)
     {
         $this->assertCallback($callback);
 
         foreach ($this->mapArray as $key => $value) {
-            $callback($key, $value);
+            $callback($value, $key);
         }
     }
 

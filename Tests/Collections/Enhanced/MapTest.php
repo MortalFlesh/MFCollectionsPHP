@@ -19,7 +19,7 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
     {
         $this->setExpectedException(\InvalidArgumentException::class);
 
-        $this->mapEnhanced->each('($k, $v) => {}');
+        $this->mapEnhanced->each('($v, $k) => {}');
     }
 
     public function testShouldMapToNewMapByArrowFunction()
@@ -90,7 +90,7 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
      *
      * @dataProvider reduceInitialByArrowFunctionProvider
      */
-    public function testeShouldReduceListWithInitialValueByArrowFunction(
+    public function testShouldReduceListWithInitialValueByArrowFunction(
         $reducer,
         array $values,
         $initialValue,

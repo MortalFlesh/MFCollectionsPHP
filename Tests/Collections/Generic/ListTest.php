@@ -273,4 +273,17 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
     }
+
+    public function testShouldGetMutableGenericListAsImmutableGenericList()
+    {
+        $this->markTestIncomplete('Immutable\Generic\ListCollection is not implemented yet.');
+        $this->list->add('value');
+
+        $immutable = $this->list->asImmutable();
+
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\ListCollection::class, $immutable);
+
+        $this->assertEquals($this->list->toArray(), $immutable->toArray());
+    }
 }
