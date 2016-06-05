@@ -6,7 +6,10 @@ use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
 use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
 use MFCollections\Collections\Generic\Map;
-use MFCollections\Collections\MapInterface;
+use MFCollections\Collections\MapInterface as BaseMapInterface;
+use MFCollections\Collections\Generic\MapInterface;
+use MFCollections\Tests\Fixtures\EntityInterface;
+use MFCollections\Tests\Fixtures\SimpleEntity;
 
 class MapTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,6 +24,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(MapInterface::class, $this->map);
+        $this->assertInstanceOf(BaseMapInterface::class, $this->map);
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->map);
         $this->assertInstanceOf(CollectionInterface::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
@@ -356,14 +360,42 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType()
+    public function testShouldMapToNewMap()
+    {
+        $map = new Map('string', EntityInterface::class);
+        $map->set('one', new SimpleEntity(1));
+        $map->set('two', new SimpleEntity(2));
+
+        $newMap = $map->map('($k, $v) => $v->getId()');
+
+        $this->assertNotSame($map, $newMap);
+
+        $this->assertInstanceOf(\MFCollections\Collections\Map::class, $newMap);
+        $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
+    }
+
+    public function testShouldMapToNewGenericMap()
+    {
+        $map = new Map('string', EntityInterface::class);
+        $map->set('one', new SimpleEntity(1));
+        $map->set('two', new SimpleEntity(2));
+
+        $newMap = $map->map('($k, $v) => $v->getId()', 'string', 'int');
+
+        $this->assertNotSame($map, $newMap);
+
+        $this->assertInstanceOf(Map::class, $newMap);
+        $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
+    }
+
+    public function testShouldThrowInvalidArgumentExceptionOnMapWithInvalidTypes()
     {
         $this->setExpectedException(\InvalidArgumentException::class);
 
-        $this->map->set('key', 1);
-        $this->map->set('key2', 2);
+        $map = new Map('string', EntityInterface::class);
+        $map->set('one', new SimpleEntity(1));
 
-        $this->map->map('($k, $v) => $k . $v');
+        $map->map('($k, $v) => $v->getId()', 'int');
     }
 
     public function testShouldFilterItemsToNewMapByArrowFunction()
@@ -427,5 +459,18 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->map->set('key3', 3);
 
         $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
+    }
+
+    public function testShouldGetMutableGenericMapAsImmutableGenericMap()
+    {
+        $this->markTestIncomplete('Immutable\Generic\Map is not implemented yet.');
+        $this->map->set('key', 'value');
+
+        $immutable = $this->map->asImmutable();
+
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\Map::class, $immutable);
+
+        $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
 }

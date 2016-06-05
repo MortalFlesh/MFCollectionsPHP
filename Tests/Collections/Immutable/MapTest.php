@@ -1,12 +1,15 @@
 <?php
 
-namespace MFCollections\Tests\Collections;
+namespace MFCollections\Tests\Collections\Immutable;
 
 use MFCollections\Collections\CollectionInterface;
-use MFCollections\Collections\ListInterface;
-use MFCollections\Collections\Map;
-use MFCollections\Collections\MapInterface;
+use MFCollections\Collections\Immutable\ListInterface;
+use MFCollections\Collections\Immutable\Map;
+use MFCollections\Collections\Immutable\MapInterface;
 
+/**
+ * @group unit
+ */
 class MapTest extends \PHPUnit_Framework_TestCase
 {
     /** @var MapInterface */
@@ -97,17 +100,11 @@ class MapTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMapArrayWay($key, $value)
+    public function testShouldThrowBadMathodCallExceptionOnAddItemsToMapArrayWay()
     {
-        $this->map[$key] = $value;
+        $this->setExpectedException(\BadMethodCallException::class);
 
-        $this->assertEquals($value, $this->map[$key]);
+        $this->map['key'] = 'value';
     }
 
     /**
@@ -118,9 +115,10 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldAddItemsToMap($key, $value)
     {
-        $this->map->set($key, $value);
+        $newMap = $this->map->set($key, $value);
 
-        $this->assertEquals($value, $this->map->get($key));
+        $this->assertNotSame($this->map, $newMap);
+        $this->assertEquals($value, $newMap->get($key));
     }
 
     public function addItemsProvider()
@@ -166,9 +164,9 @@ class MapTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key)
+    public function testShouldThrowBadMethodCallExceptionOnAddingObject($key)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->setExpectedException(\BadMethodCallException::class);
 
         $this->map[$key] = 'value';
     }
@@ -213,14 +211,9 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount($originalCount, $map);
 
-        $map->set('key', 'value');
-        $this->assertCount($originalCount + 1, $map);
-
-        $map['key'] = 'value X';
-        $this->assertCount($originalCount + 1, $map);
-
-        $map['keyY'] = 'value Y';
-        $this->assertCount($originalCount + 2, $map);
+        $newMap = $map->set('key', 'value');
+        $this->assertCount($originalCount, $map);
+        $this->assertCount($originalCount + 1, $newMap);
     }
 
     public function testShouldHasKeys()
@@ -228,7 +221,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $keyExists = 'has-key';
         $keyDoesntExist = 'has-no-key';
 
-        $this->map->set($keyExists, 'value');
+        $this->map = $this->map->set($keyExists, 'value');
 
         $this->assertArrayHasKey($keyExists, $this->map);
         $this->assertArrayNotHasKey($keyDoesntExist, $this->map);
@@ -242,17 +235,24 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $key = 'key';
         $key2 = 'key2';
 
-        $this->map->set($key, 'value');
+        $this->map = $this->map->set($key, 'value');
         $this->assertTrue($this->map->containsKey($key));
 
-        $this->map[$key2] = 'value2';
+        $this->map = $this->map->set($key2, 'value2');
         $this->assertTrue($this->map->containsKey($key2));
 
-        $this->map->remove($key);
-        $this->assertFalse($this->map->containsKey($key));
+        $newMap = $this->map->remove($key);
+        $this->assertTrue($this->map->containsKey($key));
+        $this->assertFalse($newMap->containsKey($key));
+    }
 
-        unset($this->map[$key2]);
-        $this->assertFalse($this->map->containsKey($key2));
+    public function testShouldThrowBadMethodCallExceptionOnUnsetValueArrayWay()
+    {
+        $this->setExpectedException(\BadMethodCallException::class);
+
+        $this->map = $this->map->set('key', 'value');
+
+        unset($this->map['key']);
     }
 
     public function testShouldContainsValue()
@@ -261,7 +261,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $value = 1;
         $valueNotPresented = 4;
 
-        $this->map->set($key, $value);
+        $this->map = $this->map->set($key, $value);
 
         $this->assertTrue($this->map->contains($value));
         $this->assertFalse($this->map->contains($valueNotPresented));
@@ -354,7 +354,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetValueArrayWay()
     {
-        $this->map->set('key', 'value');
+        $this->map = $this->map->set('key', 'value');
 
         $this->assertEquals('value', $this->map['key']);
         $this->assertEquals('value', $this->map->get('key'));
@@ -372,7 +372,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCallReducerCorrectly()
     {
-        $this->map->set('key', 'value');
+        $this->map = $this->map->set('key', 'value');
 
         $reduced = $this->map->reduce(function ($total, $current, $key, $map) {
             $this->assertEquals('initial', $total);
@@ -396,7 +396,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testShouldReduceMap(callable $reducer, array $values, $expected)
     {
         foreach ($values as $key => $value) {
-            $this->map->set($key, $value);
+            $this->map = $this->map->set($key, $value);
         }
 
         $this->assertEquals($expected, $this->map->reduce($reducer));
@@ -435,7 +435,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
     public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
     {
         foreach ($values as $key => $value) {
-            $this->map->set($key, $value);
+            $this->map = $this->map->set($key, $value);
         }
 
         $this->assertEquals($expected, $this->map->reduce($reducer, $initialValue));
@@ -473,15 +473,15 @@ class MapTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testShouldGetMutableListAsImmutable()
+    public function testShouldGetImmutableMapAsMutable()
     {
-        $this->map->set('key', 'value');
+        $this->map = $this->map->set('key', 'value');
 
-        $immutable = $this->map->asImmutable();
+        $mutable = $this->map->asMutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Map::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\MapInterface::class, $mutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Map::class, $mutable);
 
-        $this->assertEquals($this->map->toArray(), $immutable->toArray());
+        $this->assertEquals($this->map->toArray(), $mutable->toArray());
     }
 }

@@ -128,4 +128,17 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
             ],
         ];
     }
+
+    public function testShouldGetMutableEnhancedMapAsImmutableEnhancedMap()
+    {
+        $this->markTestIncomplete('Immutable\Enhanced\Map is not implemented yet.');
+        $this->map->set('key', 'value');
+
+        $immutable = $this->map->asImmutable();
+
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Enhanced\Map::class, $immutable);
+
+        $this->assertEquals($this->map->toArray(), $immutable->toArray());
+    }
 }

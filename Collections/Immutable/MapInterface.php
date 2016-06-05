@@ -1,6 +1,8 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MFCollections\Collections\Immutable;
+
+use MFCollections\Collections\CollectionInterface;
 
 interface MapInterface extends CollectionInterface, \ArrayAccess
 {
@@ -31,10 +33,14 @@ interface MapInterface extends CollectionInterface, \ArrayAccess
     /**
      * @param mixed $key
      * @param mixed $value
+     * @return static
      */
     public function set($key, $value);
 
-    /** @param mixed $key */
+    /**
+     * @param mixed $key
+     * @return static
+     */
     public function remove($key);
 
     /** @return ListInterface */
@@ -42,7 +48,7 @@ interface MapInterface extends CollectionInterface, \ArrayAccess
 
     /** @return ListInterface */
     public function values();
-
-    /** @return \MFCollections\Collections\Immutable\MapInterface */
-    public function asImmutable();
+    
+    /** @return \MFCollections\Collections\MapInterface */
+    public function asMutable();
 }

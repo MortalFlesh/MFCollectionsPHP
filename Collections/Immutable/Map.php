@@ -1,6 +1,8 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MFCollections\Collections\Immutable;
+
+use MFCollections\Collections\CollectionInterface;
 
 class Map implements MapInterface
 {
@@ -23,9 +25,9 @@ class Map implements MapInterface
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $map->set($key, static::createFromArray($value, true));
+                $map = $map->set($key, static::createFromArray($value, true));
             } else {
-                $map->set($key, $value);
+                $map = $map->set($key, $value);
             }
         }
 
@@ -100,12 +102,13 @@ class Map implements MapInterface
      */
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
+        throw new \BadMethodCallException('Immutable map cannot be used as array to set value. Use set() method instead.');
     }
 
     /**
      * @param mixed $key
      * @param mixed $value
+     * @return static
      */
     public function set($key, $value)
     {
@@ -116,7 +119,10 @@ class Map implements MapInterface
             throw new \InvalidArgumentException('Key cannot be an Array');
         }
 
-        $this->mapArray[$key] = $value;
+        $map = clone $this;
+        $map->mapArray[$key] = $value;
+
+        return $map;
     }
 
     /**
@@ -124,15 +130,19 @@ class Map implements MapInterface
      */
     public function offsetUnset($offset)
     {
-        $this->remove($offset);
+        throw new \BadMethodCallException('Immutable map cannot be used as array to unset value. Use remove() method instead.');
     }
 
     /**
      * @param mixed $key
+     * @return static
      */
     public function remove($key)
     {
-        unset($this->mapArray[$key]);
+        $map = clone $this;
+        unset($map->mapArray[$key]);
+
+        return $map;
     }
 
     /**
@@ -204,7 +214,7 @@ class Map implements MapInterface
         $this->assertCallback($callback);
 
         foreach ($this->mapArray as $key => $value) {
-            $map->set($key, $callback($key, $value));
+            $map = $map->set($key, $callback($key, $value));
         }
 
         return $map;
@@ -232,7 +242,7 @@ class Map implements MapInterface
 
         foreach ($this->mapArray as $key => $value) {
             if ($callback($key, $value)) {
-                $map->set($key, $value);
+                $map = $map->set($key, $value);
             }
         }
 
@@ -273,9 +283,9 @@ class Map implements MapInterface
         return $total;
     }
 
-    /** @return \MFCollections\Collections\Immutable\MapInterface */
-    public function asImmutable()
+    /** @return \MFCollections\Collections\MapInterface */
+    public function asMutable()
     {
-        return \MFCollections\Collections\Immutable\Map::createFromArray($this->toArray());
+        return \MFCollections\Collections\Map::createFromArray($this->toArray());
     }
 }

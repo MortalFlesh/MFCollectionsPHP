@@ -442,7 +442,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testShouldGetImmtuableListAsMutable()
+    public function testShouldGetImmutableListAsMutable()
     {
         $this->list = $this->list->add('value');
 

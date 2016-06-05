@@ -32,37 +32,43 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
     public function invalidCreationParamsProvider()
     {
         return [
-            [
+            'not allowed type' => [
                 'keyType' => 'string',
                 'valueType' => 'int',
                 'allowedKeyTypes' => [],
                 'allowedValueTypes' => ['string'],
             ],
-            [
+            'empty type given' => [
+                'keyType' => null,
+                'valueType' => 'int',
+                'allowedKeyTypes' => ['string'],
+                'allowedValueTypes' => ['string', 'int'],
+            ],
+            'not allowed key type' => [
                 'keyType' => 'string',
                 'valueType' => 'string',
                 'allowedKeyTypes' => ['int'],
                 'allowedValueTypes' => ['string', 'int'],
             ],
-            [
+            'empty instance' => [
                 'keyType' => 'string',
                 'valueType' => TypeValidator::TYPE_INSTANCE_OF,
                 'allowedKeyTypes' => ['int'],
                 'allowedValueTypes' => ['string', 'int', TypeValidator::TYPE_INSTANCE_OF],
             ],
-            [
+            'instance of bad class' => [
                 'keyType' => 'string',
                 'valueType' => TypeValidator::TYPE_INSTANCE_OF . 'badClass',
                 'allowedKeyTypes' => ['int'],
                 'allowedValueTypes' => ['string', 'int', TypeValidator::TYPE_INSTANCE_OF],
             ],
-            [
+            'instance of bad class in key' => [
                 'keyType' => TypeValidator::TYPE_INSTANCE_OF . 'badClass',
                 'valueType' => 'string',
                 'allowedKeyTypes' => ['int', TypeValidator::TYPE_INSTANCE_OF],
                 'allowedValueTypes' => ['string', 'int'],
             ],
-            [
+            'bad class' => [
                 'keyType' => 'badClass',
                 'valueType' => 'string',
                 'allowedKeyTypes' => ['int', TypeValidator::TYPE_INSTANCE_OF],
