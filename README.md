@@ -1,6 +1,21 @@
 # MFCollections for PHP - WIP
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
 
+## Todo for v1.0.0
+|                    | List        | Map         |
+|--------------------|-------------|-------------|
+| Classic            | OK          | OK          |
+| Enhanced           | asImmutable | asImmutable |
+| Generic            | asImmutable | asImmutable |
+| Immutable          | OK          | X           |
+| Immutable\Enhanced | X           | X           |
+| Immutable\Generic  | X           | X           |
+| methods            | ___________ | ___________ |
+| clear()            | X           | X           |
+| isEmpty()          | X           | X           |
+| allow Class::class | X           | X           |
+
+
 ## CollectionInterface
 - basic interface for Collections
 - extends `IteratorAggregate, Countable`
@@ -37,7 +52,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - extends `ListCollection`
 - has defined value type and validates it
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
-```
+```php
 // list will accept only string values
 $list = new Generic\ListCollection('string');
 ```
@@ -47,7 +62,7 @@ $list = new Generic\ListCollection('string');
 - extends `Map`
 - has defined key and value type and validates it
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
-```
+```php
 // map will accept only string keys and int values
 $map = new Generic\Map('string', 'int');
 ```
@@ -80,7 +95,9 @@ composer install
 ```
 
 
-## Usage:
+## Arrow Functions
+
+### Usage:
 ```php
 $map = new Enhanced\Map();
 $map->set(1, 'one');
@@ -110,6 +127,35 @@ array_map(
 );
 ```
 
+### With generics:
+```php
+class SimpleEntity
+{
+    private $id;
 
-## Arrow Functions - how does it work?
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+}
+
+$list = new Generic\ListCollection('instance_of_' . SimpleEntity::class);
+$list->add(new SimpleEntity(1));
+$list->add(new SimpleEntity(2));
+$list->add(new SimpleEntity(3));
+
+$sumOfIdsGreaterThan1 = $list
+    ->filter('($v, $i) => $v->getId() > 1') // filter entities with id > 1
+    ->map('($v, $i) => $v->getId()')        // map filtered entities to just ids
+    ->reduce('($t, $v) => $t + $v');        // reduce ids to their sum
+
+echo $sumOfIdsGreaterThan1;     // 5
+```
+
+### how does it work?
 - it parses function from string and evaluate it with `eval()`

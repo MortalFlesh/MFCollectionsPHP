@@ -7,6 +7,7 @@ use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
 use MFCollections\Collections\ListInterface;
 use MFCollections\Services\Validators\TypeValidator;
+use MFCollections\Tests\Fixtures\SimpleEntity;
 
 class ListTest extends \PHPUnit_Framework_TestCase
 {
@@ -204,7 +205,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $this->list->add('key');
         $this->list->add('key2');
 
-        $this->list->map('($v, $i) => 2');
+        $this->list->map('($v, $i) => 2', 'string');
     }
 
     public function testShouldFilterItemsToNewListByArrowFunction()
@@ -285,5 +286,35 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\ListCollection::class, $immutable);
 
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
+    }
+
+    public function testShouldMapObjectsToDifferentList()
+    {
+        $list = new ListCollection('instance_of_' . SimpleEntity::class);
+        $list->add(new SimpleEntity(1));
+        $list->add(new SimpleEntity(2));
+        $list->add(new SimpleEntity(3));
+
+        $sumOfIdsGreaterThan1 = $list
+            ->filter('($v, $i) => $v->getId() > 1')
+            ->map('($v, $i) => $v->getId()')
+            ->reduce('($t, $v) => $t + $v');
+
+        $this->assertEquals(5, $sumOfIdsGreaterThan1);
+    }
+
+    public function testShouldMapObjectsToDifferentGenericList()
+    {
+        $list = new ListCollection('instance_of_' . SimpleEntity::class);
+        $list->add(new SimpleEntity(1));
+        $list->add(new SimpleEntity(2));
+        $list->add(new SimpleEntity(3));
+
+        $sumOfIdsGreaterThan1 = $list
+            ->filter('($v, $i) => $v->getId() > 1')
+            ->map('($v, $i) => $v->getId()', 'int')
+            ->reduce('($t, $v) => $t + $v');
+
+        $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
 }

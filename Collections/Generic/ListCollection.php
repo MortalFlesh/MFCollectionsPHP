@@ -2,6 +2,7 @@
 
 namespace MFCollections\Collections\Generic;
 
+use MFCollections\Collections\ListInterface;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
@@ -130,12 +131,18 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
 
     /**
      * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
-     * @return static
+     * @param string|null $mappedListValueType
+     * @return ListInterface
      */
-    public function map($callback)
+    public function map($callback, $mappedListValueType = null)
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $list = new static($this->typeValidator->getValueType());
+
+        if (is_null($mappedListValueType)) {
+            $list = new \MFCollections\Collections\Enhanced\ListCollection();
+        } else {
+            $list = new static($mappedListValueType);
+        }
 
         return $this->mapList($list, $callback);
     }
@@ -164,7 +171,7 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
         }
 
         $reducer = $this->callbackParser->parseArrowFunction($reducer);
-        
+
         return parent::reduce($reducer, $initialValue);
     }
 }
