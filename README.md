@@ -4,13 +4,13 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 ## Todo list for v1.0.0
 |                    | List        | Map         |
 |--------------------|-------------|-------------|
-| Classic            | OK          | OK          |
+| Classic            | OK          | asImmutable |
 | Enhanced           | asImmutable | asImmutable |
 | Generic            | asImmutable | asImmutable |
 | Immutable          | OK          | X           |
 | Immutable\Enhanced | X           | X           |
 | Immutable\Generic  | X           | X           |
-| methods            | ___________ | ___________ |
+| _____methods_____  | ___________ | ___________ |
 | clear()            | X           | X           |
 | isEmpty()          | X           | X           |
 | allow Class::class | OK          | OK          |
