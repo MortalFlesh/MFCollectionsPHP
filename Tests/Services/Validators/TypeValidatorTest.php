@@ -16,12 +16,16 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
      * @param array $allowedKeyTypes
      * @param array $allowedValueTypes
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @dataProvider invalidCreationParamsProvider
      */
-    public function testShouldThrowExceptionWhenBadTypeValidatorIsCreated($keyType, $valueType, array $allowedKeyTypes, array $allowedValueTypes)
-    {
+    public function testShouldThrowExceptionWhenBadTypeValidatorIsCreated(
+        $keyType,
+        $valueType,
+        array $allowedKeyTypes,
+        array $allowedValueTypes
+    ) {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         new TypeValidator($keyType, $valueType, $allowedKeyTypes, $allowedValueTypes);
     }
 
@@ -58,6 +62,12 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
                 'allowedKeyTypes' => ['int', TypeValidator::TYPE_INSTANCE_OF],
                 'allowedValueTypes' => ['string', 'int'],
             ],
+            [
+                'keyType' => 'badClass',
+                'valueType' => 'string',
+                'allowedKeyTypes' => ['int', TypeValidator::TYPE_INSTANCE_OF],
+                'allowedValueTypes' => ['string', 'int'],
+            ],
         ];
     }
 
@@ -66,15 +76,23 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
      * @param string $valueType
      * @param array $allowedKeyTypes
      * @param array $allowedValueTypes
+     * @param string $expectedKeyType
+     * @param string $expectedValueType
      *
      * @dataProvider creationParamsProvider
      */
-    public function testShouldCreateTypeValidator($keyType, $valueType, array $allowedKeyTypes, array $allowedValueTypes)
-    {
+    public function testShouldCreateTypeValidator(
+        $keyType,
+        $valueType,
+        array $allowedKeyTypes,
+        array $allowedValueTypes,
+        $expectedKeyType,
+        $expectedValueType
+    ) {
         $typeValidator = new TypeValidator($keyType, $valueType, $allowedKeyTypes, $allowedValueTypes);
-        
-        $this->assertEquals($keyType, $typeValidator->getKeyType());
-        $this->assertEquals($valueType, $typeValidator->getValueType());
+
+        $this->assertEquals($expectedKeyType, $typeValidator->getKeyType());
+        $this->assertEquals($expectedValueType, $typeValidator->getValueType());
     }
 
     public function creationParamsProvider()
@@ -85,12 +103,24 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
                 'valueType' => 'string',
                 'allowedKeyTypes' => ['string'],
                 'allowedValueTypes' => ['string', 'int'],
+                'expectedKeyType' => 'string',
+                'expectedValueType' => 'string',
             ],
             [
                 'keyType' => 'int',
                 'valueType' => 'instance_of_' . Map::class,
                 'allowedKeyTypes' => ['string', 'float', 'int'],
                 'allowedValueTypes' => ['string', 'bool', 'instance_of_'],
+                'expectedKeyType' => 'int',
+                'expectedValueType' => Map::class,
+            ],
+            [
+                'keyType' => 'int',
+                'valueType' => Map::class,
+                'allowedKeyTypes' => ['string', 'float', 'int'],
+                'allowedValueTypes' => ['string', 'bool', 'instance_of_'],
+                'expectedKeyType' => 'int',
+                'expectedValueType' => Map::class,
             ],
         ];
     }
@@ -145,7 +175,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
             [
                 'type' => TypeValidator::TYPE_ARRAY,
                 'key' => [],
-                'value' => [1,2,3],
+                'value' => [1, 2, 3],
             ],
             [
                 'type' => TypeValidator::TYPE_OBJECT,
@@ -168,13 +198,13 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $type
      * @param mixed $key
-     * 
-     * @expectedException \InvalidArgumentException
      *
      * @dataProvider invalidTypesProvider
      */
     public function testShouldThrowInvalidArgumentExceptionWhenAssertingInvalidKeyTypes($type, $key)
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $validator = $this->createValidator($type);
         $validator->assertKeyType($key);
     }
@@ -223,7 +253,7 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
                 'invalid' => [],
             ],
             'instance_of_map|instance_of_list' => [
-                'type' => TypeValidator::TYPE_INSTANCE_OF . Map::class,
+                'type' => Map::class,
                 'invalid' => new ListCollection(),
             ],
         ];
@@ -233,12 +263,12 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
      * @param string $type
      * @param mixed $value
      *
-     * @expectedException \InvalidArgumentException
-     *
      * @dataProvider invalidTypesProvider
      */
     public function testShouldThrowInvalidArgumentExceptionWhenAssertingInvalidValueTypes($type, $value)
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $validator = $this->createValidator($type);
         $validator->assertValueType($value);
     }

@@ -1,7 +1,7 @@
 # MFCollections for PHP - WIP
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
 
-## Todo for v1.0.0
+## Todo list for v1.0.0
 |                    | List        | Map         |
 |--------------------|-------------|-------------|
 | Classic            | OK          | OK          |
@@ -13,7 +13,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 | methods            | ___________ | ___________ |
 | clear()            | X           | X           |
 | isEmpty()          | X           | X           |
-| allow Class::class | X           | X           |
+| allow Class::class | OK          | OK          |
 
 
 ## CollectionInterface
@@ -144,7 +144,7 @@ class SimpleEntity
     }
 }
 
-$list = new Generic\ListCollection('instance_of_' . SimpleEntity::class);
+$list = new Generic\ListCollection(SimpleEntity::class);
 $list->add(new SimpleEntity(1));
 $list->add(new SimpleEntity(2));
 $list->add(new SimpleEntity(3));

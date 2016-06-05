@@ -7,6 +7,8 @@ use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
 use MFCollections\Collections\ListInterface;
 use MFCollections\Services\Validators\TypeValidator;
+use MFCollections\Tests\Fixtures\ComplexEntity;
+use MFCollections\Tests\Fixtures\EntityInterface;
 use MFCollections\Tests\Fixtures\SimpleEntity;
 
 class ListTest extends \PHPUnit_Framework_TestCase
@@ -268,7 +270,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $list1 = \MFCollections\Collections\ListCollection::createFromArray([1, 2, 3]);
         $list2 = \MFCollections\Collections\ListCollection::createFromArray(['one', 'two']);
 
-        $list = new ListCollection('instance_of_' . \MFCollections\Collections\ListCollection::class);
+        $list = new ListCollection(\MFCollections\Collections\ListCollection::class);
         $list->add($list1);
         $list->add($list2);
 
@@ -290,7 +292,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldMapObjectsToDifferentList()
     {
-        $list = new ListCollection('instance_of_' . SimpleEntity::class);
+        $list = new ListCollection(SimpleEntity::class);
         $list->add(new SimpleEntity(1));
         $list->add(new SimpleEntity(2));
         $list->add(new SimpleEntity(3));
@@ -305,15 +307,15 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldMapObjectsToDifferentGenericList()
     {
-        $list = new ListCollection('instance_of_' . SimpleEntity::class);
-        $list->add(new SimpleEntity(1));
-        $list->add(new SimpleEntity(2));
-        $list->add(new SimpleEntity(3));
+        $list = new ListCollection(EntityInterface::class);
+        $list->add(new ComplexEntity(new SimpleEntity(1)));
+        $list->add(new ComplexEntity(new SimpleEntity(2)));
+        $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()', 'int')
-            ->reduce('($t, $v) => $t + $v');
+            ->filter('($v, $i) => $v->getSimpleEntity()->getId() > 1')
+            ->map('($v, $i) => $v->getSimpleEntity()', SimpleEntity::class)
+            ->reduce('($t, $v) => $t + $v->getId()');
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }

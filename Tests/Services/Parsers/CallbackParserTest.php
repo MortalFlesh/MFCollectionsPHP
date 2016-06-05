@@ -18,11 +18,11 @@ class CallbackParserTest extends \PHPUnit_Framework_TestCase
      * @param string $func
      *
      * @dataProvider invalidFuncProvider
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testShouldThrowExceptionWhenArrayFuncIsNotRight($func)
     {
+        $this->setExpectedException(\InvalidArgumentException::class);
+
         $this->callbackParser->parseArrowFunction($func);
     }
 
@@ -43,7 +43,7 @@ class CallbackParserTest extends \PHPUnit_Framework_TestCase
      * @param string $function
      * @param array $args
      * @param mixed $expected
-     * 
+     *
      * @dataProvider functionProvider
      */
     public function testShouldParseArrayFunctionWithTwoParams($function, array $args, $expected)
@@ -112,7 +112,7 @@ class CallbackParserTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnCallableCallbackRightAway()
     {
-        $callable = function($a) {
+        $callable = function ($a) {
             return $a;
         };
 
