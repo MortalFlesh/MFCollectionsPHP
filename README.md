@@ -4,10 +4,10 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 ## Todo list for v1.0.0
 |                    | List        | Map         |
 |--------------------|-------------|-------------|
-| Classic            | OK          | asImmutable |
+| Classic            | OK          | OK          |
 | Enhanced           | asImmutable | asImmutable |
 | Generic            | asImmutable | asImmutable |
-| Immutable          | OK          | X           |
+| Immutable          | OK          | OK          |
 | Immutable\Enhanced | X           | X           |
 | Immutable\Generic  | X           | X           |
 | _____methods_____  | ___________ | ___________ |
@@ -73,6 +73,13 @@ $map = new Generic\Map('string', 'int');
 
 ### Immutable List
 - it's basic Immutable List Collection
+
+
+## ImmutableMapInterface
+- extends `CollectionInterface, ArrayAccess`
+
+### Immutable Map
+- it's basic Immutable Map Collection
 
 
 ## Instalation:
@@ -157,5 +164,5 @@ $sumOfIdsGreaterThan1 = $list
 echo $sumOfIdsGreaterThan1;     // 5
 ```
 
-### how does it work?
+### How does it work?
 - it parses function from string and evaluate it with `eval()`

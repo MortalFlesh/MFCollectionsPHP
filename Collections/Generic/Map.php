@@ -5,7 +5,7 @@ namespace MFCollections\Collections\Generic;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class Map extends \MFCollections\Collections\Map implements CollectionInterface
+class Map extends \MFCollections\Collections\Map implements CollectionInterface, MapInterface
 {
     /** @var array */
     private $allowedKeyTypes = [
@@ -153,12 +153,19 @@ class Map extends \MFCollections\Collections\Map implements CollectionInterface
 
     /**
      * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
-     * @return static
+     * @param string|null $mappedMapKeyType
+     * @param string|null $mappedMapValueType
+     * @return \MFCollections\Collections\MapInterface|static
      */
-    public function map($callback)
+    public function map($callback, $mappedMapKeyType = null, $mappedMapValueType = null)
     {
+        if (isset($mappedMapKeyType) || isset($mappedMapValueType)) {
+            $map = new static($mappedMapKeyType, $mappedMapValueType);
+        } else {
+            $map = new \MFCollections\Collections\Enhanced\Map();
+        }
+
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $map = new static($this->typeValidator->getKeyType(), $this->typeValidator->getValueType());
 
         return $this->mapToMap($map, $callback);
     }

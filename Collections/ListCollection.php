@@ -290,6 +290,6 @@ class ListCollection implements ListInterface
     /** @return \MFCollections\Collections\Immutable\ListInterface */
     public function asImmutable()
     {
-        return \MFCollections\Collections\Immutable\ListCollection::createFromArray($this->listArray);
+        return \MFCollections\Collections\Immutable\ListCollection::createFromArray($this->toArray());
     }
 }

@@ -5,7 +5,8 @@ namespace MFCollections\Tests\Collections\Generic;
 use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
 use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListCollection;
-use MFCollections\Collections\ListInterface;
+use MFCollections\Collections\Generic\ListInterface;
+use MFCollections\Collections\ListInterface as BaseListInterface;
 use MFCollections\Services\Validators\TypeValidator;
 use MFCollections\Tests\Fixtures\ComplexEntity;
 use MFCollections\Tests\Fixtures\EntityInterface;
@@ -24,8 +25,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(ListInterface::class, $this->list);
-        $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
+        $this->assertInstanceOf(BaseListInterface::class, $this->list);
         $this->assertInstanceOf(CollectionInterface::class, $this->list);
+        $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
