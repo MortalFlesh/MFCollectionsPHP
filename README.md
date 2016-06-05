@@ -37,12 +37,20 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - extends `ListCollection`
 - has defined value type and validates it
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+```
+// list will accept only string values
+$list = new Generic\ListCollection('string');
+```
 
 ### Generic Map
 - implements `Generic\CollectionInterface`
 - extends `Map`
 - has defined key and value type and validates it
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+```
+// map will accept only string keys and int values
+$map = new Generic\Map('string', 'int');
+```
 
 
 ## ImmutableListInterface
