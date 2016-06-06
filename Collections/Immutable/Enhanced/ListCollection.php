@@ -1,10 +1,10 @@
 <?php
 
-namespace MFCollections\Collections\Enhanced;
+namespace MFCollections\Collections\Immutable\Enhanced;
 
 use MFCollections\Services\Parsers\CallbackParser;
 
-class ListCollection extends \MFCollections\Collections\ListCollection
+class ListCollection extends \MFCollections\Collections\Immutable\ListCollection
 {
     /** @var CallbackParser */
     private $callbackParser;
@@ -50,10 +50,10 @@ class ListCollection extends \MFCollections\Collections\ListCollection
     }
 
     /**
-     * @return \MFCollections\Collections\Immutable\ListCollection
+     * @return \MFCollections\Collections\ListCollection
      */
-    public function asImmutable()
+    public function asMutable()
     {
-        return \MFCollections\Collections\Immutable\Enhanced\ListCollection::createFromArray($this->toArray());
+        return \MFCollections\Collections\Enhanced\ListCollection::createFromArray($this->toArray());
     }
 }
