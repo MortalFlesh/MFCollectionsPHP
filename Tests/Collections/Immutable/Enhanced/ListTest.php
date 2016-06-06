@@ -1,10 +1,13 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Enhanced;
+namespace MFCollections\Tests\Collections\Immutable\Enhanced;
 
-use MFCollections\Collections\Enhanced\ListCollection;
+use MFCollections\Collections\Immutable\Enhanced\ListCollection;
 
-class ListTest extends \MFCollections\Tests\Collections\ListTest
+/**
+ * @group unit
+ */
+class ListTest extends \MFCollections\Tests\Collections\Immutable\ListTest
 {
     /** @var ListCollection */
     private $listEnhanced;
@@ -60,7 +63,7 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
-            $this->listEnhanced->add($value);
+            $this->listEnhanced = $this->listEnhanced->add($value);
         }
 
         $this->assertEquals($expected, $this->listEnhanced->reduce($reducer));
@@ -99,7 +102,7 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
-            $this->listEnhanced->add($value);
+            $this->listEnhanced = $this->listEnhanced->add($value);
         }
 
         $this->assertEquals($expected, $this->listEnhanced->reduce($reducer, $initialValue));
@@ -133,11 +136,11 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
     {
         $this->listEnhanced->add('value');
 
-        $immutable = $this->listEnhanced->asImmutable();
-        
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Enhanced\ListCollection::class, $immutable);
+        $mutable = $this->listEnhanced->asMutable();
 
-        $this->assertEquals($this->listEnhanced->toArray(), $immutable->toArray());
+        $this->assertInstanceOf(\MFCollections\Collections\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Enhanced\ListCollection::class, $mutable);
+
+        $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());
     }
 }

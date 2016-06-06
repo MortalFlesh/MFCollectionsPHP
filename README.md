@@ -5,10 +5,10 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 |                    | List        | Map         |
 |--------------------|-------------|-------------|
 | Classic            | OK          | OK          |
-| Enhanced           | asImmutable | asImmutable |
+| Enhanced           | OK          | asImmutable |
 | Generic            | asImmutable | asImmutable |
 | Immutable          | OK          | OK          |
-| Immutable\Enhanced | X           | X           |
+| Immutable\Enhanced | OK          | X           |
 | Immutable\Generic  | X           | X           |
 | _____methods_____  | ___________ | ___________ |
 | clear()            | X           | X           |
@@ -27,7 +27,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 ### ListCollection
 - it's basic List Collection
 
-### Enhanced ListCollection
+### Enhanced\ListCollection
 - extends `ListCollection`
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
@@ -38,16 +38,16 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 ### Map
 - it's basic Map Collection
 
-### Enhanced Map
+### Enhanced\Map
 - extends `Map`
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
-## Generic CollectionInterface
+## Generic\CollectionInterface
 - extends `CollectionInterface`
 - adds generic functionality to Collections, which will validate types
 
-### Generic ListCollection
+### Generic\ListCollection
 - implements `Generic\CollectionInterface`
 - extends `ListCollection`
 - has defined value type and validates it
@@ -57,7 +57,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 $list = new Generic\ListCollection('string');
 ```
 
-### Generic Map
+### Generic\Map
 - implements `Generic\CollectionInterface`
 - extends `Map`
 - has defined key and value type and validates it
@@ -68,17 +68,21 @@ $map = new Generic\Map('string', 'int');
 ```
 
 
-## ImmutableListInterface
+## Immutable\ListInterface
 - extends `CollectionInterface`
 
-### Immutable List
+### Immutable\ListCollection
 - it's basic Immutable List Collection
 
+### Immutable\Enhanced\ListCollection
+- extends `Immutable\ListCollection`
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
-## ImmutableMapInterface
+
+## Immutable\MapInterface
 - extends `CollectionInterface, ArrayAccess`
 
-### Immutable Map
+### Immutable\Map
 - it's basic Immutable Map Collection
 
 
