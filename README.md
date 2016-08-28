@@ -6,10 +6,10 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 |--------------------|-------------|-------------|
 | Classic            | OK          | OK          |
 | Enhanced           | OK          | OK          |
-| Generic            | asImmutable | asImmutable |
+| Generic            | OK          | asImmutable |
 | Immutable          | OK          | OK          |
 | Immutable\Enhanced | OK          | OK          |
-| Immutable\Generic  | X           | X           |
+| Immutable\Generic  | OK          | X           |
 | _____methods_____  | ___________ | ___________ |
 | clear()            | X           | X           |
 | isEmpty()          | X           | X           |
@@ -90,7 +90,7 @@ $map = new Generic\Map('string', 'int');
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 ```php
 // list will accept only string values
-$list = new Generic\ListCollection('string');
+$list = new Immutable\Generic\ListCollection('string');
 ```
 
 
