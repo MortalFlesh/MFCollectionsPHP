@@ -1,18 +1,23 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Generic;
+namespace MFCollections\Tests\Collections\Immutable\Generic;
 
 use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
 use MFCollections\Collections\Generic\CollectionInterface;
-use MFCollections\Collections\Generic\ListCollection;
-use MFCollections\Collections\Generic\ListInterface;
+use MFCollections\Collections\Generic\ListInterface as GenericListInterface;
+use MFCollections\Collections\Immutable\Generic\ListCollection;
+use MFCollections\Collections\Immutable\ListCollection as BaseImmutableListCollection;
+use MFCollections\Collections\Immutable\ListInterface;
 use MFCollections\Collections\ListInterface as BaseListInterface;
 use MFCollections\Services\Validators\TypeValidator;
 use MFCollections\Tests\Fixtures\ComplexEntity;
 use MFCollections\Tests\Fixtures\EntityInterface;
 use MFCollections\Tests\Fixtures\SimpleEntity;
 
-class ListTest extends \PHPUnit_Framework_TestCase
+/**
+ * @group unit
+ */
+class ListCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ListCollection */
     private $list;
@@ -24,8 +29,10 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
+        $this->assertInstanceOf(GenericListInterface::class, $this->list);
         $this->assertInstanceOf(ListInterface::class, $this->list);
         $this->assertInstanceOf(BaseListInterface::class, $this->list);
+        $this->assertInstanceOf(BaseImmutableListCollection::class, $this->list);
         $this->assertInstanceOf(CollectionInterface::class, $this->list);
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
@@ -111,8 +118,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldUnshiftValue()
     {
         $firstValue = 'first_value';
-        $this->list->add('value');
-        $this->list->unshift($firstValue);
+        $this->list = $this->list->add('value');
+        $this->list = $this->list->unshift($firstValue);
+        $this->list->add('irelevant-value');
 
         $this->assertCount(2, $this->list);
         $this->assertEquals($firstValue, $this->list->first());
@@ -129,7 +137,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertFalse($this->list->contains('value'));
 
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
     }
 
@@ -142,13 +150,13 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRemoveFirstValue()
     {
-        $this->list->add('value');
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
+        $this->list = $this->list->add('value');
 
         $this->assertCount(2, $this->list);
         $this->assertTrue($this->list->contains('value'));
 
-        $this->list->removeFirst('value');
+        $this->list = $this->list->removeFirst('value');
         $this->assertCount(1, $this->list);
         $this->assertTrue($this->list->contains('value'));
     }
@@ -162,15 +170,15 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRemoveAllValues()
     {
-        $this->list->add('value');
-        $this->list->add('value');
-        $this->list->add('value2');
+        $this->list = $this->list->add('value');
+        $this->list = $this->list->add('value');
+        $this->list = $this->list->add('value2');
 
         $this->assertCount(3, $this->list);
         $this->assertTrue($this->list->contains('value'));
         $this->assertTrue($this->list->contains('value2'));
 
-        $this->list->removeAll('value');
+        $this->list = $this->list->removeAll('value');
         $this->assertCount(1, $this->list);
         $this->assertFalse($this->list->contains('value'));
         $this->assertTrue($this->list->contains('value2'));
@@ -192,9 +200,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldMapToNewListWithSameGenericType()
     {
-        $this->list->add('key');
-        $this->list->add('key2');
-        $this->list->add('key3');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
+        $this->list = $this->list->add('key3');
 
         $newList = $this->list->map('($v, $i) => $v . "_"');
 
@@ -206,17 +214,17 @@ class ListTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(\InvalidArgumentException::class);
 
-        $this->list->add('key');
-        $this->list->add('key2');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
 
         $this->list->map('($v, $i) => 2', 'string');
     }
 
     public function testShouldFilterItemsToNewListByArrowFunction()
     {
-        $this->list->add('key');
-        $this->list->add('key2');
-        $this->list->add('key3');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
+        $this->list = $this->list->add('key3');
 
         $newList = $this->list->filter('($v, $i) => strlen($v) > 3');
 
@@ -235,8 +243,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCombineMapAndFilterToCreateNewMap()
     {
-        $this->list->add('key');
-        $this->list->add('key2');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
 
         $newList = $this->list
             ->filter('($v, $i) => $v === "key"')
@@ -248,8 +256,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldIterateValues()
     {
-        $this->list->add('key');
-        $this->list->add('key2');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
 
         $array = [];
         foreach ($this->list as $value) {
@@ -261,8 +269,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReduceGenericList()
     {
-        $this->list->add('key');
-        $this->list->add('key2');
+        $this->list = $this->list->add('key');
+        $this->list = $this->list->add('key2');
 
         $this->assertEquals('key|key2|', $this->list->reduce('($t, $c) => $t . $c . "|"'));
     }
@@ -273,30 +281,30 @@ class ListTest extends \PHPUnit_Framework_TestCase
         $list2 = \MFCollections\Collections\ListCollection::createFromArray(['one', 'two']);
 
         $list = new ListCollection(\MFCollections\Collections\ListCollection::class);
-        $list->add($list1);
-        $list->add($list2);
+        $list = $list->add($list1);
+        $list = $list->add($list2);
 
         $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
     }
 
     public function testShouldGetMutableGenericListAsImmutableGenericList()
     {
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
 
-        $immutable = $this->list->asImmutable();
+        $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MFCollections\Collections\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MFCollections\Collections\Generic\ListCollection::class, $mutable);
 
-        $this->assertEquals($this->list->toArray(), $immutable->toArray());
+        $this->assertEquals($this->list->toArray(), $mutable->toArray());
     }
 
     public function testShouldMapObjectsToDifferentList()
     {
         $list = new ListCollection(SimpleEntity::class);
-        $list->add(new SimpleEntity(1));
-        $list->add(new SimpleEntity(2));
-        $list->add(new SimpleEntity(3));
+        $list = $list->add(new SimpleEntity(1));
+        $list = $list->add(new SimpleEntity(2));
+        $list = $list->add(new SimpleEntity(3));
 
         $sumOfIdsGreaterThan1 = $list
             ->filter('($v, $i) => $v->getId() > 1')
@@ -309,9 +317,9 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldMapObjectsToDifferentGenericList()
     {
         $list = new ListCollection(EntityInterface::class);
-        $list->add(new ComplexEntity(new SimpleEntity(1)));
-        $list->add(new ComplexEntity(new SimpleEntity(2)));
-        $list->add(new ComplexEntity(new SimpleEntity(3)));
+        $list = $list->add(new ComplexEntity(new SimpleEntity(1)));
+        $list = $list->add(new ComplexEntity(new SimpleEntity(2)));
+        $list = $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
             ->filter('($v, $i) => $v->getSimpleEntity()->getId() > 1')

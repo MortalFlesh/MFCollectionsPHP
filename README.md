@@ -24,6 +24,11 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 ## ListInterface
 - extends `CollectionInterface`
 
+## MutableListInterface
+- extend `ListInterface`
+- adds methods for mutable Lists only
+
+
 ### ListCollection
 - it's basic List Collection
 
@@ -77,6 +82,16 @@ $map = new Generic\Map('string', 'int');
 ### Immutable\Enhanced\ListCollection
 - extends `Immutable\ListCollection`
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+
+### Immutable\Generic\ListCollection
+- implements `Generic\CollectionInterface`
+- extends `Immutable\ListCollection`
+- has defined value type and validates it
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+```php
+// list will accept only string values
+$list = new Generic\ListCollection('string');
+```
 
 
 ## Immutable\MapInterface

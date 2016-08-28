@@ -1,11 +1,13 @@
 <?php
 
-namespace MFCollections\Collections\Generic;
+namespace MFCollections\Collections\Immutable\Generic;
 
+use MFCollections\Collections\Generic\CollectionInterface;
+use MFCollections\Collections\Generic\ListInterface;
 use MFCollections\Services\Parsers\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
-class ListCollection extends \MFCollections\Collections\ListCollection implements CollectionInterface, ListInterface
+class ListCollection extends \MFCollections\Collections\Immutable\ListCollection implements CollectionInterface, ListInterface
 {
     /** @var array */
     private $allowedValueTypes = [
@@ -34,7 +36,7 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
         $list = new static($valueType);
 
         foreach ($array as $item) {
-            $list->add($item);
+            $list = $list->add($item);
         }
 
         return $list;
@@ -48,17 +50,12 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
      */
     public static function createGenericFromArray($keyType, $valueType, array $array)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray insted.');
+        throw new \BadMethodCallException('This method should not be used with Immutable Generic List. Use createGenericListFromArray insted.');
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return static
-     */
     public static function createFromArray(array $array, $recursive = false)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray insted.');
+        throw new \BadMethodCallException('This method should not be used with Immutable Generic List. Use createGenericListFromArray insted.');
     }
 
     /**
@@ -79,22 +76,24 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
 
     /**
      * @param <TValue> $value
+     * @return static
      */
     public function add($value)
     {
         $this->typeValidator->assertValueType($value);
 
-        parent::add($value);
+        return parent::add($value);
     }
 
     /**
      * @param <TValue> $value
+     * @return static
      */
     public function unshift($value)
     {
         $this->typeValidator->assertValueType($value);
 
-        parent::unshift($value);
+        return parent::unshift($value);
     }
 
     /**
@@ -110,35 +109,56 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
 
     /**
      * @param <TValue> $value
+     * @return static
      */
     public function removeFirst($value)
     {
         $this->typeValidator->assertValueType($value);
 
-        parent::removeFirst($value);
+        $index = $this->find($value);
+
+        if ($index !== false) {
+            return $this->removeIndex($index);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int $index
+     * @return static
+     */
+    private function removeIndex($index)
+    {
+        $list = clone $this;
+
+        unset($list->listArray[$index]);
+
+        return static::createGenericListFromArray($list->typeValidator->getValueType(), $list->listArray);
     }
 
     /**
      * @param <TValue> $value
+     * @return static
      */
     public function removeAll($value)
     {
         $this->typeValidator->assertValueType($value);
 
-        parent::removeAll($value);
+        return parent::removeAll($value);
     }
 
     /**
      * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
      * @param string|null $mappedListValueType
-     * @return \MFCollections\Collections\ListInterface|static
+     * @return \MFCollections\Collections\Immutable\ListInterface|static
      */
     public function map($callback, $mappedListValueType = null)
     {
         if (isset($mappedListValueType)) {
             $list = new static($mappedListValueType);
         } else {
-            $list = new \MFCollections\Collections\Enhanced\ListCollection();
+            $list = new \MFCollections\Collections\Immutable\Enhanced\ListCollection();
         }
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
@@ -175,11 +195,11 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
     }
 
     /**
-     * @return \MFCollections\Collections\Immutable\Generic\ListCollection
+     * @return \MFCollections\Collections\Generic\ListCollection
      */
-    public function asImmutable()
+    public function asMutable()
     {
-        return \MFCollections\Collections\Immutable\Generic\ListCollection::createGenericListFromArray(
+        return \MFCollections\Collections\Generic\ListCollection::createGenericListFromArray(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

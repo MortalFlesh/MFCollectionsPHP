@@ -2,7 +2,7 @@
 
 namespace MFCollections\Collections;
 
-class ListCollection implements ListInterface
+class ListCollection implements MutableListInterface
 {
     /** @var array */
     private $listArray;
