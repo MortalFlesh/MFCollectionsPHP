@@ -86,7 +86,7 @@ $map = new Generic\Map('string', 'int');
 - it's basic Immutable Map Collection
 
 
-## Instalation:
+## Installation:
 ```
 //composer.json
 {
