@@ -5,10 +5,10 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 |                    | List        | Map         |
 |--------------------|-------------|-------------|
 | Classic            | OK          | OK          |
-| Enhanced           | OK          | asImmutable |
+| Enhanced           | OK          | OK          |
 | Generic            | asImmutable | asImmutable |
 | Immutable          | OK          | OK          |
-| Immutable\Enhanced | OK          | X           |
+| Immutable\Enhanced | OK          | OK          |
 | Immutable\Generic  | X           | X           |
 | _____methods_____  | ___________ | ___________ |
 | clear()            | X           | X           |
@@ -84,6 +84,10 @@ $map = new Generic\Map('string', 'int');
 
 ### Immutable\Map
 - it's basic Immutable Map Collection
+
+### Immutable\Enhanced\Map
+- extends `Immutable\Map`
+- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
 ## Installation:
@@ -170,3 +174,13 @@ echo $sumOfIdsGreaterThan1;     // 5
 
 ### How does it work?
 - it parses function from string and evaluate it with `eval()`
+
+## Plans for next versions
+- separation of callback parser (to be useable on its own)
+- methods:
+    - CollectionInterface::forAll(callback):bool
+    - Map:firstBy(callback):mixed
+    - MapInterface::firstKey()
+    - MapInterface::firstValue() 
+    - Touple(key, value)
+    - Map:first():Touple

@@ -266,7 +266,7 @@ class Map implements MapInterface
     }
 
     /**
-     * @param callable (value:mixed,index:int):mixed $reducer
+     * @param callable (total:mixed,value:mixed,key:mixed,map:Map):mixed $reducer
      * @param mixed|null $initialValue
      * @return mixed
      */
