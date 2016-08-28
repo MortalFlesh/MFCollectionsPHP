@@ -7,7 +7,7 @@ use MFCollections\Collections\CollectionInterface;
 class ListCollection implements ListInterface
 {
     /** @var array */
-    private $listArray;
+    protected $listArray;
 
     public function __construct()
     {
@@ -134,7 +134,7 @@ class ListCollection implements ListInterface
      * @param mixed $value
      * @return int|false
      */
-    private function find($value)
+    protected function find($value)
     {
         return array_search($value, $this->listArray, true);
     }
@@ -156,20 +156,15 @@ class ListCollection implements ListInterface
 
     /**
      * @param int $index
-     * @param bool $normalize
      * @return static
      */
-    private function removeIndex($index, $normalize = true)
+    private function removeIndex($index)
     {
         $list = clone $this;
 
         unset($list->listArray[$index]);
 
-        if ($normalize) {
-            return static::createFromArray($list->listArray);
-        }
-
-        return $list;
+        return static::createFromArray($list->listArray);
     }
 
     /**

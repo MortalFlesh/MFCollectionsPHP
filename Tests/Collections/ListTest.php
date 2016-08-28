@@ -5,6 +5,7 @@ namespace MFCollections\Tests\Collections;
 use MFCollections\Collections\CollectionInterface;
 use MFCollections\Collections\ListCollection;
 use MFCollections\Collections\ListInterface;
+use MFCollections\Collections\MutableListInterface;
 
 class ListTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,6 +20,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(ListInterface::class, $this->list);
+        $this->assertInstanceOf(MutableListInterface::class, $this->list);
         $this->assertInstanceOf(CollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);

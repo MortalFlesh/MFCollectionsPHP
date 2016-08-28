@@ -11,12 +11,6 @@ interface ListInterface extends CollectionInterface
     public function unshift($value);
 
     /** @return mixed */
-    public function shift();
-
-    /** @return mixed */
-    public function pop();
-
-    /** @return mixed */
     public function first();
 
     /** @return mixed */
@@ -36,7 +30,4 @@ interface ListInterface extends CollectionInterface
 
     /** @param mixed $value */
     public function removeAll($value);
-
-    /** @return \MFCollections\Collections\Immutable\ListInterface */
-    public function asImmutable();
 }
