@@ -194,8 +194,8 @@ echo $sumOfIdsGreaterThan1;     // 5
 - separation of callback parser (to be useable on its own)
 - methods:
     - CollectionInterface::forAll(callback):bool
-    - Map:firstBy(callback):mixed
+    - Map::firstBy(callback):mixed
     - MapInterface::firstKey()
     - MapInterface::firstValue() 
     - Touple(key, value)
-    - Map:first():Touple
+    - Map::first():Touple
