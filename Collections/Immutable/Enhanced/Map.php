@@ -1,10 +1,10 @@
 <?php
 
-namespace MFCollections\Collections\Enhanced;
+namespace MFCollections\Collections\Immutable\Enhanced;
 
 use MFCollections\Services\Parsers\CallbackParser;
 
-class Map extends \MFCollections\Collections\Map
+class Map extends \MFCollections\Collections\Immutable\Map
 {
     /** @var CallbackParser */
     private $callbackParser;
@@ -38,8 +38,8 @@ class Map extends \MFCollections\Collections\Map
     }
 
     /**
-     * @param callable (total:mixed,value:mixed,index:mixed,map:Map):mixed $reducer
-     * @param null|mixed $initialValue
+     * @param callable (total:mixed,value:mixed,key:mixed,map:Map):mixed $reducer
+     * @param mixed|null $initialValue
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null)
@@ -50,10 +50,10 @@ class Map extends \MFCollections\Collections\Map
     }
 
     /**
-     * @return \MFCollections\Collections\Immutable\Enhanced\Map
+     * @return \MFCollections\Collections\Enhanced\Map
      */
-    public function asImmutable()
+    public function asMutable()
     {
-        return \MFCollections\Collections\Immutable\Enhanced\Map::createFromArray($this->toArray());
+        return \MFCollections\Collections\Enhanced\Map::createFromArray($this->toArray());
     }
 }
