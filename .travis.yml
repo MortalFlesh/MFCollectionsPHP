@@ -3,7 +3,15 @@ php:
     - '5.5'
     - '5.6'
     - '7.0'
+
 install:
     - composer install
 
-script: phpunit --coverage-clover=clover.xml --configuration phpunit.xml.dist
+before-script:
+    - mkdir -p code-coverage
+
+script:
+    - phpunit --configuration phpunit.xml.dist
+
+after_success:
+    - travis_retry php vendor/bin/coveralls -v

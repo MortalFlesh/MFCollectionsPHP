@@ -1,1 +1,1 @@
-coverage_clover: clover.xml
+coverage_clover: code-coverage/clover.xml
