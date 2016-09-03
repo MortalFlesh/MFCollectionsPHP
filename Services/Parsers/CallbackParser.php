@@ -38,8 +38,6 @@ class CallbackParser
         }
         eval($functionString);
 
-        $this->assertCallable($callback);
-
         return $callback;
     }
 
@@ -72,16 +70,6 @@ class CallbackParser
             if (!empty($param) && !preg_match(self::PARAM_REGEX, $param)) {
                 throw new \InvalidArgumentException('Params are not in right format');
             }
-        }
-    }
-
-    /**
-     * @param string $callback
-     */
-    private function assertCallable($callback)
-    {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Given string is not in right format');
         }
     }
 }

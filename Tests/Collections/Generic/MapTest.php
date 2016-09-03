@@ -473,4 +473,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
+
+    public function testShouldReduceMapWithInitialValue()
+    {
+        $map = new Map('string', 'int');
+        $map->set('one', 1);
+        $map->set('two', 2);
+        $map->set('three', 3);
+
+        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
+    }
 }

@@ -2,8 +2,8 @@
 
 namespace MFCollections\Tests\Services\Validators;
 
-use MFCollections\Collections\ListCollection;
 use MFCollections\Collections\Enhanced\ListCollection as EnhancedListCollection;
+use MFCollections\Collections\ListCollection;
 use MFCollections\Collections\ListInterface;
 use MFCollections\Collections\Map;
 use MFCollections\Services\Validators\TypeValidator;
@@ -198,6 +198,11 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
                 'key' => new ListCollection(),
                 'value' => new EnhancedListCollection(),
             ],
+            [
+                'type' => ListInterface::class,
+                'key' => new ListCollection(),
+                'value' => new EnhancedListCollection(),
+            ],
         ];
     }
 
@@ -277,5 +282,36 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = $this->createValidator($type);
         $validator->assertValueType($value);
+    }
+
+    /**
+     * @param string $type
+     * @param mixed $value
+     *
+     * @dataProvider invalidValuesProvider
+     */
+    public function testShouldValidateClassTypeWithInvalidValue($type, $value)
+    {
+        $this->setExpectedException(
+            \InvalidArgumentException::class,
+            'Invalid value type argument "MFCollections\Collections\ListCollection"<object> given - ' .
+            '<instance of (MFCollections\Collections\Map)> expected'
+        );
+
+        $validator = new TypeValidator(
+            TypeValidator::TYPE_STRING,
+            $type,
+            [TypeValidator::TYPE_STRING],
+            [TypeValidator::TYPE_INSTANCE_OF]
+        );
+
+        $validator->assertValueType($value);
+    }
+
+    public function invalidValuesProvider()
+    {
+        return [
+            'map/list' => [Map::class, new ListCollection()],
+        ];
     }
 }
