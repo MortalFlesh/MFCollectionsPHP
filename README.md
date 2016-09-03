@@ -2,6 +2,7 @@ MFCollections for PHP - WIP
 ===========================
 
 [![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
+[![Code Coverage](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
 
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
