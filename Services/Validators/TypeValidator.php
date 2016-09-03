@@ -39,11 +39,25 @@ class TypeValidator
         $keyType = $this->normalizeType($keyType);
         $valueType = $this->normalizeType($valueType);
 
+        $allowedKeyTypes = $this->normalizeTypes($allowedKeyTypes);
+        $allowedValueTypes = $this->normalizeTypes($allowedValueTypes);
+
         $this->assertValidType($keyType, 'key', $allowedKeyTypes);
         $this->assertValidType($valueType, 'value', $allowedValueTypes);
 
         $this->keyType = $keyType;
         $this->valueType = $valueType;
+    }
+
+    /**
+     * @param array $types
+     * @return array
+     */
+    private function normalizeTypes(array $types)
+    {
+        return array_map(function ($type) {
+            return $this->normalizeType($type);
+        }, $types);
     }
 
     /**
@@ -69,7 +83,14 @@ class TypeValidator
         if (in_array(self::TYPE_INSTANCE_OF, $allowedTypes, true) && $this->isInstanceOfType($type)) {
             $this->assertValidInstanceOf($type);
         } elseif (!in_array($type, $allowedTypes, true)) {
-            throw new \InvalidArgumentException(sprintf('Not allowed %s type given', $typeTitle));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Not allowed %s type given - <%s>, expected one of [%s]',
+                    $typeTitle,
+                    $type,
+                    implode(', ', $allowedTypes)
+                )
+            );
         }
     }
 
@@ -175,7 +196,7 @@ class TypeValidator
         $class = $this->parseClass($this->valueType);
 
         if (!$value instanceof $class) {
-            $this->invalidTypeError($type, sprintf('instance of (%s)', $class), $type);
+            $this->invalidTypeError($type, sprintf('instance of (%s)', $class), $value);
         }
     }
 

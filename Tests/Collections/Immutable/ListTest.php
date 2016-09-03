@@ -193,8 +193,21 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($value, $this->list->first());
         $this->assertEquals($value, $listWithoutValue->first());
+    }
 
+    public function testShouldNotRemoveFirstValue()
+    {
+        $this->list = $this->list->add('value');
 
+        $this->assertCount(1, $this->list);
+        $this->assertTrue($this->list->contains('value'));
+        $this->assertFalse($this->list->contains('not-existed-value'));
+
+        $this->list = $this->list->removeFirst('not-existed-value');
+
+        $this->assertCount(1, $this->list);
+        $this->assertTrue($this->list->contains('value'));
+        $this->assertFalse($this->list->contains('not-existed-value'));
     }
 
     public function testShouldRemoveAll()

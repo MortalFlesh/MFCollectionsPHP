@@ -161,6 +161,21 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->list->contains('value'));
     }
 
+    public function testShouldNotRemoveFirstValue()
+    {
+        $this->list = $this->list->add('value');
+
+        $this->assertCount(1, $this->list);
+        $this->assertTrue($this->list->contains('value'));
+        $this->assertFalse($this->list->contains('not-existed-value'));
+
+        $this->list = $this->list->removeFirst('not-existed-value');
+
+        $this->assertCount(1, $this->list);
+        $this->assertTrue($this->list->contains('value'));
+        $this->assertFalse($this->list->contains('not-existed-value'));
+    }
+
     public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue()
     {
         $this->setExpectedException(\InvalidArgumentException::class);
@@ -327,5 +342,15 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
             ->reduce('($t, $v) => $t + $v->getId()');
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
+    }
+
+    public function testShouldReduceListWithInitialValue()
+    {
+        $list = new ListCollection('int');
+        $list = $list->add(1);
+        $list = $list->add(2);
+        $list = $list->add(3);
+
+        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
     }
 }

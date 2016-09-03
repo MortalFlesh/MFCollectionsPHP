@@ -1,14 +1,14 @@
 MFCollections for PHP - WIP
 ===========================
 
-- Travis
+- Travis + Coveralls
 [![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
+[![Coverage Status](https://coveralls.io/repos/github/MortalFlesh/MFCollectionsPHP/badge.svg?branch=master)](https://coveralls.io/github/MortalFlesh/MFCollectionsPHP?branch=master)
+
 - Scrutinizer
 [![Build Status](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/build.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
-- Coveralls
-[![Coverage Status](https://coveralls.io/repos/github/MortalFlesh/MFCollectionsPHP/badge.svg?branch=master)](https://coveralls.io/github/MortalFlesh/MFCollectionsPHP?branch=master)
 
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
 
