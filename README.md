@@ -16,15 +16,33 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 | allow Class::class | OK          | OK          |
 
 
-## CollectionInterface
+## Table of Contents
+- [Requirements](#requirements)
+- [CollectionInterface](#collection-interface)
+- [ListInterface](#list-interface)
+    - [MutableListInterface](#mutable-list-interface)
+- [MapInterface](#map-interface)
+- [Generic\CollectionInterface](#generic-collection-interface)
+- [Immutable\ListInterface](#immutable-list-interface)
+- [Immutable\MapInterface](#immutable-map-interface)
+- [Installation](#installation)
+- [Arrow Functions](#arrow-functions)
+- [Plans for next versions](#plans)
+
+
+## <a name="requirements"></a>Requirements
+- PHP 5.5
+- `eval()` function for parsing [Arrow Functions](#arrow-functions)
+
+## <a name="collection-interface"></a>CollectionInterface
 - basic interface for Collections
 - extends `IteratorAggregate, Countable`
 
 
-## ListInterface
+## <a name="list-interface"></a>ListInterface
 - extends `CollectionInterface`
 
-## MutableListInterface
+### <a name="mutable-list-interface"></a>MutableListInterface
 - extend `ListInterface`
 - adds methods for mutable Lists only
 
@@ -37,7 +55,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
-## MapInterface
+## <a name="map-interface"></a>MapInterface
 - extends `CollectionInterface, ArrayAccess`
 
 ### Map
@@ -48,7 +66,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
-## Generic\CollectionInterface
+## <a name="generic-collection-interface"></a>Generic\CollectionInterface
 - extends `CollectionInterface`
 - adds generic functionality to Collections, which will validate types
 
@@ -73,7 +91,7 @@ $map = new Generic\Map('string', 'int');
 ```
 
 
-## Immutable\ListInterface
+## <a name="immutable-list-interface"></a>Immutable\ListInterface
 - extends `CollectionInterface`
 
 ### Immutable\ListCollection
@@ -94,7 +112,7 @@ $list = new Immutable\Generic\ListCollection('string');
 ```
 
 
-## Immutable\MapInterface
+## <a name="immutable-map-interface"></a>Immutable\MapInterface
 - extends `CollectionInterface, ArrayAccess`
 
 ### Immutable\Map
@@ -105,7 +123,7 @@ $list = new Immutable\Generic\ListCollection('string');
 - adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
 
 
-## Installation:
+## <a name="installation"></a>Installation:
 ```
 //composer.json
 {
@@ -125,7 +143,7 @@ composer install
 ```
 
 
-## Arrow Functions
+## <a name="arrow-functions"></a>Arrow Functions
 
 ### Usage:
 ```php
@@ -190,7 +208,7 @@ echo $sumOfIdsGreaterThan1;     // 5
 ### How does it work?
 - it parses function from string and evaluate it with `eval()`
 
-## Plans for next versions
+## <a name="plans"></a>Plans for next versions
 - separation of callback parser (to be useable on its own)
 - methods:
     - CollectionInterface::forAll(callback):bool
