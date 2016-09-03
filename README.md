@@ -1,5 +1,11 @@
-# MFCollections for PHP - WIP
+MFCollections for PHP - WIP
+===========================
+
+[![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
+
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
+
 
 ## Todo list for v1.0.0
 |                    | List        | Map         |
