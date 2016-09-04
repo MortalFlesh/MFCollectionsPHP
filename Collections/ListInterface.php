@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MF\Collections;
 
 interface ListInterface extends CollectionInterface
 {

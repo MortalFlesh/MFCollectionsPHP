@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Tests\Fixtures;
+namespace MF\Tests\Fixtures;
 
 interface EntityInterface
 {

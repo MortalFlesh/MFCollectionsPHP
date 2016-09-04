@@ -1,15 +1,15 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Generic;
+namespace MF\Tests\Collections\Generic;
 
-use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
-use MFCollections\Collections\Generic\CollectionInterface;
-use MFCollections\Collections\Generic\ListCollection;
-use MFCollections\Collections\Generic\Map;
-use MFCollections\Collections\MapInterface as BaseMapInterface;
-use MFCollections\Collections\Generic\MapInterface;
-use MFCollections\Tests\Fixtures\EntityInterface;
-use MFCollections\Tests\Fixtures\SimpleEntity;
+use MF\Collections\CollectionInterface as BaseCollectionInterface;
+use MF\Collections\Generic\CollectionInterface;
+use MF\Collections\Generic\ListCollection;
+use MF\Collections\Generic\Map;
+use MF\Collections\MapInterface as BaseMapInterface;
+use MF\Collections\Generic\MapInterface;
+use MF\Tests\Fixtures\EntityInterface;
+use MF\Tests\Fixtures\SimpleEntity;
 
 class MapTest extends \PHPUnit_Framework_TestCase
 {
@@ -370,7 +370,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotSame($map, $newMap);
 
-        $this->assertInstanceOf(\MFCollections\Collections\Map::class, $newMap);
+        $this->assertInstanceOf(\MF\Collections\Map::class, $newMap);
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
@@ -468,8 +468,8 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\Map::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\Generic\Map::class, $immutable);
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }

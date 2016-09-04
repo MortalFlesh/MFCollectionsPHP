@@ -1,8 +1,8 @@
 <?php
 
-namespace MFCollections\Collections\Immutable;
+namespace MF\Collections\Immutable;
 
-use MFCollections\Collections\CollectionInterface;
+use MF\Collections\CollectionInterface;
 
 class Map implements MapInterface
 {
@@ -283,9 +283,9 @@ class Map implements MapInterface
         return $total;
     }
 
-    /** @return \MFCollections\Collections\MapInterface */
+    /** @return \MF\Collections\MapInterface */
     public function asMutable()
     {
-        return \MFCollections\Collections\Map::createFromArray($this->toArray());
+        return \MF\Collections\Map::createFromArray($this->toArray());
     }
 }

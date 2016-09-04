@@ -1,8 +1,8 @@
 <?php
 
-namespace MFCollections\Collections\Immutable;
+namespace MF\Collections\Immutable;
 
-use MFCollections\Collections\CollectionInterface;
+use MF\Collections\CollectionInterface;
 
 interface ListInterface extends CollectionInterface
 {
@@ -45,6 +45,6 @@ interface ListInterface extends CollectionInterface
      */
     public function removeAll($value);
 
-    /** @return \MFCollections\Collections\ListInterface */
+    /** @return \MF\Collections\ListInterface */
     public function asMutable();
 }

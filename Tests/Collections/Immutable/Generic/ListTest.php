@@ -1,18 +1,18 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Immutable\Generic;
+namespace MF\Tests\Collections\Immutable\Generic;
 
-use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
-use MFCollections\Collections\Generic\CollectionInterface;
-use MFCollections\Collections\Generic\ListInterface as GenericListInterface;
-use MFCollections\Collections\Immutable\Generic\ListCollection;
-use MFCollections\Collections\Immutable\ListCollection as BaseImmutableListCollection;
-use MFCollections\Collections\Immutable\ListInterface;
-use MFCollections\Collections\ListInterface as BaseListInterface;
-use MFCollections\Services\Validators\TypeValidator;
-use MFCollections\Tests\Fixtures\ComplexEntity;
-use MFCollections\Tests\Fixtures\EntityInterface;
-use MFCollections\Tests\Fixtures\SimpleEntity;
+use MF\Collections\CollectionInterface as BaseCollectionInterface;
+use MF\Collections\Generic\CollectionInterface;
+use MF\Collections\Generic\ListInterface as GenericListInterface;
+use MF\Collections\Immutable\Generic\ListCollection;
+use MF\Collections\Immutable\ListCollection as BaseImmutableListCollection;
+use MF\Collections\Immutable\ListInterface;
+use MF\Collections\ListInterface as BaseListInterface;
+use MF\Services\Validators\TypeValidator;
+use MF\Tests\Fixtures\ComplexEntity;
+use MF\Tests\Fixtures\EntityInterface;
+use MF\Tests\Fixtures\SimpleEntity;
 
 /**
  * @group unit
@@ -292,10 +292,10 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = \MFCollections\Collections\ListCollection::createFromArray([1, 2, 3]);
-        $list2 = \MFCollections\Collections\ListCollection::createFromArray(['one', 'two']);
+        $list1 = \MF\Collections\ListCollection::createFromArray([1, 2, 3]);
+        $list2 = \MF\Collections\ListCollection::createFromArray(['one', 'two']);
 
-        $list = new ListCollection(\MFCollections\Collections\ListCollection::class);
+        $list = new ListCollection(\MF\Collections\ListCollection::class);
         $list = $list->add($list1);
         $list = $list->add($list2);
 
@@ -308,8 +308,8 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
         $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\ListInterface::class, $mutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Generic\ListCollection::class, $mutable);
+        $this->assertInstanceOf(\MF\Collections\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collections\Generic\ListCollection::class, $mutable);
 
         $this->assertEquals($this->list->toArray(), $mutable->toArray());
     }

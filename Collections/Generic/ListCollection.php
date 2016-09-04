@@ -1,11 +1,11 @@
 <?php
 
-namespace MFCollections\Collections\Generic;
+namespace MF\Collections\Generic;
 
-use MFCollections\Services\Parsers\CallbackParser;
-use MFCollections\Services\Validators\TypeValidator;
+use MF\Parser\CallbackParser;
+use MF\Services\Validators\TypeValidator;
 
-class ListCollection extends \MFCollections\Collections\ListCollection implements CollectionInterface, ListInterface
+class ListCollection extends \MF\Collections\ListCollection implements CollectionInterface, ListInterface
 {
     /** @var array */
     private $allowedValueTypes = [
@@ -131,14 +131,14 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
     /**
      * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
      * @param string|null $mappedListValueType
-     * @return \MFCollections\Collections\ListInterface|static
+     * @return \MF\Collections\ListInterface|static
      */
     public function map($callback, $mappedListValueType = null)
     {
         if (isset($mappedListValueType)) {
             $list = new static($mappedListValueType);
         } else {
-            $list = new \MFCollections\Collections\Enhanced\ListCollection();
+            $list = new \MF\Collections\Enhanced\ListCollection();
         }
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
@@ -175,11 +175,11 @@ class ListCollection extends \MFCollections\Collections\ListCollection implement
     }
 
     /**
-     * @return \MFCollections\Collections\Immutable\Generic\ListCollection
+     * @return \MF\Collections\Immutable\Generic\ListCollection
      */
     public function asImmutable()
     {
-        return \MFCollections\Collections\Immutable\Generic\ListCollection::createGenericListFromArray(
+        return \MF\Collections\Immutable\Generic\ListCollection::createGenericListFromArray(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

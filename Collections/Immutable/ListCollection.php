@@ -1,8 +1,8 @@
 <?php
 
-namespace MFCollections\Collections\Immutable;
+namespace MF\Collections\Immutable;
 
-use MFCollections\Collections\CollectionInterface;
+use MF\Collections\CollectionInterface;
 
 class ListCollection implements ListInterface
 {
@@ -272,9 +272,9 @@ class ListCollection implements ListInterface
         return $total;
     }
 
-    /** @return \MFCollections\Collections\ListInterface */
+    /** @return \MF\Collections\ListInterface */
     public function asMutable()
     {
-        return \MFCollections\Collections\ListCollection::createFromArray($this->toArray());
+        return \MF\Collections\ListCollection::createFromArray($this->toArray());
     }
 }

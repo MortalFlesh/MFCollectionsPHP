@@ -1,16 +1,16 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Generic;
+namespace MF\Tests\Collections\Generic;
 
-use MFCollections\Collections\CollectionInterface as BaseCollectionInterface;
-use MFCollections\Collections\Generic\CollectionInterface;
-use MFCollections\Collections\Generic\ListCollection;
-use MFCollections\Collections\Generic\ListInterface;
-use MFCollections\Collections\ListInterface as BaseListInterface;
-use MFCollections\Services\Validators\TypeValidator;
-use MFCollections\Tests\Fixtures\ComplexEntity;
-use MFCollections\Tests\Fixtures\EntityInterface;
-use MFCollections\Tests\Fixtures\SimpleEntity;
+use MF\Collections\CollectionInterface as BaseCollectionInterface;
+use MF\Collections\Generic\CollectionInterface;
+use MF\Collections\Generic\ListCollection;
+use MF\Collections\Generic\ListInterface;
+use MF\Collections\ListInterface as BaseListInterface;
+use MF\Services\Validators\TypeValidator;
+use MF\Tests\Fixtures\ComplexEntity;
+use MF\Tests\Fixtures\EntityInterface;
+use MF\Tests\Fixtures\SimpleEntity;
 
 class ListTest extends \PHPUnit_Framework_TestCase
 {
@@ -269,10 +269,10 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = \MFCollections\Collections\ListCollection::createFromArray([1, 2, 3]);
-        $list2 = \MFCollections\Collections\ListCollection::createFromArray(['one', 'two']);
+        $list1 = \MF\Collections\ListCollection::createFromArray([1, 2, 3]);
+        $list2 = \MF\Collections\ListCollection::createFromArray(['one', 'two']);
 
-        $list = new ListCollection(\MFCollections\Collections\ListCollection::class);
+        $list = new ListCollection(\MF\Collections\ListCollection::class);
         $list->add($list1);
         $list->add($list2);
 
@@ -285,8 +285,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $immutable = $this->list->asImmutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Generic\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\Generic\ListCollection::class, $immutable);
 
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
     }

@@ -1,13 +1,13 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Immutable\Enhanced;
+namespace MF\Tests\Collections\Immutable\Enhanced;
 
-use MFCollections\Collections\Immutable\Enhanced\ListCollection;
+use MF\Collections\Immutable\Enhanced\ListCollection;
 
 /**
  * @group unit
  */
-class ListTest extends \MFCollections\Tests\Collections\Immutable\ListTest
+class ListTest extends \MF\Tests\Collections\Immutable\ListTest
 {
     /** @var ListCollection */
     private $listEnhanced;
@@ -138,8 +138,8 @@ class ListTest extends \MFCollections\Tests\Collections\Immutable\ListTest
 
         $mutable = $this->listEnhanced->asMutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\ListInterface::class, $mutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Enhanced\ListCollection::class, $mutable);
+        $this->assertInstanceOf(\MF\Collections\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collections\Enhanced\ListCollection::class, $mutable);
 
         $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());
     }

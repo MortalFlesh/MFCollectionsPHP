@@ -1,10 +1,10 @@
 <?php
 
-namespace MFCollections\Collections\Enhanced;
+namespace MF\Collections\Enhanced;
 
-use MFCollections\Services\Parsers\CallbackParser;
+use MF\Parser\CallbackParser;
 
-class Map extends \MFCollections\Collections\Map
+class Map extends \MF\Collections\Map
 {
     /** @var CallbackParser */
     private $callbackParser;
@@ -50,10 +50,10 @@ class Map extends \MFCollections\Collections\Map
     }
 
     /**
-     * @return \MFCollections\Collections\Immutable\Enhanced\Map
+     * @return \MF\Collections\Immutable\Enhanced\Map
      */
     public function asImmutable()
     {
-        return \MFCollections\Collections\Immutable\Enhanced\Map::createFromArray($this->toArray());
+        return \MF\Collections\Immutable\Enhanced\Map::createFromArray($this->toArray());
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace MFCollections\Tests\Collections;
+namespace MF\Tests\Collections;
 
-use MFCollections\Collections\CollectionInterface;
-use MFCollections\Collections\ListCollection;
-use MFCollections\Collections\ListInterface;
-use MFCollections\Collections\MutableListInterface;
+use MF\Collections\CollectionInterface;
+use MF\Collections\ListCollection;
+use MF\Collections\ListInterface;
+use MF\Collections\MutableListInterface;
 
 class ListTest extends \PHPUnit_Framework_TestCase
 {
@@ -472,8 +472,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $immutable = $this->list->asImmutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\ListCollection::class, $immutable);
 
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
     }

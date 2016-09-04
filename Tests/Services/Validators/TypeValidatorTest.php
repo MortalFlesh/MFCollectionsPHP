@@ -1,12 +1,12 @@
 <?php
 
-namespace MFCollections\Tests\Services\Validators;
+namespace MF\Tests\Services\Validators;
 
-use MFCollections\Collections\Enhanced\ListCollection as EnhancedListCollection;
-use MFCollections\Collections\ListCollection;
-use MFCollections\Collections\ListInterface;
-use MFCollections\Collections\Map;
-use MFCollections\Services\Validators\TypeValidator;
+use MF\Collections\Enhanced\ListCollection as EnhancedListCollection;
+use MF\Collections\ListCollection;
+use MF\Collections\ListInterface;
+use MF\Collections\Map;
+use MF\Services\Validators\TypeValidator;
 
 class TypeValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -294,8 +294,8 @@ class TypeValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
             \InvalidArgumentException::class,
-            'Invalid value type argument "MFCollections\Collections\ListCollection"<object> given - ' .
-            '<instance of (MFCollections\Collections\Map)> expected'
+            'Invalid value type argument "MF\Collections\ListCollection"<object> given - ' .
+            '<instance of (MF\Collections\Map)> expected'
         );
 
         $validator = new TypeValidator(

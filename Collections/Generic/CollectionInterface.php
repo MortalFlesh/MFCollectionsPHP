@@ -1,8 +1,8 @@
 <?php
 
-namespace MFCollections\Collections\Generic;
+namespace MF\Collections\Generic;
 
-interface CollectionInterface extends \MFCollections\Collections\CollectionInterface
+interface CollectionInterface extends \MF\Collections\CollectionInterface
 {
     /**
      * @param string $keyType

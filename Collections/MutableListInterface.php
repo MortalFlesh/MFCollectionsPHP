@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MF\Collections;
 
 interface MutableListInterface extends ListInterface
 {
@@ -10,6 +10,6 @@ interface MutableListInterface extends ListInterface
     /** @return mixed */
     public function pop();
 
-    /** @return \MFCollections\Collections\Immutable\ListInterface */
+    /** @return \MF\Collections\Immutable\ListInterface */
     public function asImmutable();
 }
