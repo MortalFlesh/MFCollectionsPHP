@@ -3,7 +3,7 @@
 namespace MF\Collections\Generic;
 
 use MF\Parser\CallbackParser;
-use MF\Services\Validators\TypeValidator;
+use MF\Validator\TypeValidator;
 
 class Map extends \MF\Collections\Map implements CollectionInterface, MapInterface
 {
