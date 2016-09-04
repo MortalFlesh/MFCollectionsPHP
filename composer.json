@@ -17,12 +17,17 @@
     },
     "require": {
         "php": ">=5.5 || ~7.0",
-        "mf/callback-parser": "dev-master"
+        "mf/callback-parser": "dev-master",
+        "mf/type-validator": "dev-master"
     },
     "repositories": [
         {
             "type": "vcs",
             "url":  "https://github.com/MortalFlesh/CallbackParser.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/MortalFlesh/TypeValidator.git"
         }
     ],
     "require-dev": {

@@ -9,7 +9,7 @@ use MF\Collections\Immutable\Generic\ListCollection;
 use MF\Collections\Immutable\ListCollection as BaseImmutableListCollection;
 use MF\Collections\Immutable\ListInterface;
 use MF\Collections\ListInterface as BaseListInterface;
-use MF\Services\Validators\TypeValidator;
+use MF\Validator\TypeValidator;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
