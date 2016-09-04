@@ -1,6 +1,7 @@
 {
     "name": "mf/collections-php",
-    "type": "bundle",
+    "description": "Collections for PHP - It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.",
+    "type": "library",
     "license": "MIT",
     "version": "0.1.0",
     "authors": [
@@ -9,12 +10,21 @@
             "email": "mortal_flesh@seznam.cz"
         }
     ],
-    "require": {
-        "php": ">=5.5 || ~7.0"
-    },
     "autoload": {
-        "psr-4": { "MFCollections\\": "" }
+        "psr-4": {
+            "MFCollections\\": ""
+        }
     },
+    "require": {
+        "php": ">=5.5 || ~7.0",
+        "mf/callback-parser": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/MortalFlesh/CallbackParser.git"
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "^4.7",
         "satooshi/php-coveralls": "^1.0"

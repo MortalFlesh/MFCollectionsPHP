@@ -2,7 +2,7 @@
 
 namespace MFCollections\Collections\Generic;
 
-use MFCollections\Services\Parsers\CallbackParser;
+use MF\Parser\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
 class Map extends \MFCollections\Collections\Map implements CollectionInterface, MapInterface

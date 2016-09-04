@@ -2,7 +2,7 @@
 
 namespace MFCollections\Collections\Immutable\Enhanced;
 
-use MFCollections\Services\Parsers\CallbackParser;
+use MF\Parser\CallbackParser;
 
 class ListCollection extends \MFCollections\Collections\Immutable\ListCollection
 {

@@ -4,7 +4,7 @@ namespace MFCollections\Collections\Immutable\Generic;
 
 use MFCollections\Collections\Generic\CollectionInterface;
 use MFCollections\Collections\Generic\ListInterface;
-use MFCollections\Services\Parsers\CallbackParser;
+use MF\Parser\CallbackParser;
 use MFCollections\Services\Validators\TypeValidator;
 
 class ListCollection extends \MFCollections\Collections\Immutable\ListCollection implements CollectionInterface, ListInterface
