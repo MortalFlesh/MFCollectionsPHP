@@ -1,10 +1,10 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Enhanced;
+namespace MF\Tests\Collections\Enhanced;
 
-use MFCollections\Collections\Enhanced\ListCollection;
+use MF\Collections\Enhanced\ListCollection;
 
-class ListTest extends \MFCollections\Tests\Collections\ListTest
+class ListTest extends \MF\Tests\Collections\ListTest
 {
     /** @var ListCollection */
     private $listEnhanced;
@@ -135,8 +135,8 @@ class ListTest extends \MFCollections\Tests\Collections\ListTest
 
         $immutable = $this->listEnhanced->asImmutable();
         
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\ListInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Enhanced\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\Enhanced\ListCollection::class, $immutable);
 
         $this->assertEquals($this->listEnhanced->toArray(), $immutable->toArray());
     }

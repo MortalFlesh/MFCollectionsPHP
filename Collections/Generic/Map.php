@@ -1,11 +1,11 @@
 <?php
 
-namespace MFCollections\Collections\Generic;
+namespace MF\Collections\Generic;
 
 use MF\Parser\CallbackParser;
-use MFCollections\Services\Validators\TypeValidator;
+use MF\Services\Validators\TypeValidator;
 
-class Map extends \MFCollections\Collections\Map implements CollectionInterface, MapInterface
+class Map extends \MF\Collections\Map implements CollectionInterface, MapInterface
 {
     /** @var array */
     private $allowedKeyTypes = [
@@ -155,14 +155,14 @@ class Map extends \MFCollections\Collections\Map implements CollectionInterface,
      * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
      * @param string|null $mappedMapKeyType
      * @param string|null $mappedMapValueType
-     * @return \MFCollections\Collections\MapInterface|static
+     * @return \MF\Collections\MapInterface|static
      */
     public function map($callback, $mappedMapKeyType = null, $mappedMapValueType = null)
     {
         if (isset($mappedMapKeyType) || isset($mappedMapValueType)) {
             $map = new static($mappedMapKeyType, $mappedMapValueType);
         } else {
-            $map = new \MFCollections\Collections\Enhanced\Map();
+            $map = new \MF\Collections\Enhanced\Map();
         }
 
         $callback = $this->callbackParser->parseArrowFunction($callback);

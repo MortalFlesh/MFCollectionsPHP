@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MF\Collections;
 
 class ListCollection implements MutableListInterface
 {
@@ -287,9 +287,9 @@ class ListCollection implements MutableListInterface
         return $total;
     }
 
-    /** @return \MFCollections\Collections\Immutable\ListInterface */
+    /** @return \MF\Collections\Immutable\ListInterface */
     public function asImmutable()
     {
-        return \MFCollections\Collections\Immutable\ListCollection::createFromArray($this->toArray());
+        return \MF\Collections\Immutable\ListCollection::createFromArray($this->toArray());
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Services\Validators;
+namespace MF\Services\Validators;
 
 class TypeValidator
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MFCollections\Collections;
+namespace MF\Collections;
 
 interface MapInterface extends CollectionInterface, \ArrayAccess
 {
@@ -43,6 +43,6 @@ interface MapInterface extends CollectionInterface, \ArrayAccess
     /** @return ListInterface */
     public function values();
 
-    /** @return \MFCollections\Collections\Immutable\MapInterface */
+    /** @return \MF\Collections\Immutable\MapInterface */
     public function asImmutable();
 }

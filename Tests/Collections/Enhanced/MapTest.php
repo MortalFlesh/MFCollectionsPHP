@@ -1,10 +1,10 @@
 <?php
 
-namespace MFCollections\Tests\Collections\Enhanced;
+namespace MF\Tests\Collections\Enhanced;
 
-use MFCollections\Collections\Enhanced\Map;
+use MF\Collections\Enhanced\Map;
 
-class MapTest extends \MFCollections\Tests\Collections\MapTest
+class MapTest extends \MF\Tests\Collections\MapTest
 {
     /** @var Map */
     protected $mapEnhanced;
@@ -135,8 +135,8 @@ class MapTest extends \MFCollections\Tests\Collections\MapTest
 
         $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Enhanced\Map::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\Enhanced\Map::class, $immutable);
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace MFCollections\Tests\Collections;
+namespace MF\Tests\Collections;
 
-use MFCollections\Collections\CollectionInterface;
-use MFCollections\Collections\ListInterface;
-use MFCollections\Collections\Map;
-use MFCollections\Collections\MapInterface;
+use MF\Collections\CollectionInterface;
+use MF\Collections\ListInterface;
+use MF\Collections\Map;
+use MF\Collections\MapInterface;
 
 class MapTest extends \PHPUnit_Framework_TestCase
 {
@@ -479,8 +479,8 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\MapInterface::class, $immutable);
-        $this->assertInstanceOf(\MFCollections\Collections\Immutable\Map::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collections\Immutable\Map::class, $immutable);
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }

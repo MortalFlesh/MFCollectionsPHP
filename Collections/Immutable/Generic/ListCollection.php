@@ -1,13 +1,13 @@
 <?php
 
-namespace MFCollections\Collections\Immutable\Generic;
+namespace MF\Collections\Immutable\Generic;
 
-use MFCollections\Collections\Generic\CollectionInterface;
-use MFCollections\Collections\Generic\ListInterface;
+use MF\Collections\Generic\CollectionInterface;
+use MF\Collections\Generic\ListInterface;
 use MF\Parser\CallbackParser;
-use MFCollections\Services\Validators\TypeValidator;
+use MF\Services\Validators\TypeValidator;
 
-class ListCollection extends \MFCollections\Collections\Immutable\ListCollection implements CollectionInterface, ListInterface
+class ListCollection extends \MF\Collections\Immutable\ListCollection implements CollectionInterface, ListInterface
 {
     /** @var array */
     private $allowedValueTypes = [
@@ -151,14 +151,14 @@ class ListCollection extends \MFCollections\Collections\Immutable\ListCollection
     /**
      * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
      * @param string|null $mappedListValueType
-     * @return \MFCollections\Collections\Immutable\ListInterface|static
+     * @return \MF\Collections\Immutable\ListInterface|static
      */
     public function map($callback, $mappedListValueType = null)
     {
         if (isset($mappedListValueType)) {
             $list = new static($mappedListValueType);
         } else {
-            $list = new \MFCollections\Collections\Immutable\Enhanced\ListCollection();
+            $list = new \MF\Collections\Immutable\Enhanced\ListCollection();
         }
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
@@ -195,11 +195,11 @@ class ListCollection extends \MFCollections\Collections\Immutable\ListCollection
     }
 
     /**
-     * @return \MFCollections\Collections\Generic\ListCollection
+     * @return \MF\Collections\Generic\ListCollection
      */
     public function asMutable()
     {
-        return \MFCollections\Collections\Generic\ListCollection::createGenericListFromArray(
+        return \MF\Collections\Generic\ListCollection::createGenericListFromArray(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );
