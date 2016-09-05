@@ -221,7 +221,6 @@ echo $sumOfIdsGreaterThan1;     // 5
 - it parses function from string and evaluate it with `eval()`
 
 ## <a name="plans"></a>Plans for next versions
-- separation of callback parser (to be useable on its own)
 - methods:
     - CollectionInterface::forAll(callback):bool
     - Map::firstBy(callback):mixed
