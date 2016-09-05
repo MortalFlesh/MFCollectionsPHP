@@ -17,19 +17,9 @@
     },
     "require": {
         "php": ">=5.5 || ~7.0",
-        "mf/callback-parser": "dev-master",
-        "mf/type-validator": "dev-master"
+        "mf/callback-parser": "^1.0",
+        "mf/type-validator": "^1.0"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "https://github.com/MortalFlesh/CallbackParser.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "https://github.com/MortalFlesh/TypeValidator.git"
-        }
-    ],
     "require-dev": {
         "phpunit/phpunit": "^4.7",
         "satooshi/php-coveralls": "^1.0"
