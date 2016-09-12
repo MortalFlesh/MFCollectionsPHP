@@ -18,10 +18,10 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 |--------------------|-------------|-------------|
 | Classic            | OK          | OK          |
 | Enhanced           | OK          | OK          |
-| Generic            | OK          | asImmutable |
+| Generic            | OK          | OK          |
 | Immutable          | OK          | OK          |
 | Immutable\Enhanced | OK          | OK          |
-| Immutable\Generic  | OK          | X           |
+| Immutable\Generic  | OK          | OK          |
 | _____methods_____  | ___________ | ___________ |
 | clear()            | X           | X           |
 | isEmpty()          | X           | X           |
@@ -221,6 +221,7 @@ echo $sumOfIdsGreaterThan1;     // 5
 - it parses function from string and evaluate it with `eval()`
 
 ## <a name="plans"></a>Plans for next versions
+- use Assertion
 - methods:
     - CollectionInterface::forAll(callback):bool
     - Map::firstBy(callback):mixed
