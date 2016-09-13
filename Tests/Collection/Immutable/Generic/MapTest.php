@@ -473,7 +473,16 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->map = $this->map->set('key', 123);
         $this->assertTrue($this->map->contains(123));
 
-        $this->map->clear();
+        $this->map = $this->map->clear();
         $this->assertFalse($this->map->contains(123));
+    }
+
+    public function testShouldCheckIfCollectionIsEmpty()
+    {
+        $this->map = $this->map->set('key', 123);
+        $this->assertFalse($this->map->isEmpty());
+
+        $this->map = $this->map->clear();
+        $this->assertTrue($this->map->isEmpty());
     }
 }

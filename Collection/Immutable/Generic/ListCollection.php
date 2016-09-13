@@ -203,4 +203,12 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
             $this->toArray()
         );
     }
+
+    /**
+     * @return static
+     */
+    public function clear()
+    {
+        return new static($this->typeValidator->getValueType());
+    }
 }

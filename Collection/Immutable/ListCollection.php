@@ -280,8 +280,17 @@ class ListCollection implements ListInterface
         return \MF\Collection\Mutable\ListCollection::createFromArray($this->toArray());
     }
 
+    /**
+     * @return static
+     */
     public function clear()
     {
-        $this->listArray = [];
+        return new static();
+    }
+
+    /** @return bool */
+    public function isEmpty()
+    {
+        return empty($this->listArray);
     }
 }

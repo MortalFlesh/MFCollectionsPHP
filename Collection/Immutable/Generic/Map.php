@@ -233,4 +233,12 @@ class Map extends \MF\Collection\Immutable\Map implements MapInterface
             $this->toArray()
         );
     }
+
+    /**
+     * @return static
+     */
+    public function clear()
+    {
+        return new static($this->typeValidator->getKeyType(), $this->typeValidator->getValueType());
+    }
 }

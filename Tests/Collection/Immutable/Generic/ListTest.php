@@ -360,7 +360,16 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
 
-        $this->list->clear();
+        $this->list = $this->list->clear();
         $this->assertFalse($this->list->contains('value'));
+    }
+
+    public function testShouldCheckIfCollectionIsEmpty()
+    {
+        $this->list = $this->list->add('value');
+        $this->assertFalse($this->list->isEmpty());
+
+        $this->list = $this->list->clear();
+        $this->assertTrue($this->list->isEmpty());
     }
 }
