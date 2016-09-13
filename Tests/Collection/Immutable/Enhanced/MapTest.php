@@ -170,7 +170,16 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
         $this->map = $this->map->set('key', 'value');
         $this->assertTrue($this->map->contains('value'));
 
-        $this->map->clear();
+        $this->map = $this->map->clear();
         $this->assertFalse($this->map->contains('value'));
+    }
+
+    public function testShouldCheckIfCollectionIsEmpty()
+    {
+        $this->map = $this->map->set('key', 'value');
+        $this->assertFalse($this->map->isEmpty());
+
+        $this->map = $this->map->clear();
+        $this->assertTrue($this->map->isEmpty());
     }
 }

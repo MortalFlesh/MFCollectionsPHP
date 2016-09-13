@@ -285,4 +285,10 @@ class Map implements MapInterface
     {
         $this->mapArray = [];
     }
+
+    /** @return bool */
+    public function isEmpty()
+    {
+        return empty($this->mapArray);
+    }
 }

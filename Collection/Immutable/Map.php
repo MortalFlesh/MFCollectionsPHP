@@ -287,8 +287,17 @@ class Map implements MapInterface
         return \MF\Collection\Mutable\Map::createFromArray($this->toArray());
     }
 
+    /**
+     * @return static
+     */
     public function clear()
     {
-        $this->mapArray = [];
+        return new static();
+    }
+
+    /** @return bool */
+    public function isEmpty()
+    {
+        return empty($this->mapArray);
     }
 }

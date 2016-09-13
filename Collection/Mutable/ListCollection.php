@@ -297,4 +297,10 @@ class ListCollection implements ListInterface
     {
         $this->listArray = [];
     }
+
+    /** @return bool */
+    public function isEmpty()
+    {
+        return empty($this->listArray);
+    }
 }

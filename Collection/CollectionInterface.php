@@ -18,6 +18,9 @@ interface CollectionInterface extends \IteratorAggregate, \Countable
 
     public function clear();
 
+    /** @return bool */
+    public function isEmpty();
+
     /** @return array */
     public function toArray();
 

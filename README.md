@@ -24,7 +24,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 | Immutable\Generic  | OK          | OK          |
 | _____methods_____  | ___________ | ___________ |
 | clear()            | OK          | OK          |
-| isEmpty()          | X           | X           |
+| isEmpty()          | OK          | OK          |
 | allow Class::class | OK          | OK          |
 
 
@@ -222,10 +222,11 @@ echo $sumOfIdsGreaterThan1;     // 5
 
 ## <a name="plans"></a>Plans for next versions
 - use Assertion
+- benchmarks and memory usage tests
 - methods:
     - CollectionInterface::forAll(callback):bool
     - Map::firstBy(callback):mixed
     - MapInterface::firstKey()
     - MapInterface::firstValue() 
-    - Touple(key, value)
-    - Map::first():Touple
+    - Tuple(key, value)
+    - Map::first():Tuple

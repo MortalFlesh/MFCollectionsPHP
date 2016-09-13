@@ -134,7 +134,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
         $this->listEnhanced->add('value');
 
         $immutable = $this->listEnhanced->asImmutable();
-        
+
         $this->assertInstanceOf(\MF\Collection\Immutable\ListInterface::class, $immutable);
         $this->assertInstanceOf(\MF\Collection\Immutable\Enhanced\ListCollection::class, $immutable);
 
@@ -148,5 +148,14 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
 
         $this->list->clear();
         $this->assertFalse($this->list->contains('value'));
+    }
+
+    public function testShouldCheckIfCollectionIsEmpty()
+    {
+        $this->list->add('value');
+        $this->assertFalse($this->list->isEmpty());
+
+        $this->list->clear();
+        $this->assertTrue($this->list->isEmpty());
     }
 }
