@@ -292,4 +292,9 @@ class ListCollection implements ListInterface
     {
         return \MF\Collection\Immutable\ListCollection::createFromArray($this->toArray());
     }
+
+    public function clear()
+    {
+        $this->listArray = [];
+    }
 }

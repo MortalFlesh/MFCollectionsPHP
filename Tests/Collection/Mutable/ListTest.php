@@ -477,4 +477,13 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
     }
+
+    public function testShouldClearCollection()
+    {
+        $this->list->add('value');
+        $this->assertTrue($this->list->contains('value'));
+
+        $this->list->clear();
+        $this->assertFalse($this->list->contains('value'));
+    }
 }

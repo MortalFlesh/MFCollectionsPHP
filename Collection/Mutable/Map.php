@@ -280,4 +280,9 @@ class Map implements MapInterface
     {
         return \MF\Collection\Immutable\Map::createFromArray($this->toArray());
     }
+
+    public function clear()
+    {
+        $this->mapArray = [];
+    }
 }

@@ -16,6 +16,8 @@ interface CollectionInterface extends \IteratorAggregate, \Countable
      */
     public function contains($value);
 
+    public function clear();
+
     /** @return array */
     public function toArray();
 

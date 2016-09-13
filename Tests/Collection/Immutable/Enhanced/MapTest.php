@@ -164,4 +164,13 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
 
         $this->assertEquals($this->mapEnhanced->toArray(), $mutable->toArray());
     }
+
+    public function testShouldClearCollection()
+    {
+        $this->map = $this->map->set('key', 'value');
+        $this->assertTrue($this->map->contains('value'));
+
+        $this->map->clear();
+        $this->assertFalse($this->map->contains('value'));
+    }
 }

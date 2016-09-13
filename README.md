@@ -23,7 +23,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 | Immutable\Enhanced | OK          | OK          |
 | Immutable\Generic  | OK          | OK          |
 | _____methods_____  | ___________ | ___________ |
-| clear()            | X           | X           |
+| clear()            | OK          | OK          |
 | isEmpty()          | X           | X           |
 | allow Class::class | OK          | OK          |
 

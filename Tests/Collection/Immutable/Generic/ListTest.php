@@ -354,4 +354,13 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
     }
+
+    public function testShouldClearCollection()
+    {
+        $this->list = $this->list->add('value');
+        $this->assertTrue($this->list->contains('value'));
+
+        $this->list->clear();
+        $this->assertFalse($this->list->contains('value'));
+    }
 }
