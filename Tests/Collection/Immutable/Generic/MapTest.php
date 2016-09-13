@@ -467,4 +467,13 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
     }
+
+    public function testShouldClearCollection()
+    {
+        $this->map = $this->map->set('key', 123);
+        $this->assertTrue($this->map->contains(123));
+
+        $this->map->clear();
+        $this->assertFalse($this->map->contains(123));
+    }
 }

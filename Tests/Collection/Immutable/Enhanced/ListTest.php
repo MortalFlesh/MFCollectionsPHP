@@ -143,4 +143,13 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
 
         $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());
     }
+
+    public function testShouldClearCollection()
+    {
+        $this->list = $this->list->add('value');
+        $this->assertTrue($this->list->contains('value'));
+
+        $this->list->clear();
+        $this->assertFalse($this->list->contains('value'));
+    }
 }

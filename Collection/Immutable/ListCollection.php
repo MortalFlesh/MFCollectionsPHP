@@ -279,4 +279,9 @@ class ListCollection implements ListInterface
     {
         return \MF\Collection\Mutable\ListCollection::createFromArray($this->toArray());
     }
+
+    public function clear()
+    {
+        $this->listArray = [];
+    }
 }

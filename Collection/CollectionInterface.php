@@ -10,6 +10,14 @@ interface CollectionInterface extends \IteratorAggregate, \Countable
      */
     public static function createFromArray(array $array);
 
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    public function contains($value);
+
+    public function clear();
+
     /** @return array */
     public function toArray();
 

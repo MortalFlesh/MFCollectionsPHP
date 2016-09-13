@@ -286,4 +286,9 @@ class Map implements MapInterface
     {
         return \MF\Collection\Mutable\Map::createFromArray($this->toArray());
     }
+
+    public function clear()
+    {
+        $this->mapArray = [];
+    }
 }
