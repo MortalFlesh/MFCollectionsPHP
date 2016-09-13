@@ -19,12 +19,6 @@ interface ListInterface extends CollectionInterface
     /** @return static */
     public function sort();
 
-    /**
-     * @param mixed $value
-     * @return bool
-     */
-    public function contains($value);
-
     /** @param mixed $value */
     public function removeFirst($value);
 

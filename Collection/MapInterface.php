@@ -12,12 +12,6 @@ interface MapInterface extends CollectionInterface, \ArrayAccess
 
     /**
      * @param mixed $value
-     * @return bool
-     */
-    public function contains($value);
-
-    /**
-     * @param mixed $value
      * @return mixed|false
      */
     public function find($value);
