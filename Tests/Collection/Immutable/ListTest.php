@@ -2,9 +2,9 @@
 
 namespace MF\Tests\Collection\Immutable;
 
-use MF\Collection\CollectionInterface;
+use MF\Collection\ICollection;
 use MF\Collection\Immutable\ListCollection;
-use MF\Collection\Immutable\ListInterface;
+use MF\Collection\Immutable\IList;
 
 /**
  * @group unit
@@ -21,8 +21,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
-        $this->assertInstanceOf(ListInterface::class, $this->list);
-        $this->assertInstanceOf(CollectionInterface::class, $this->list);
+        $this->assertInstanceOf(IList::class, $this->list);
+        $this->assertInstanceOf(ICollection::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
@@ -461,7 +461,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $mutable);
         $this->assertInstanceOf(\MF\Collection\Mutable\ListCollection::class, $mutable);
 
         $this->assertEquals($this->list->toArray(), $mutable->toArray());

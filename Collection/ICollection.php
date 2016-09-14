@@ -2,7 +2,7 @@
 
 namespace MF\Collection;
 
-interface CollectionInterface extends \IteratorAggregate, \Countable
+interface ICollection extends \IteratorAggregate, \Countable
 {
     /**
      * @param array $array

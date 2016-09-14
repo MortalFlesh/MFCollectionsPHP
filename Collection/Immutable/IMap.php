@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Immutable;
 
-interface MapInterface extends \MF\Collection\MapInterface, CollectionInterface
+interface IMap extends \MF\Collection\IMap, ICollection
 {
     /**
      * @param mixed $key
@@ -17,12 +17,12 @@ interface MapInterface extends \MF\Collection\MapInterface, CollectionInterface
      */
     public function remove($key);
 
-    /** @return ListInterface */
+    /** @return IList */
     public function keys();
 
-    /** @return ListInterface */
+    /** @return IList */
     public function values();
 
-    /** @return \MF\Collection\MapInterface */
+    /** @return \MF\Collection\IMap */
     public function asMutable();
 }

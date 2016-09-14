@@ -2,13 +2,13 @@
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
-use MF\Collection\CollectionInterface as BaseCollectionInterface;
-use MF\Collection\Generic\CollectionInterface;
-use MF\Collection\Generic\ListInterface as GenericListInterface;
+use MF\Collection\ICollection as BaseCollectionInterface;
+use MF\Collection\Generic\ICollection;
+use MF\Collection\Generic\IList as GenericListInterface;
 use MF\Collection\Immutable\Generic\ListCollection;
 use MF\Collection\Immutable\ListCollection as BaseImmutableListCollection;
-use MF\Collection\Immutable\ListInterface;
-use MF\Collection\ListInterface as BaseListInterface;
+use MF\Collection\Immutable\IList;
+use MF\Collection\IList as BaseListInterface;
 use MF\Collection\Mutable\ListCollection as MutableListCollection;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
@@ -31,10 +31,10 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(GenericListInterface::class, $this->list);
-        $this->assertInstanceOf(ListInterface::class, $this->list);
+        $this->assertInstanceOf(IList::class, $this->list);
         $this->assertInstanceOf(BaseListInterface::class, $this->list);
         $this->assertInstanceOf(BaseImmutableListCollection::class, $this->list);
-        $this->assertInstanceOf(CollectionInterface::class, $this->list);
+        $this->assertInstanceOf(ICollection::class, $this->list);
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
@@ -309,7 +309,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
         $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $mutable);
         $this->assertInstanceOf(\MF\Collection\Mutable\Generic\ListCollection::class, $mutable);
 
         $this->assertEquals($this->list->toArray(), $mutable->toArray());

@@ -138,7 +138,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
 
         $mutable = $this->listEnhanced->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\ListInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $mutable);
         $this->assertInstanceOf(\MF\Collection\Mutable\Enhanced\ListCollection::class, $mutable);
 
         $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());

@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Mutable;
 
-interface ListInterface extends \MF\Collection\ListInterface, CollectionInterface
+interface IList extends \MF\Collection\IList, ICollection
 {
     /** @return mixed */
     public function shift();
@@ -10,6 +10,6 @@ interface ListInterface extends \MF\Collection\ListInterface, CollectionInterfac
     /** @return mixed */
     public function pop();
 
-    /** @return \MF\Collection\Immutable\ListInterface */
+    /** @return \MF\Collection\Immutable\IList */
     public function asImmutable();
 }

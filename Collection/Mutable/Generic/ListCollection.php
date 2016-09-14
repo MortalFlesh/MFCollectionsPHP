@@ -2,11 +2,11 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-use MF\Collection\Generic\ListInterface;
+use MF\Collection\Generic\IList;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
-class ListCollection extends \MF\Collection\Mutable\ListCollection implements ListInterface
+class ListCollection extends \MF\Collection\Mutable\ListCollection implements IList
 {
     /** @var array */
     private $allowedValueTypes = [
@@ -132,7 +132,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements Li
     /**
      * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
      * @param string|null $mappedListValueType
-     * @return \MF\Collection\Mutable\ListInterface|static
+     * @return \MF\Collection\Mutable\IList|static
      */
     public function map($callback, $mappedListValueType = null)
     {

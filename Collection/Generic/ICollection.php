@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Generic;
 
-interface CollectionInterface extends \MF\Collection\CollectionInterface
+interface ICollection extends \MF\Collection\ICollection
 {
     /**
      * @param string $keyType
