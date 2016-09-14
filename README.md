@@ -1,5 +1,9 @@
-MFCollections for PHP - WIP
-===========================
+MFCollections for PHP
+=====================
+
+[![Latest Stable Version](https://img.shields.io/packagist/v/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
+[![License](https://img.shields.io/packagist/l/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
 
 - Travis + Coveralls
 [![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
@@ -156,21 +160,7 @@ $map = new Immutable\Generic\Map('int', 'string');
 
 ## Installation:
 ```
-//composer.json
-{
-    "require": {
-        "mf/collections-php": "^0.1.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "https://github.com/MortalFlesh/MFCollectionsPHP.git"
-        }
-    ]
-}
-
-// console
-composer install
+composer require mf/collections-php
 ```
 
 
