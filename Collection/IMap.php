@@ -2,7 +2,7 @@
 
 namespace MF\Collection;
 
-interface MapInterface extends CollectionInterface, \ArrayAccess
+interface IMap extends ICollection, \ArrayAccess
 {
     /**
      * @param mixed $key
@@ -31,9 +31,9 @@ interface MapInterface extends CollectionInterface, \ArrayAccess
     /** @param mixed $key */
     public function remove($key);
 
-    /** @return ListInterface */
+    /** @return IList */
     public function keys();
 
-    /** @return ListInterface */
+    /** @return IList */
     public function values();
 }

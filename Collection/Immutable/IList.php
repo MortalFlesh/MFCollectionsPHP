@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Immutable;
 
-interface ListInterface extends \MF\Collection\ListInterface, CollectionInterface
+interface IList extends \MF\Collection\IList, ICollection
 {
     /**
      * @param mixed $value
@@ -28,6 +28,6 @@ interface ListInterface extends \MF\Collection\ListInterface, CollectionInterfac
      */
     public function removeAll($value);
 
-    /** @return \MF\Collection\ListInterface */
+    /** @return \MF\Collection\IList */
     public function asMutable();
 }

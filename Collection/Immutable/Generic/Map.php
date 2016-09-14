@@ -2,11 +2,11 @@
 
 namespace MF\Collection\Immutable\Generic;
 
-use MF\Collection\Generic\MapInterface;
+use MF\Collection\Generic\IMap;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
-class Map extends \MF\Collection\Immutable\Map implements MapInterface
+class Map extends \MF\Collection\Immutable\Map implements IMap
 {
     /** @var array */
     private $allowedKeyTypes = [
@@ -157,7 +157,7 @@ class Map extends \MF\Collection\Immutable\Map implements MapInterface
     /**
      * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
      * @param string|null $mappedMapValueType
-     * @return \MF\Collection\Immutable\MapInterface|static
+     * @return \MF\Collection\Immutable\IMap|static
      */
     public function map($callback, $mappedMapValueType = null)
     {

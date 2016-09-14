@@ -2,7 +2,7 @@
 
 namespace MF\Collection;
 
-interface ListInterface extends CollectionInterface
+interface IList extends ICollection
 {
     /** @param mixed $value */
     public function add($value);

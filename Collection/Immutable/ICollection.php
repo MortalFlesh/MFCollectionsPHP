@@ -2,11 +2,11 @@
 
 namespace MF\Collection\Immutable;
 
-interface CollectionInterface extends \MF\Collection\CollectionInterface
+interface ICollection extends \MF\Collection\ICollection
 {
     /** @return static */
     public function clear();
 
-    /** @return \MF\Collection\Mutable\CollectionInterface */
+    /** @return \MF\Collection\Mutable\ICollection */
     public function asMutable();
 }

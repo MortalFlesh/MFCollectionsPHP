@@ -2,9 +2,9 @@
 
 namespace MF\Collection\Immutable;
 
-use MF\Collection\CollectionInterface;
+use MF\Collection\ICollection;
 
-class ListCollection implements ListInterface
+class ListCollection implements IList
 {
     /** @var array */
     protected $listArray;
@@ -40,7 +40,7 @@ class ListCollection implements ListInterface
         $array = [];
 
         foreach ($this->listArray as $value) {
-            if ($value instanceof CollectionInterface) {
+            if ($value instanceof ICollection) {
                 $value = $value->toArray();
             }
 
@@ -210,11 +210,11 @@ class ListCollection implements ListInterface
     }
 
     /**
-     * @param ListInterface $list
+     * @param IList $list
      * @param callable $callback
      * @return static
      */
-    protected function mapList(ListInterface $list, $callback)
+    protected function mapList(IList $list, $callback)
     {
         $this->assertCallback($callback);
 
@@ -237,11 +237,11 @@ class ListCollection implements ListInterface
     }
 
     /**
-     * @param ListInterface $list
+     * @param IList $list
      * @param callable $callback
      * @return static
      */
-    protected function filterList(ListInterface $list, $callback)
+    protected function filterList(IList $list, $callback)
     {
         $this->assertCallback($callback);
 

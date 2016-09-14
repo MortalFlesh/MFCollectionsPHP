@@ -135,7 +135,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
 
         $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\MapInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\IMap::class, $immutable);
         $this->assertInstanceOf(\MF\Collection\Immutable\Enhanced\Map::class, $immutable);
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());

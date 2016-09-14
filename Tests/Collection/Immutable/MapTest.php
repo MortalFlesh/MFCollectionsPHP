@@ -2,17 +2,17 @@
 
 namespace MF\Tests\Collection\Immutable;
 
-use MF\Collection\CollectionInterface;
-use MF\Collection\Immutable\ListInterface;
+use MF\Collection\ICollection;
+use MF\Collection\Immutable\IList;
 use MF\Collection\Immutable\Map;
-use MF\Collection\Immutable\MapInterface;
+use MF\Collection\Immutable\IMap;
 
 /**
  * @group unit
  */
 class MapTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var MapInterface */
+    /** @var IMap */
     protected $map;
 
     public function setUp()
@@ -22,8 +22,8 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
-        $this->assertInstanceOf(MapInterface::class, $this->map);
-        $this->assertInstanceOf(CollectionInterface::class, $this->map);
+        $this->assertInstanceOf(IMap::class, $this->map);
+        $this->assertInstanceOf(ICollection::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->map);
         $this->assertInstanceOf(\Countable::class, $this->map);
@@ -348,7 +348,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $keys = $map->keys();
 
-        $this->assertInstanceOf(ListInterface::class, $keys);
+        $this->assertInstanceOf(IList::class, $keys);
         $this->assertEquals([1, 2, 'three'], $keys->toArray());
     }
 
@@ -366,7 +366,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $values = $map->values();
 
-        $this->assertInstanceOf(ListInterface::class, $values);
+        $this->assertInstanceOf(IList::class, $values);
         $this->assertEquals(['one', 'two', 3], $values->toArray());
     }
 
@@ -479,7 +479,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $mutable = $this->map->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\MapInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\IMap::class, $mutable);
         $this->assertInstanceOf(\MF\Collection\Mutable\Map::class, $mutable);
 
         $this->assertEquals($this->map->toArray(), $mutable->toArray());

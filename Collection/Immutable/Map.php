@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Immutable;
 
-class Map implements MapInterface
+class Map implements IMap
 {
     /** @var array */
     protected $mapArray;
@@ -159,7 +159,7 @@ class Map implements MapInterface
         $array = [];
 
         foreach ($this->mapArray as $key => $value) {
-            if ($value instanceof CollectionInterface) {
+            if ($value instanceof ICollection) {
                 $value = $value->toArray();
             }
 
@@ -203,11 +203,11 @@ class Map implements MapInterface
     }
 
     /**
-     * @param MapInterface $map
+     * @param IMap $map
      * @param callable $callback
-     * @return MapInterface
+     * @return IMap
      */
-    protected function mapToMap(MapInterface $map, $callback)
+    protected function mapToMap(IMap $map, $callback)
     {
         $this->assertCallback($callback);
 
@@ -230,11 +230,11 @@ class Map implements MapInterface
     }
 
     /**
-     * @param MapInterface $map
+     * @param IMap $map
      * @param callable $callback
-     * @return MapInterface
+     * @return IMap
      */
-    protected function filterToMap(MapInterface $map, $callback)
+    protected function filterToMap(IMap $map, $callback)
     {
         $this->assertCallback($callback);
 
@@ -281,7 +281,7 @@ class Map implements MapInterface
         return $total;
     }
 
-    /** @return \MF\Collection\MapInterface */
+    /** @return \MF\Collection\IMap */
     public function asMutable()
     {
         return \MF\Collection\Mutable\Map::createFromArray($this->toArray());

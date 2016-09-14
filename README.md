@@ -12,130 +12,149 @@ MFCollections for PHP - WIP
 
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
 
-
-## Todo list for v1.0.0
-|                    | List        | Map         |
-|--------------------|-------------|-------------|
-| Classic            | OK          | OK          |
-| Enhanced           | OK          | OK          |
-| Generic            | OK          | OK          |
-| Immutable          | OK          | OK          |
-| Immutable\Enhanced | OK          | OK          |
-| Immutable\Generic  | OK          | OK          |
-| _____methods_____  | ___________ | ___________ |
-| clear()            | OK          | OK          |
-| isEmpty()          | OK          | OK          |
-| allow Class::class | OK          | OK          |
-
-
 ## Table of Contents
 - [Requirements](#requirements)
-- [CollectionInterface](#collection-interface)
-- [ListInterface](#list-interface)
-    - [MutableListInterface](#mutable-list-interface)
-- [MapInterface](#map-interface)
-- [Generic\CollectionInterface](#generic-collection-interface)
-- [Immutable\ListInterface](#immutable-list-interface)
-- [Immutable\MapInterface](#immutable-map-interface)
+- [Base Interfaces](#base-interfaces)
+    - [ICollection](#collection-interface)
+    - [IList](#list-interface)
+    - [IMap](#map-interface)
+- [Mutable](#mutable-collections)
+- [Immutable](#immutable-collections)
+- [Generic](#generic-collections)
 - [Installation](#installation)
 - [Arrow Functions](#arrow-functions)
-- [Plans for next versions](#plans)
+- [Plans for next versions](#plans-for-next-versions)
 
 
-## <a name="requirements"></a>Requirements
-- PHP 5.5
+## Requirements
+- `PHP >=5.5`
 - `eval()` function for parsing [Arrow Functions](#arrow-functions)
 
-## <a name="collection-interface"></a>CollectionInterface
-- basic interface for Collections
+
+## Base Interfaces
+
+### <a name="collection-interface"></a>ICollection
+- basic Interface for Collections
 - extends `IteratorAggregate, Countable`
 
+### <a name="list-interface"></a>IList
+- extends `ICollection`
 
-## <a name="list-interface"></a>ListInterface
-- extends `CollectionInterface`
-
-### <a name="mutable-list-interface"></a>MutableListInterface
-- extend `ListInterface`
-- adds methods for mutable Lists only
+### <a name="map-interface"></a>IMap
+- extends `ICollection, ArrayAccess`
 
 
-### ListCollection
-- it's basic List Collection
+## Mutable Collections
 
-### Enhanced\ListCollection
+### Interfaces
+- `Mutable\ICollection`, `Mutable\IList`, `Mutable\IMap`
+- extends base version of Interface
+- adds methods for mutable Collections only
+
+### Mutable\ListCollection
+- implements `Mutable\IList`
+- basic List Collection
+
+### Mutable\Enhanced\ListCollection
 - extends `ListCollection`
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 
-
-## <a name="map-interface"></a>MapInterface
-- extends `CollectionInterface, ArrayAccess`
-
-### Map
-- it's basic Map Collection
-
-### Enhanced\Map
-- extends `Map`
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
-
-
-## <a name="generic-collection-interface"></a>Generic\CollectionInterface
-- extends `CollectionInterface`
-- adds generic functionality to Collections, which will validate types
-
-### Generic\ListCollection
-- implements `Generic\CollectionInterface`
+### Mutable\Generic\ListCollection
+- implements `Generic\IList`
 - extends `ListCollection`
 - has defined value type and validates it
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 ```php
 // list will accept only string values
-$list = new Generic\ListCollection('string');
+$list = new Mutable\Generic\ListCollection('string');
 ```
 
-### Generic\Map
-- implements `Generic\CollectionInterface`
+### Mutable\Map
+- implements `Mutable\IMap`
+- basic Map Collection
+
+### Mutable\Enhanced\Map
+- extends `Map`
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
+
+### Mutable\Generic\Map
+- implements `Generic\IMap`
 - extends `Map`
 - has defined key and value type and validates it
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 ```php
 // map will accept only string keys and int values
-$map = new Generic\Map('string', 'int');
+$map = new Mutable\Generic\Map('string', 'int');
 ```
 
 
-## <a name="immutable-list-interface"></a>Immutable\ListInterface
-- extends `CollectionInterface`
+## Immutable Collections
+- `internal state` of Immutable\Collection instance will `never change`
+```php
+$list = new Immutable\ListCollection();
+$listWith1 = $list->add(1);
+
+// $list != $listWith1
+echo $list->count();        // 0
+echo $listWith1->count();   // 1
+```
+- `$list` is still an empty `Immutable\ListCollection`
+- `$listWith1` is new instance of `Immutable\ListCollection` with value `1` 
+
+### Interfaces
+- `Immutable\ICollection`, `Immutable\IList`, `Immutable\IMap`
+- extends base version of Interface
+- adds methods for immutable Collections only or alters method return value
 
 ### Immutable\ListCollection
-- it's basic Immutable List Collection
+- implements `Immutable\IList`
+- basic Immutable List Collection
 
 ### Immutable\Enhanced\ListCollection
 - extends `Immutable\ListCollection`
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 
 ### Immutable\Generic\ListCollection
-- implements `Generic\CollectionInterface`
+- implements `Generic\IList`
 - extends `Immutable\ListCollection`
 - has defined value type and validates it
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 ```php
 // list will accept only string values
 $list = new Immutable\Generic\ListCollection('string');
 ```
 
-
-## <a name="immutable-map-interface"></a>Immutable\MapInterface
-- extends `CollectionInterface, ArrayAccess`
-
 ### Immutable\Map
-- it's basic Immutable Map Collection
+- implements `Immutable\IMap`
+- basic Immutable Map Collection
 
 ### Immutable\Enhanced\Map
 - extends `Immutable\Map`
-- adds possibility of usage `Arrow Functions` in map(), filter() and reduce() methods
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
+
+### Immutable\Generic\Map
+- implements `Generic\IMap`
+- extends `Immutable\ListCollection`
+- has defined value type and validates it
+- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
+```php
+// map will accept only string values and int keys
+$map = new Immutable\Generic\Map('int', 'string');
+```
 
 
-## <a name="installation"></a>Installation:
+## Generic Collections
+- It's basically strictly validated Collection
+- To see more check: [MF/TypeValidator](https://github.com/MortalFlesh/TypeValidator)
+
+### Generic Interfaces
+- `Generic\ICollection`, `Generic\IList`, `Generic\IMap`
+- extends base version of Interface
+- adds generic functionality to Collections, which will validate types
+- each Generic Collection implements its Generic Interface
+
+
+## Installation:
 ```
 //composer.json
 {
@@ -155,11 +174,12 @@ composer install
 ```
 
 
-## <a name="arrow-functions"></a>Arrow Functions
+## Arrow Functions
+- To see more check: [MF/CallbackParser](https://github.com/MortalFlesh/CallbackParser)
 
 ### Usage:
 ```php
-$map = new Enhanced\Map();
+$map = new Mutable\Enhanced\Map();
 $map->set(1, 'one');
 $map[2] = 'two';
 
@@ -204,7 +224,7 @@ class SimpleEntity
     }
 }
 
-$list = new Generic\ListCollection(SimpleEntity::class);
+$list = new Mutable\Generic\ListCollection(SimpleEntity::class);
 $list->add(new SimpleEntity(1));
 $list->add(new SimpleEntity(2));
 $list->add(new SimpleEntity(3));
@@ -220,13 +240,17 @@ echo $sumOfIdsGreaterThan1;     // 5
 ### How does it work?
 - it parses function from string and evaluate it with `eval()`
 
-## <a name="plans"></a>Plans for next versions
+
+## Plans for next versions
 - use Assertion
 - benchmarks and memory usage tests
+- ListCollection -> LinkedList
+- check https://github.com/morrisonlevi/Ardent
+- documentation
 - methods:
-    - CollectionInterface::forAll(callback):bool
-    - Map::firstBy(callback):mixed
-    - MapInterface::firstKey()
-    - MapInterface::firstValue() 
+    - ICollection::forAll(callback):bool
+    - IMap::firstKey()
+    - IMap::firstValue() 
     - Tuple(key, value)
-    - Map::first():Tuple
+    - IMap::first():Tuple
+    - IMap::firstBy(callback):mixed

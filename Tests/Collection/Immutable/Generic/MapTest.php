@@ -2,12 +2,12 @@
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
-use MF\Collection\CollectionInterface as BaseCollectionInterface;
-use MF\Collection\Generic\CollectionInterface;
+use MF\Collection\ICollection as BaseCollectionInterface;
+use MF\Collection\Generic\ICollection;
 use MF\Collection\Immutable\Generic\ListCollection;
 use MF\Collection\Immutable\Generic\Map;
-use MF\Collection\Immutable\MapInterface;
-use MF\Collection\MapInterface as BaseMapInterface;
+use MF\Collection\Immutable\IMap;
+use MF\Collection\IMap as BaseMapInterface;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
 
@@ -23,10 +23,10 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
-        $this->assertInstanceOf(MapInterface::class, $this->map);
+        $this->assertInstanceOf(IMap::class, $this->map);
         $this->assertInstanceOf(BaseMapInterface::class, $this->map);
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->map);
-        $this->assertInstanceOf(CollectionInterface::class, $this->map);
+        $this->assertInstanceOf(ICollection::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->map);
         $this->assertInstanceOf(\Countable::class, $this->map);
@@ -452,7 +452,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
         $mutable = $this->map->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\Mutable\MapInterface::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\Mutable\IMap::class, $mutable);
         $this->assertInstanceOf(\MF\Collection\Mutable\Generic\Map::class, $mutable);
 
         $this->assertEquals($this->map->toArray(), $mutable->toArray());

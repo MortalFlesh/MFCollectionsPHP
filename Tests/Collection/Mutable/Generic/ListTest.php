@@ -2,11 +2,11 @@
 
 namespace MF\Tests\Collection\Mutable\Generic;
 
-use MF\Collection\Generic\CollectionInterface;
-use MF\Collection\Generic\ListInterface;
-use MF\Collection\Mutable\CollectionInterface as BaseCollectionInterface;
+use MF\Collection\Generic\ICollection;
+use MF\Collection\Generic\IList;
+use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\Generic\ListCollection;
-use MF\Collection\Mutable\ListInterface as BaseListInterface;
+use MF\Collection\Mutable\IList as BaseListInterface;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
@@ -25,8 +25,8 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldImplementsInterfaces()
     {
         $this->assertInstanceOf(BaseListInterface::class, $this->list);
-        $this->assertInstanceOf(ListInterface::class, $this->list);
-        $this->assertInstanceOf(CollectionInterface::class, $this->list);
+        $this->assertInstanceOf(IList::class, $this->list);
+        $this->assertInstanceOf(ICollection::class, $this->list);
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
@@ -285,7 +285,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
         $immutable = $this->list->asImmutable();
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\ListInterface::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\IList::class, $immutable);
         $this->assertInstanceOf(\MF\Collection\Immutable\Generic\ListCollection::class, $immutable);
 
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
