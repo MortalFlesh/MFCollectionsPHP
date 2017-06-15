@@ -17,6 +17,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
     - [ICollection](#collection-interface)
     - [IList](#list-interface)
     - [IMap](#map-interface)
+    - [ISeq](#seq-interface)
 - [Mutable](#mutable-collections)
 - [Immutable](#immutable-collections)
 - [Generic](#generic-collections)
@@ -48,6 +49,9 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 
 ### <a name="map-interface"></a>IMap
 - extends `ICollection, ArrayAccess`
+
+### <a name="seq-interface"></a>ISeq
+- extends `ICollection`
 
 
 ## Mutable Collections
@@ -95,7 +99,7 @@ $map = new Mutable\Generic\Map('string', 'int');
 
 
 ## Immutable Collections
-- `internal state` of Immutable\Collection instance will `never change`
+- `internal state` of Immutable\Collection instance will `never change` from the outside
 ```php
 $list = new Immutable\ListCollection();
 $listWith1 = $list->add(1);
@@ -108,7 +112,7 @@ echo $listWith1->count();   // 1
 - `$listWith1` is new instance of `Immutable\ListCollection` with value `1` 
 
 ### Interfaces
-- `Immutable\ICollection`, `Immutable\IList`, `Immutable\IMap`
+- `Immutable\ICollection`, `Immutable\IList`, `Immutable\IMap`, `Immutable\ISeq`
 - extends base version of Interface
 - adds methods for immutable Collections only or alters method return value
 
@@ -146,6 +150,20 @@ $list = new Immutable\Generic\ListCollection('string');
 ```php
 // map will accept only string values and int keys
 $map = new Immutable\Generic\Map('int', 'string');
+```
+
+### Immutable\Seq
+- implements `Immutable\ISeq`
+- basic Immutable Sequence
+- is `lazy` as possible (_even could be `Infinite`_)
+- allows `Arrow Functions` everywhere where `callable` is wanted
+```php
+Seq::infinite()
+    ->filter('($i) => $i % 2 === 0')
+    ->map('($i) => $i * $i')
+    ->takeWhile('($i) => $i < 25')
+    ->toArray();
+// [4, 16]
 ```
 
 
@@ -231,12 +249,14 @@ echo $sumOfIdsGreaterThan1;     // 5
 - benchmarks and memory usage tests ([here](https://github.com/MortalFlesh/PerformanceTests))
 
 ## Lazy mapping
-- if your `Collection` get mapped and filltered many times (_for readability_), it is not a problem
+- if your `Collection` get mapped and filtered many times (_for readability_), it is not a problem
     - `map -> map -> filter -> map -> filter -> map` will iterate the collection only once (_for applying all modifiers at once_)
     - this modification is done when another method is triggered, so adding new modifier is an **atomic** operation
 
 
 ## Plans for next versions
+- in `ListCollection` and `Map` supports `iterable` instead of just `array` to allow `Seq`
+- add `Generic/Seq`
 - use `Symfony/Stopwatch` in unit tests
 - **IMap** change order of `key/value` in `map` and `filter` to `value/key` (**BC**)
 - _even better_ documentation ([current](https://github.com/MortalFlesh/MFCollectionsPHP/wiki))

@@ -25,13 +25,8 @@ class MapTest extends AbstractTestCase
         $this->assertInstanceOf(\Countable::class, $this->map);
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     *
-     * @dataProvider arrayProvider
-     */
-    public function testShouldCreateMapFromArray(array $array, $recursive): void
+    /** @dataProvider arrayProvider */
+    public function testShouldCreateMapFromArray(array $array, bool $recursive): void
     {
         $map = Map::from($array, $recursive);
 

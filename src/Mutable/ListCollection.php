@@ -71,9 +71,7 @@ class ListCollection implements IList
 
         $listArray = [];
         foreach ($this->listArray as $i => $value) {
-            foreach ($this->modifiers as $item) {
-                [$type, $callback] = $item;
-
+            foreach ($this->modifiers as [$type, $callback]) {
                 if ($type === self::MAP) {
                     $value = $callback($value, $i);
                 } elseif ($type === self::FILTER && !$callback($value, $i)) {

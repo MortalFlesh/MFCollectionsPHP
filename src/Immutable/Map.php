@@ -71,9 +71,7 @@ class Map implements IMap
 
         $mapArray = [];
         foreach ($this->mapArray as $key => $value) {
-            foreach ($this->modifiers as $item) {
-                [$type, $callback] = $item;
-
+            foreach ($this->modifiers as [$type, $callback]) {
                 if ($type === self::MAP) {
                     $value = $callback($key, $value);
                 } elseif ($type === self::FILTER && !$callback($key, $value)) {
