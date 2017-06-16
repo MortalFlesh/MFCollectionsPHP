@@ -3,10 +3,11 @@
 namespace MF\Tests\Collection\Mutable\Enhanced;
 
 use MF\Collection\Mutable\Enhanced\ListCollection;
+use MF\Collection\Mutable\IList;
 
 class ListTest extends \MF\Tests\Collection\Mutable\ListTest
 {
-    /** @var ListCollection */
+    /** @var IList|ListCollection */
     private $listEnhanced;
 
     public function setUp()
@@ -17,7 +18,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
 
     public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->listEnhanced->each('($k, $v) => {}');
     }

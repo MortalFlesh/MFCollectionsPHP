@@ -31,7 +31,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 
 
 ## Requirements
-- `PHP >=5.5`
+- `PHP >=7.1`
 - `eval()` function for parsing [Arrow Functions](#arrow-functions)
 
 

@@ -62,7 +62,7 @@ class Map implements IMap
      * @param mixed $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         return $this->find($value) !== false;
     }

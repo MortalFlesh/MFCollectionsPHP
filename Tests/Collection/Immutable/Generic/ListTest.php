@@ -14,11 +14,9 @@ use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
 use MF\Validator\TypeValidator;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
-class ListCollectionTest extends \PHPUnit_Framework_TestCase
+class ListTest extends TestCase
 {
     /** @var ListCollection */
     private $list;
@@ -73,14 +71,14 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         ListCollection::createFromArray([]);
     }
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingGenericCollection()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         ListCollection::createGenericFromArray('string', 'int', []);
     }
@@ -93,7 +91,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         ListCollection::createGenericListFromArray($valueType, $values);
     }
@@ -129,7 +127,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionWhenUnshiftInvalidValue()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->unshift(1);
     }
@@ -144,7 +142,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionWhenContainsInvalidType()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->contains(true);
     }
@@ -179,7 +177,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeFirst(2);
     }
@@ -202,14 +200,14 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveAllValues()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeAll(2.54);
     }
 
     public function testShouldThrowExceptionWhenForeachItemInListWithArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->each('($k, $v) => {}');
     }
@@ -228,7 +226,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -250,7 +248,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewListByArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $newList = $this->list->filter('($v, $i) => true');
 

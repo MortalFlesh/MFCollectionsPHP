@@ -56,7 +56,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      */
     public static function createGenericListFromArray($valueType, array $array)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic Map. Use createGenericFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic Map. Use createGenericFromArray instead.'
+        );
     }
 
     /**
@@ -66,7 +68,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      */
     public static function createFromArray(array $array, $recursive = false)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic Map. Use createGenericFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic Map. Use createGenericFromArray instead.'
+        );
     }
 
     /**
@@ -101,7 +105,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param <TValue> $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         $this->typeValidator->assertValueType($value);
 

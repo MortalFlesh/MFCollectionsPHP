@@ -14,7 +14,7 @@ interface ICollection extends \IteratorAggregate, \Countable
      * @param mixed $value
      * @return bool
      */
-    public function contains($value);
+    public function contains($value): bool;
 
     public function clear();
 

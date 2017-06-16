@@ -49,7 +49,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public static function createGenericFromArray($keyType, $valueType, array $array)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use createGenericListFromArray instead.'
+        );
     }
 
     /**
@@ -59,7 +61,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public static function createFromArray(array $array, $recursive = false)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use createGenericListFromArray instead.'
+        );
     }
 
     /**
@@ -102,7 +106,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param <TValue> $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         $this->typeValidator->assertValueType($value);
 

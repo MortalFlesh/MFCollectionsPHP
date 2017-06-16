@@ -5,11 +5,9 @@ namespace MF\Tests\Collection\Immutable;
 use MF\Collection\ICollection;
 use MF\Collection\Immutable\ListCollection;
 use MF\Collection\Immutable\IList;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
-class ListTest extends \PHPUnit_Framework_TestCase
+class ListTest extends TestCase
 {
     /** @var ListCollection */
     protected $list;
@@ -331,21 +329,21 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->each(1);
     }
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->map(1);
     }
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->filter(1);
     }

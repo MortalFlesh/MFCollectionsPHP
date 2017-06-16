@@ -17,7 +17,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
 
     public function testShouldThrowExceptionWhenForeachItemInMapWithArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->mapEnhanced->each('($v, $k) => {}');
     }

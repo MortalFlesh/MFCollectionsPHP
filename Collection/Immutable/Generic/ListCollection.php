@@ -49,12 +49,16 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public static function createGenericFromArray($keyType, $valueType, array $array)
     {
-        throw new \BadMethodCallException('This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.'
+        );
     }
 
     public static function createFromArray(array $array, $recursive = false)
     {
-        throw new \BadMethodCallException('This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.'
+        );
     }
 
     /**
@@ -99,7 +103,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param <TValue> $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         $this->typeValidator->assertValueType($value);
 

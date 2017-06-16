@@ -10,8 +10,9 @@ use MF\Collection\Immutable\IMap;
 use MF\Collection\IMap as BaseMapInterface;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
+use PHPUnit\Framework\TestCase;
 
-class MapTest extends \PHPUnit_Framework_TestCase
+class MapTest extends TestCase
 {
     /** @var Map */
     private $map;
@@ -34,14 +35,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         Map::createFromArray([]);
     }
 
     public function testShouldThrowExceptionWhenBadCreateGenericFunctionIsUsed()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         Map::createGenericListFromArray('string', []);
     }
@@ -57,7 +58,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $array = ['key' => 1, 'key2' => 2];
         $map = Map::createGenericFromArray('int', 'int', $array);
@@ -74,7 +75,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldNotCreateGenericMap($keyType, $valueType)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         new Map($keyType, $valueType);
     }
@@ -194,7 +195,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowBadMathodCallExceptionOnAddItemsToMapArrayWay()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         $this->map['key'] = 'value';
     }
@@ -207,7 +208,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet($key, $value)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->set($key, $value);
     }
@@ -260,7 +261,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType($key)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->containsKey($key);
     }
@@ -295,7 +296,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType($value)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->contains($value);
     }
@@ -331,14 +332,14 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType($key)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->remove($key);
     }
 
     public function testShouldThrowExceptionWhenForeachItemInMapWithArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->each('($k, $v) => {}');
     }
@@ -397,7 +398,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $newMap = $this->map->filter('($k, $v) => true');
 

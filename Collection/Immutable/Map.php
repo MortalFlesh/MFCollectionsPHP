@@ -62,7 +62,7 @@ class Map implements IMap
      * @param mixed $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         return $this->find($value) !== false;
     }
@@ -100,7 +100,9 @@ class Map implements IMap
      */
     public function offsetSet($offset, $value)
     {
-        throw new \BadMethodCallException('Immutable map cannot be used as array to set value. Use set() method instead.');
+        throw new \BadMethodCallException(
+            'Immutable map cannot be used as array to set value. Use set() method instead.'
+        );
     }
 
     /**
@@ -128,7 +130,9 @@ class Map implements IMap
      */
     public function offsetUnset($offset)
     {
-        throw new \BadMethodCallException('Immutable map cannot be used as array to unset value. Use remove() method instead.');
+        throw new \BadMethodCallException(
+            'Immutable map cannot be used as array to unset value. Use remove() method instead.'
+        );
     }
 
     /**

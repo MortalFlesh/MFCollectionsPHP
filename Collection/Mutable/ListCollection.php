@@ -12,12 +12,7 @@ class ListCollection implements IList
         $this->listArray = [];
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return ListCollection
-     */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function createFromArray(array $array, bool $recursive = false): IList
     {
         $list = new static();
 
@@ -129,7 +124,7 @@ class ListCollection implements IList
      * @param mixed $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         return $this->find($value) !== false;
     }

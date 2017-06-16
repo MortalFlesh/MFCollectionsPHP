@@ -7,8 +7,9 @@ use MF\Collection\Mutable\ICollection;
 use MF\Collection\Mutable\IList;
 use MF\Collection\Mutable\Map;
 use MF\Collection\Mutable\IMap;
+use PHPUnit\Framework\TestCase;
 
-class MapTest extends \PHPUnit_Framework_TestCase
+class MapTest extends TestCase
 {
     /** @var IMap */
     protected $map;
@@ -158,7 +159,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->set($key, 'value');
     }
@@ -170,7 +171,7 @@ class MapTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map[$key] = 'value';
     }
@@ -325,21 +326,21 @@ class MapTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->each(1);
     }
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->map(1);
     }
 
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map->filter(1);
     }
