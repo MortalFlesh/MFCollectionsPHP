@@ -18,8 +18,7 @@ interface ICollection extends \IteratorAggregate, \Countable
 
     public function clear();
 
-    /** @return bool */
-    public function isEmpty();
+    public function isEmpty(): bool;
 
     /** @return array */
     public function toArray();

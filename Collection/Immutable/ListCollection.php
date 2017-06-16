@@ -283,8 +283,7 @@ class ListCollection implements IList
         return new static();
     }
 
-    /** @return bool */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->listArray);
     }

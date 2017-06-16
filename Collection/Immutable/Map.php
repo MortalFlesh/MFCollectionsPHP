@@ -299,8 +299,7 @@ class Map implements IMap
         return new static();
     }
 
-    /** @return bool */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->mapArray);
     }

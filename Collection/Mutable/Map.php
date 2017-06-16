@@ -286,8 +286,7 @@ class Map implements IMap
         $this->mapArray = [];
     }
 
-    /** @return bool */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->mapArray);
     }
