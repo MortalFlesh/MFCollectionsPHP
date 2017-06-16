@@ -205,13 +205,6 @@ class ListTest extends TestCase
         $this->list->removeAll(2.54);
     }
 
-    public function testShouldThrowExceptionWhenForeachItemInListWithArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->each('($k, $v) => {}');
-    }
-
     public function testShouldMapToNewListWithSameGenericType()
     {
         $this->list = $this->list->add('key');

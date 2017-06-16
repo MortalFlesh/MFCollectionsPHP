@@ -16,13 +16,6 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->listEnhanced = ListCollection::createFromArray(['one', 'two', 3]);
     }
 
-    public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->listEnhanced->each('($k, $v) => {}');
-    }
-
     public function testShouldMapCollectionToNewListCollectionByArrowFunction()
     {
         $newListCollection = $this->listEnhanced->map('($v, $i) => $i . $v');

@@ -161,10 +161,8 @@ class Map implements IMap
     /**
      * @param callable (value:mixed,index:mixed):void $callback
      */
-    public function each($callback)
+    public function each(callable $callback)
     {
-        $this->assertCallback($callback);
-
         foreach ($this->mapArray as $key => $value) {
             $callback($value, $key);
         }

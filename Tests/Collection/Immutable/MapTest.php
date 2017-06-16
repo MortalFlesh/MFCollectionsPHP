@@ -319,13 +319,6 @@ class MapTest extends TestCase
         $this->assertEquals(['three' => 3], $newMap->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->map->each(1);
-    }
-
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
         $this->expectException(\InvalidArgumentException::class);

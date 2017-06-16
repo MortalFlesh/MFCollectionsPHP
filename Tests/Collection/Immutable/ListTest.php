@@ -327,13 +327,6 @@ class ListTest extends TestCase
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->each(1);
-    }
-
     public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
     {
         $this->expectException(\InvalidArgumentException::class);

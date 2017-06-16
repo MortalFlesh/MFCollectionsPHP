@@ -15,13 +15,6 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
         $this->mapEnhanced = Map::createFromArray([1 => 'one', 'two' => 'two', 'three' => 3]);
     }
 
-    public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->mapEnhanced->each('($k, $v) => {}');
-    }
-
     public function testShouldMapCollectionToNewMapByArrowFunction()
     {
         $newMap = $this->mapEnhanced->map('($k, $v) => $k . $v');

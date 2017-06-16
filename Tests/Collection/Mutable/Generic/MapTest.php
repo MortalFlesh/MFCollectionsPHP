@@ -342,13 +342,6 @@ class MapTest extends TestCase
         $this->map->remove($key);
     }
 
-    public function testShouldThrowExceptionWhenForeachItemInMapWithArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->map->each('($k, $v) => {}');
-    }
-
     public function testShouldMapToNewMapWithSameGenericType()
     {
         $this->map->set('key', 1);

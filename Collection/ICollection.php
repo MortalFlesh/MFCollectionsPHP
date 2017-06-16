@@ -23,7 +23,7 @@ interface ICollection extends \IteratorAggregate, \Countable
     public function toArray(): array;
 
     /** @param callable (value:mixed,index:mixed):void $callback */
-    public function each($callback);
+    public function each(callable $callback);
 
     /**
      * @param callable (value:mixed,index:mixed):mixed $callback

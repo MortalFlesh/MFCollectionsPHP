@@ -173,10 +173,8 @@ class ListCollection implements IList
     }
 
     /** @param callable (value:mixed,index:int):void $callback */
-    public function each($callback)
+    public function each(callable $callback)
     {
-        $this->assertCallback($callback);
-
         foreach ($this->listArray as $i => $value) {
             $callback($value, $i);
         }
