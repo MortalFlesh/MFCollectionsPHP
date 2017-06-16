@@ -29,8 +29,7 @@ class ListCollection implements IList
         return $list;
     }
 
-    /** @return array */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
 

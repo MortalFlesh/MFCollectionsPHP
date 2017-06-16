@@ -155,10 +155,7 @@ class Map implements IMap
         return count($this->mapArray);
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
 
