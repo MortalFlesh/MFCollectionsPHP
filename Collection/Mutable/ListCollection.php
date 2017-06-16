@@ -246,7 +246,7 @@ class ListCollection implements IList
     /**
      * @param IList $list
      * @param callable $callback
-     * @return IList
+     * @return static
      */
     protected function filterList(IList $list, $callback)
     {

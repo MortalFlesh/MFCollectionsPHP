@@ -219,7 +219,7 @@ class Map implements IMap
     /**
      * @param IMap $map
      * @param callable $callback
-     * @return IMap
+     * @return static
      */
     protected function filterToMap(IMap $map, $callback)
     {
