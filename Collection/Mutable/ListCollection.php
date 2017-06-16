@@ -188,7 +188,7 @@ class ListCollection implements IList
     }
 
     /** @param callable (value:mixed,index:int):void $callback */
-    public function each(callable $callback)
+    public function each(callable $callback): void
     {
         foreach ($this->listArray as $i => $value) {
             $callback($value, $i);

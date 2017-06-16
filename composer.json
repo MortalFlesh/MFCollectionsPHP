@@ -42,6 +42,7 @@
         "cs": "vendor/bin/phpcs --standard=ruleset.xml .",
         "phpunit": "vendor/bin/phpunit -c phpunit.xml.dist",
         "phpstan": "vendor/bin/phpstan analyse -l 2 -c phpstan.neon Collection Tests",
+        "phpstan5": "vendor/bin/phpstan analyse -l 5 -c phpstan.neon Collection Tests",
         "fix": [
             "./bin/php-cs-fixer fix src",
             "./bin/php-cs-fixer fix tests",

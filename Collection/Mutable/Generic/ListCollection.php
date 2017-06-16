@@ -25,12 +25,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /** @var TypeValidator */
     private $typeValidator;
 
-    /**
-     * @param string $valueType
-     * @param array $array
-     * @return static
-     */
-    public static function createGenericListFromArray($valueType, array $array)
+    public static function createGenericListFromArray(string $valueType, array $array)
     {
         $list = new static($valueType);
 
@@ -41,13 +36,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         return $list;
     }
 
-    /**
-     * @param string $keyType
-     * @param string $valueType
-     * @param array $array
-     * @return static
-     */
-    public static function createGenericFromArray($keyType, $valueType, array $array)
+    public static function createGenericFromArray(string $keyType, string $valueType, array $array)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use createGenericListFromArray instead.'
