@@ -4,20 +4,20 @@ namespace MF\Collection\Mutable;
 
 interface ICollection extends \MF\Collection\ICollection
 {
-    /**
-     * @param array $array
-     * @return static
+    /*
+     * todo
+     * - projit ICollection
+     *      - pokud nebude mozne returnovat konkretni instanci, zrusit override metody
      */
-    public static function createFromArray(array $array);
 
     /**
-     * @param callable (value:mixed,index:mixed):mixed $callback
+     * @param callable $callback (value:mixed,index:mixed):mixed
      * @return static
      */
     public function map($callback);
 
     /**
-     * @param callable (value:mixed,index:mixed):bool $callback
+     * @param callable $callback (value:mixed,index:mixed):bool
      * @return static
      */
     public function filter($callback);

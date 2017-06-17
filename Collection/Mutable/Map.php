@@ -17,13 +17,13 @@ class Map implements IMap
      * @param bool $recursive
      * @return static
      */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, $recursive = false)
     {
         $map = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $map->set($key, static::createFromArray($value, true));
+                $map->set($key, static::of($value, true));
             } else {
                 $map->set($key, $value);
             }
@@ -159,7 +159,7 @@ class Map implements IMap
     }
 
     /**
-     * @param callable (value:mixed,index:mixed):void $callback
+     * @param callable $callback (value:mixed,index:mixed):void
      */
     public function each(callable $callback): void
     {
@@ -179,7 +179,7 @@ class Map implements IMap
     }
 
     /**
-     * @param callable (key:mixed,value:mixed):mixed $callback
+     * @param callable $callback (key:mixed,value:mixed):mixed
      * @return static
      */
     public function map($callback)
@@ -206,7 +206,7 @@ class Map implements IMap
     }
 
     /**
-     * @param callable (key:mixed,value:mixed):bool $callback
+     * @param callable $callback (key:mixed,value:mixed):bool
      * @return static
      */
     public function filter($callback)
@@ -239,7 +239,7 @@ class Map implements IMap
      */
     public function keys()
     {
-        return ListCollection::createFromArray(array_keys($this->mapArray));
+        return ListCollection::of(array_keys($this->mapArray));
     }
 
     /**
@@ -247,11 +247,11 @@ class Map implements IMap
      */
     public function values()
     {
-        return ListCollection::createFromArray(array_values($this->mapArray));
+        return ListCollection::of(array_values($this->mapArray));
     }
 
     /**
-     * @param callable (value:mixed,index:int):mixed $reducer
+     * @param callable $reducer (value:mixed,index:int):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
@@ -273,7 +273,7 @@ class Map implements IMap
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Map::createFromArray($this->toArray());
+        return \MF\Collection\Immutable\Map::of($this->toArray());
     }
 
     public function clear()

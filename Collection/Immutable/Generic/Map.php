@@ -55,7 +55,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param bool $recursive
      * @return static
      */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use createGenericFromArray instead.'
@@ -148,7 +148,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
+     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $mappedMapValueType
      * @return \MF\Collection\Immutable\IMap|static
      */
@@ -166,7 +166,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable (key:<TKey>,value:<TValue>):bool $callback
+     * @param callable $callback (key:<TKey>,value:<TValue>):bool
      * @return static
      */
     public function filter($callback)
@@ -200,7 +200,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue> $reducer
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */

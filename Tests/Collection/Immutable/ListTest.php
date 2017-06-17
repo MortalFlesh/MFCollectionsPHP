@@ -33,7 +33,7 @@ class ListTest extends TestCase
      */
     public function testShouldCreateListFromArray(array $array, $recursive)
     {
-        $list = ListCollection::createFromArray($array, $recursive);
+        $list = ListCollection::of($array, $recursive);
 
         $this->assertEquals($array, $list->toArray());
     }
@@ -78,7 +78,7 @@ class ListTest extends TestCase
             $subArray,
         ];
 
-        $list = ListCollection::createFromArray($array, $recursive);
+        $list = ListCollection::of($array, $recursive);
 
         if ($recursive) {
             $this->assertInstanceOf(ListCollection::class, $list->last());
@@ -121,7 +121,7 @@ class ListTest extends TestCase
 
     public function testShouldIterateThroughList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $i = 0;
         foreach ($list as $value) {
@@ -144,7 +144,7 @@ class ListTest extends TestCase
     public function testShouldGetCount(array $array)
     {
         $originalCount = count($array);
-        $list = ListCollection::createFromArray($array);
+        $list = ListCollection::of($array);
 
         $this->assertCount($originalCount, $list);
 
@@ -265,7 +265,7 @@ class ListTest extends TestCase
 
     public function testShouldSortValues()
     {
-        $list = ListCollection::createFromArray([1, 4, 3, 4, 2, 5, 4]);
+        $list = ListCollection::of([1, 4, 3, 4, 2, 5, 4]);
 
         $sortedList = $list->sort();
 
@@ -275,7 +275,7 @@ class ListTest extends TestCase
 
     public function testShouldForeachItemInList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $list->each(function ($value, $i) {
             if ($i === 0) {
@@ -290,7 +290,7 @@ class ListTest extends TestCase
 
     public function testShouldMapItemsToNewList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $newList = $list->map(function ($value, $i) {
             if ($i === 0) {
@@ -310,7 +310,7 @@ class ListTest extends TestCase
 
     public function testShouldFilterMapToNewList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $newList = $list->filter(function ($value, $i) {
             if ($i === 0) {

@@ -5,7 +5,7 @@ namespace MF\Collection\Generic;
 interface IMap extends \MF\Collection\IMap, ICollection
 {
     /**
-     * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
+     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $mappedMapValueType
      * @return \MF\Collection\Mutable\IMap|static
      */

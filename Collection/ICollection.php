@@ -6,9 +6,9 @@ interface ICollection extends \IteratorAggregate, \Countable
 {
     /**
      * @param array $array
-     * @return static
+     * @return ICollection
      */
-    public static function createFromArray(array $array);
+    public static function of(array $array);
 
     /**
      * @param mixed $value
@@ -22,23 +22,23 @@ interface ICollection extends \IteratorAggregate, \Countable
 
     public function toArray(): array;
 
-    /** @param callable (value:mixed,index:mixed):void $callback */
+    /** @param callable $callback (value:mixed,index:mixed):void */
     public function each(callable $callback): void;
 
     /**
-     * @param callable (value:mixed,index:mixed):mixed $callback
-     * @return static
+     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @return ICollection
      */
     public function map($callback);
 
     /**
-     * @param callable (value:mixed,index:mixed):bool $callback
-     * @return static
+     * @param callable $callback (value:mixed,index:mixed):bool
+     * @return ICollection
      */
     public function filter($callback);
 
     /**
-     * @param callable (total:mixed,value:mixed,index:mixed,collection:CollectionInterface):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:CollectionInterface):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */

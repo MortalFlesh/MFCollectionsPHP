@@ -16,7 +16,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable (key:mixed,value:mixed):mixed $callback
+     * @param callable $callback (key:mixed,value:mixed):mixed
      * @return static
      */
     public function map($callback)
@@ -27,7 +27,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable (key:mixed,value:mixed):bool $callback
+     * @param callable $callback (key:mixed,value:mixed):bool
      * @return static
      */
     public function filter($callback)
@@ -38,7 +38,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable (total:mixed,value:mixed,index:mixed,map:Map):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,map:Map):mixed
      * @param null|mixed $initialValue
      * @return mixed
      */
@@ -54,6 +54,6 @@ class Map extends \MF\Collection\Mutable\Map
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Enhanced\Map::createFromArray($this->toArray());
+        return \MF\Collection\Immutable\Enhanced\Map::of($this->toArray());
     }
 }

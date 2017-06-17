@@ -14,13 +14,13 @@ class ListCollection implements IList
         $this->listArray = [];
     }
 
-    public static function createFromArray(array $array, bool $recursive = false): IList
+    public static function of(array $array, bool $recursive = false): IList
     {
         $list = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $list = $list->add(static::createFromArray($value, true));
+                $list = $list->add(static::of($value, true));
             } else {
                 $list = $list->add($value);
             }
@@ -104,7 +104,7 @@ class ListCollection implements IList
         $sortedMap = $this->listArray;
         sort($sortedMap);
 
-        return static::createFromArray($sortedMap);
+        return static::of($sortedMap);
     }
 
     /**
@@ -158,7 +158,7 @@ class ListCollection implements IList
 
         unset($list->listArray[$index]);
 
-        return static::createFromArray($list->listArray);
+        return static::of($list->listArray);
     }
 
     /**
@@ -172,7 +172,7 @@ class ListCollection implements IList
         });
     }
 
-    /** @param callable (value:mixed,index:int):void $callback */
+    /** @param callable $callback (value:mixed,index:int):void */
     public function each(callable $callback): void
     {
         foreach ($this->listArray as $i => $value) {
@@ -191,7 +191,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (value:mixed,index:int):mixed $callback
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return static
      */
     public function map($callback)
@@ -218,7 +218,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (value:mixed,index:int):bool $callback
+     * @param callable $callback (value:mixed,index:int):bool
      * @return static
      */
     public function filter($callback)
@@ -247,7 +247,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (total:mixed,value:mixed,index:int,list:List):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:int,list:List):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
@@ -269,7 +269,7 @@ class ListCollection implements IList
      */
     public function asMutable()
     {
-        return \MF\Collection\Mutable\ListCollection::createFromArray($this->toArray());
+        return \MF\Collection\Mutable\ListCollection::of($this->toArray());
     }
 
     /**

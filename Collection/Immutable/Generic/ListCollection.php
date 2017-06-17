@@ -43,7 +43,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         );
     }
 
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.'
@@ -141,7 +141,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
+     * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
      * @param string|null $mappedListValueType
      * @return \MF\Collection\Immutable\IList|static
      */
@@ -159,7 +159,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):bool $callback
+     * @param callable $callback (value:<TValue>,index:<TKey>):bool
      * @return static
      */
     public function filter($callback)
@@ -171,7 +171,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue> $reducer
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */

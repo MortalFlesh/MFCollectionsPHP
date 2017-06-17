@@ -68,7 +68,7 @@ class ListTest extends TestCase
     {
         $this->expectException(\BadMethodCallException::class);
 
-        ListCollection::createFromArray([]);
+        ListCollection::of([]);
     }
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingGenericCollection()
@@ -263,8 +263,8 @@ class ListTest extends TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = \MF\Collection\Mutable\ListCollection::createFromArray([1, 2, 3]);
-        $list2 = \MF\Collection\Mutable\ListCollection::createFromArray(['one', 'two']);
+        $list1 = \MF\Collection\Mutable\ListCollection::of([1, 2, 3]);
+        $list2 = \MF\Collection\Mutable\ListCollection::of(['one', 'two']);
 
         $list = new ListCollection(\MF\Collection\Mutable\ListCollection::class);
         $list->add($list1);

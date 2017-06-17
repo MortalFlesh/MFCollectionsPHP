@@ -16,7 +16,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable (value:mixed,index:int):mixed $callback
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return static
      */
     public function map($callback)
@@ -27,7 +27,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable (value:mixed,index:int):bool $callback
+     * @param callable $callback (value:mixed,index:int):bool
      * @return static
      */
     public function filter($callback)
@@ -38,7 +38,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable (total:mixed,value:mixed,index:int,list:List):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:int,list:List):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
@@ -54,6 +54,6 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
      */
     public function asMutable()
     {
-        return \MF\Collection\Mutable\Enhanced\ListCollection::createFromArray($this->toArray());
+        return \MF\Collection\Mutable\Enhanced\ListCollection::of($this->toArray());
     }
 }

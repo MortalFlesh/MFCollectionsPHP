@@ -37,7 +37,7 @@ class MapTest extends TestCase
     {
         $this->expectException(\BadMethodCallException::class);
 
-        Map::createFromArray([]);
+        Map::of([]);
     }
 
     public function testShouldThrowExceptionWhenBadCreateGenericFunctionIsUsed()

@@ -48,7 +48,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param bool $recursive
      * @return static
      */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use createGenericListFromArray instead.'
@@ -123,7 +123,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
+     * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
      * @param string|null $mappedListValueType
      * @return \MF\Collection\Mutable\IList|static
      */
@@ -141,7 +141,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):bool $callback
+     * @param callable $callback (value:<TValue>,index:<TKey>):bool
      * @return static
      */
     public function filter($callback)
@@ -153,7 +153,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue> $reducer
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */

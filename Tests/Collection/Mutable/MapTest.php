@@ -37,7 +37,7 @@ class MapTest extends TestCase
      */
     public function testShouldCreateMapFromArray(array $array, $recursive)
     {
-        $map = Map::createFromArray($array, $recursive);
+        $map = Map::of($array, $recursive);
 
         $this->assertEquals($array, $map->toArray());
     }
@@ -83,7 +83,7 @@ class MapTest extends TestCase
             $key => $subArray,
         ];
 
-        $map = Map::createFromArray($array, $recursive);
+        $map = Map::of($array, $recursive);
 
         if ($recursive) {
             $this->assertInstanceOf(Map::class, $map[$key]);
@@ -186,7 +186,7 @@ class MapTest extends TestCase
 
     public function testShouldIterateThroughMap()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $i = 0;
         foreach ($map as $key => $value) {
@@ -212,7 +212,7 @@ class MapTest extends TestCase
     public function testShouldGetCount(array $array)
     {
         $originalCount = count($array);
-        $map = Map::createFromArray($array);
+        $map = Map::of($array);
 
         $this->assertCount($originalCount, $map);
 
@@ -272,7 +272,7 @@ class MapTest extends TestCase
 
     public function testShouldForeachItemInMap()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $map->each(function ($value, $key) {
             if ($key === 1) {
@@ -287,7 +287,7 @@ class MapTest extends TestCase
 
     public function testShouldMapItemsToNewMap()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $newMap = $map->map(function ($key, $value) {
             if ($key === 1) {
@@ -307,7 +307,7 @@ class MapTest extends TestCase
 
     public function testShouldFilterMapToNewMap()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $newMap = $map->filter(function ($key, $value) {
             if ($key === 1) {
@@ -340,7 +340,7 @@ class MapTest extends TestCase
 
     public function testShouldGetKeys()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $keys = $map->keys();
 
@@ -358,7 +358,7 @@ class MapTest extends TestCase
 
     public function testShouldGetValues()
     {
-        $map = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
+        $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
 
         $values = $map->values();
 
