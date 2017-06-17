@@ -25,7 +25,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /** @var TypeValidator */
     private $typeValidator;
 
-    public static function createGenericListFromArray(string $valueType, array $array)
+    public static function ofT(string $valueType, array $array)
     {
         $list = new static($valueType);
 
@@ -36,17 +36,10 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         return $list;
     }
 
-    public static function createGenericFromArray(string $keyType, string $valueType, array $array)
-    {
-        throw new \BadMethodCallException(
-            'This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.'
-        );
-    }
-
     public static function of(array $array, $recursive = false)
     {
         throw new \BadMethodCallException(
-            'This method should not be used with Immutable Generic List. Use createGenericListFromArray instead.'
+            'This method should not be used with Immutable Generic List. Use ofT instead.'
         );
     }
 
@@ -126,7 +119,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
         unset($list->listArray[$index]);
 
-        return static::createGenericListFromArray($list->typeValidator->getValueType(), $list->listArray);
+        return static::ofT($list->typeValidator->getValueType(), $list->listArray);
     }
 
     /**
@@ -191,7 +184,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function asMutable()
     {
-        return \MF\Collection\Mutable\Generic\ListCollection::createGenericListFromArray(
+        return \MF\Collection\Mutable\Generic\ListCollection::ofT(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

@@ -40,17 +40,10 @@ class MapTest extends TestCase
         Map::of([]);
     }
 
-    public function testShouldThrowExceptionWhenBadCreateGenericFunctionIsUsed()
-    {
-        $this->expectException(\BadMethodCallException::class);
-
-        Map::createGenericListFromArray('string', []);
-    }
-
     public function testShouldCreateMapFromArray()
     {
         $array = ['key' => 1, 'key2' => 2];
-        $map = Map::createGenericFromArray('string', 'int', $array);
+        $map = Map::ofKT('string', 'int', $array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());
@@ -61,7 +54,7 @@ class MapTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $array = ['key' => 1, 'key2' => 2];
-        $map = Map::createGenericFromArray('int', 'int', $array);
+        $map = Map::ofKT('int', 'int', $array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());

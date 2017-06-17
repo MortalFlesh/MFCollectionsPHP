@@ -38,7 +38,7 @@ interface ICollection extends \IteratorAggregate, \Countable
     public function filter($callback);
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:CollectionInterface):mixed
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ICollection):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */

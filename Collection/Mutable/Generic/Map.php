@@ -32,7 +32,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     /** @var TypeValidator */
     private $typeValidator;
 
-    public static function createGenericFromArray(string $keyType, string $valueType, array $array)
+    public static function ofKT(string $keyType, string $valueType, array $array)
     {
         $map = new static($keyType, $valueType);
 
@@ -43,13 +43,6 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         return $map;
     }
 
-    public static function createGenericListFromArray(string $valueType, array $array)
-    {
-        throw new \BadMethodCallException(
-            'This method should not be used with Generic Map. Use createGenericFromArray instead.'
-        );
-    }
-
     /**
      * @param array $array
      * @param bool $recursive
@@ -58,7 +51,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     public static function of(array $array, $recursive = false)
     {
         throw new \BadMethodCallException(
-            'This method should not be used with Generic Map. Use createGenericFromArray instead.'
+            'This method should not be used with Generic Map. Use ofKT instead.'
         );
     }
 
@@ -180,7 +173,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function keys()
     {
-        return ListCollection::createGenericListFromArray(
+        return ListCollection::ofT(
             $this->typeValidator->getKeyType(),
             array_keys($this->mapArray)
         );
@@ -191,7 +184,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function values()
     {
-        return ListCollection::createGenericListFromArray(
+        return ListCollection::ofT(
             $this->typeValidator->getValueType(),
             array_values($this->mapArray)
         );
@@ -218,7 +211,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Generic\Map::createGenericFromArray(
+        return \MF\Collection\Immutable\Generic\Map::ofKT(
             $this->typeValidator->getKeyType(),
             $this->typeValidator->getValueType(),
             $this->toArray()

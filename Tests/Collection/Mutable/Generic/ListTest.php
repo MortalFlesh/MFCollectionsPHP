@@ -41,7 +41,7 @@ class ListTest extends TestCase
      */
     public function testShouldCreateList($valueType, array $values)
     {
-        $list = ListCollection::createGenericListFromArray($valueType, $values);
+        $list = ListCollection::ofT($valueType, $values);
 
         $this->assertEquals($values, $list->toArray());
     }
@@ -71,13 +71,6 @@ class ListTest extends TestCase
         ListCollection::of([]);
     }
 
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingGenericCollection()
-    {
-        $this->expectException(\BadMethodCallException::class);
-
-        ListCollection::createGenericFromArray('string', 'int', []);
-    }
-
     /**
      * @param string $valueType
      * @param array $values
@@ -88,7 +81,7 @@ class ListTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ListCollection::createGenericListFromArray($valueType, $values);
+        ListCollection::ofT($valueType, $values);
     }
 
     public function invalidValuesProvider()

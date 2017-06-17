@@ -98,7 +98,7 @@ class MapTest extends TestCase
         ];
     }
 
-    public function testShouldThrowBadMathodCallExceptionOnAddItemsToMapArrayWay()
+    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay()
     {
         $this->expectException(\BadMethodCallException::class);
 
