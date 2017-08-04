@@ -44,9 +44,9 @@
         "phpstan": "vendor/bin/phpstan analyse -l 2 -c phpstan.neon Collection Tests",
         "phpstan5": "vendor/bin/phpstan analyse -l 5 -c phpstan.neon Collection Tests",
         "fix": [
-            "./bin/php-cs-fixer fix src",
-            "./bin/php-cs-fixer fix tests",
-            "./bin/phpcbf --standard=ruleset.xml ."
+            "vendor/bin/php-cs-fixer fix src",
+            "vendor/bin/php-cs-fixer fix tests",
+            "vendor/bin/phpcbf --standard=ruleset.xml ."
         ]
     }
 }
