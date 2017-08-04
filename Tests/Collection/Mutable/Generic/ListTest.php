@@ -211,15 +211,6 @@ class ListTest extends TestCase
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewListByArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $newList = $this->list->filter('($v, $i) => true');
-
-        $newList->add(1);
-    }
-
     public function testShouldCombineMapAndFilterToCreateNewMap()
     {
         $this->list->add('key');
@@ -287,7 +278,7 @@ class ListTest extends TestCase
 
         $sumOfIdsGreaterThan1 = $list
             ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()')
+            ->map('($v, $i) => $v->getId()', 'int')
             ->reduce('($t, $v) => $t + $v');
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);

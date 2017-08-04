@@ -12,7 +12,7 @@ class ListCollection implements IList
         $this->listArray = [];
     }
 
-    public static function of(array $array, bool $recursive = false): IList
+    public static function of(array $array, bool $recursive = false)
     {
         $list = new static();
 
@@ -44,8 +44,8 @@ class ListCollection implements IList
 
     public function getIterator(): \Generator
     {
-        foreach ($this->listArray as $index => $value) {
-            yield $index => $value;
+        foreach ($this->listArray as $i => $value) {
+            yield $i => $value;
         }
     }
 
@@ -99,9 +99,6 @@ class ListCollection implements IList
         return array_pop($list);
     }
 
-    /**
-     * @return static
-     */
     public function sort()
     {
         $sortedMap = $this->listArray;
@@ -110,10 +107,7 @@ class ListCollection implements IList
         return static::of($sortedMap);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->listArray);
     }
@@ -144,15 +138,11 @@ class ListCollection implements IList
         $index = $this->find($value);
 
         if ($index !== false) {
-            $this->removeIndex($index);
+            $this->removeIndex((int) $index);
         }
     }
 
-    /**
-     * @param int $index
-     * @param bool $normalize
-     */
-    private function removeIndex($index, $normalize = true)
+    private function removeIndex(int $index, bool $normalize = true)
     {
         unset($this->listArray[$index]);
 
@@ -189,7 +179,7 @@ class ListCollection implements IList
     /** @param callable $callback (value:mixed,index:int):void */
     public function each(callable $callback): void
     {
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $callback($value, $i);
         }
     }
@@ -197,7 +187,7 @@ class ListCollection implements IList
     /**
      * @param callable $callback
      */
-    private function assertCallback($callback)
+    protected function assertCallback($callback)
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');
@@ -215,16 +205,9 @@ class ListCollection implements IList
         return $this->mapList($list, $callback);
     }
 
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return IList
-     */
-    protected function mapList(IList $list, $callback)
+    private function mapList(IList $list, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $list->add($callback($value, $i));
         }
 
@@ -242,16 +225,9 @@ class ListCollection implements IList
         return $this->filterList($list, $callback);
     }
 
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return static
-     */
-    protected function filterList(IList $list, $callback)
+    private function filterList(IList $list, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             if ($callback($value, $i)) {
                 $list->add($value);
             }
@@ -271,17 +247,11 @@ class ListCollection implements IList
 
         $total = $initialValue;
 
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $total = $reducer($total, $value, $i, $this);
         }
 
         return $total;
-    }
-
-    /** @return \MF\Collection\Immutable\IList */
-    public function asImmutable()
-    {
-        return \MF\Collection\Immutable\ListCollection::of($this->toArray());
     }
 
     public function clear()
@@ -292,5 +262,11 @@ class ListCollection implements IList
     public function isEmpty(): bool
     {
         return empty($this->listArray);
+    }
+
+    /** @return \MF\Collection\Immutable\IList */
+    public function asImmutable()
+    {
+        return \MF\Collection\Immutable\ListCollection::of($this->toArray());
     }
 }

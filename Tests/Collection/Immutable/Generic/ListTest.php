@@ -2,13 +2,14 @@
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
-use MF\Collection\ICollection as BaseCollectionInterface;
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList as GenericListInterface;
-use MF\Collection\Immutable\Generic\ListCollection;
-use MF\Collection\Immutable\ListCollection as BaseImmutableListCollection;
-use MF\Collection\Immutable\IList;
+use MF\Collection\ICollection as BaseCollectionInterface;
 use MF\Collection\IList as BaseListInterface;
+use MF\Collection\Immutable\Generic\IList as ImmutableGenericInterface;
+use MF\Collection\Immutable\Generic\ListCollection;
+use MF\Collection\Immutable\IList;
+use MF\Collection\Immutable\ListCollection as BaseImmutableListCollection;
 use MF\Collection\Mutable\ListCollection as MutableListCollection;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
@@ -18,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListTest extends TestCase
 {
-    /** @var ListCollection */
+    /** @var ListCollection|ImmutableGenericInterface */
     private $list;
 
     public function setUp()
@@ -28,6 +29,7 @@ class ListTest extends TestCase
 
     public function testShouldImplementsInterfaces()
     {
+        $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list);
         $this->assertInstanceOf(GenericListInterface::class, $this->list);
         $this->assertInstanceOf(IList::class, $this->list);
         $this->assertInstanceOf(BaseListInterface::class, $this->list);
@@ -36,6 +38,8 @@ class ListTest extends TestCase
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
+
+        $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list->add('foo'));
     }
 
     /**
@@ -118,26 +122,12 @@ class ListTest extends TestCase
         $this->assertEquals($firstValue, $this->list->first());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenUnshiftInvalidValue()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->unshift(1);
-    }
-
     public function testShouldCountainsValue()
     {
         $this->assertFalse($this->list->contains('value'));
 
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionWhenContainsInvalidType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->contains(true);
     }
 
     public function testShouldRemoveFirstValue()
@@ -232,15 +222,6 @@ class ListTest extends TestCase
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewListByArrowFunction()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $newList = $this->list->filter('($v, $i) => true');
-
-        $newList->add(1);
-    }
-
     public function testShouldCombineMapAndFilterToCreateNewMap()
     {
         $this->list = $this->list->add('key');
@@ -308,7 +289,7 @@ class ListTest extends TestCase
 
         $sumOfIdsGreaterThan1 = $list
             ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()')
+            ->map('($v, $i) => $v->getId()', 'int')
             ->reduce('($t, $v) => $t + $v');
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);

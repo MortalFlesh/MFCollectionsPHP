@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class ListTest extends TestCase
 {
-    /** @var ListCollection */
+    /** @var ListCollection|IList */
     protected $list;
 
     public function setUp()
@@ -325,20 +325,6 @@ class ListTest extends TestCase
         });
 
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->map(1);
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->filter(1);
     }
 
     public function testShouldCallReducerCorrectly()

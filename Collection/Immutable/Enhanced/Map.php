@@ -50,7 +50,7 @@ class Map extends \MF\Collection\Immutable\Map
     }
 
     /**
-     * @return \MF\Collection\Mutable\Enhanced\Map
+     * @return \MF\Collection\Mutable\IMap
      */
     public function asMutable()
     {

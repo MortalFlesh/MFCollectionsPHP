@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-use MF\Collection\Generic\IList;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
@@ -25,9 +24,14 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /** @var TypeValidator */
     private $typeValidator;
 
-    public static function ofT(string $valueType, array $array)
+    /**
+     * @param string $TValue
+     * @param array $array
+     * @return static
+     */
+    public static function ofT(string $TValue, array $array)
     {
-        $list = new static($valueType);
+        $list = new static($TValue);
 
         foreach ($array as $item) {
             $list->add($item);
@@ -36,26 +40,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         return $list;
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return static
-     */
-    public static function of(array $array, $recursive = false)
-    {
-        throw new \BadMethodCallException(
-            'This method should not be used with Generic List. Use ofT instead.'
-        );
-    }
-
-    /**
-     * @param string $valueType
-     */
-    public function __construct($valueType)
+    public function __construct(string $TValue)
     {
         $this->typeValidator = new TypeValidator(
             TypeValidator::TYPE_INT,
-            $valueType,
+            $TValue,
             [TypeValidator::TYPE_INT],
             $this->allowedValueTypes
         );
@@ -116,17 +105,13 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
-     * @param string|null $mappedListValueType
-     * @return \MF\Collection\Mutable\IList|static
+     * @param callable $callback (value:<TValue>,index:int):<TValue>
+     * @param string|null $TValue
+     * @return IList
      */
-    public function map($callback, $mappedListValueType = null)
+    public function map($callback, string $TValue = null)
     {
-        if (isset($mappedListValueType)) {
-            $list = new static($mappedListValueType);
-        } else {
-            $list = new \MF\Collection\Mutable\Enhanced\ListCollection();
-        }
+        $list = new static($TValue ?: $this->typeValidator->getValueType());
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
@@ -134,8 +119,22 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:<TKey>):bool
-     * @return static
+     * @param IList $list
+     * @param callable $callback
+     * @return IList
+     */
+    private function mapList(IList $list, callable $callback)
+    {
+        foreach ($this as $i => $value) {
+            $list->add($callback($value, $i));
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param callable $callback (value:<TValue>,index:int):bool
+     * @return IList
      */
     public function filter($callback)
     {
@@ -146,7 +145,25 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue>
+     * @param IList $list
+     * @param callable $callback
+     * @return IList
+     */
+    private function filterList(IList $list, callable $callback)
+    {
+        $this->assertCallback($callback);
+
+        foreach ($this as $i => $value) {
+            if ($callback($value, $i)) {
+                $list->add($value);
+            }
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */
@@ -162,7 +179,18 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return \MF\Collection\Immutable\Generic\ListCollection
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(array $array, bool $recursive = false): \MF\Collection\Mutable\IList
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use ofT instead.'
+        );
+    }
+
+    /**
+     * @return \MF\Collection\Immutable\Generic\IList
      */
     public function asImmutable()
     {

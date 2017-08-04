@@ -1,8 +1,8 @@
 <?php
 
-namespace MF\Collection\Generic;
+namespace MF\Collection\Immutable\Generic;
 
-interface IMap extends \MF\Collection\IMap, ICollection
+interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMap
 {
     /**
      * @param string $TKey
@@ -17,6 +17,22 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @see IMap::ofKT()
      */
     public static function of(array $array, bool $recursive = false);
+
+    /**
+     * @param <TKey> $key
+     * @param <TValue> $value
+     * @return IMap
+     */
+    public function set($key, $value);
+
+    /**
+     * @param <TKey> $key
+     * @return IMap
+     */
+    public function remove($key);
+
+    /** @return IMap */
+    public function clear();
 
     /** @return IList<TKey> */
     public function keys();
@@ -36,4 +52,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);
+
+    /** @return \MF\Collection\Mutable\Generic\IMap */
+    public function asMutable();
 }

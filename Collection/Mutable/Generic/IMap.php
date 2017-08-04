@@ -1,8 +1,8 @@
 <?php
 
-namespace MF\Collection\Generic;
+namespace MF\Collection\Mutable\Generic;
 
-interface IMap extends \MF\Collection\IMap, ICollection
+interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Mutable\IMap
 {
     /**
      * @param string $TKey
@@ -36,4 +36,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);
+
+    /** @return \MF\Collection\Immutable\Generic\IMap */
+    public function asImmutable();
 }

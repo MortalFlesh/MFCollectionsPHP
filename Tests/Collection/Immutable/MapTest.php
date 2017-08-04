@@ -319,20 +319,6 @@ class MapTest extends TestCase
         $this->assertEquals(['three' => 3], $newMap->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->map->map(1);
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->map->filter(1);
-    }
-
     public function testShouldGetKeys()
     {
         $map = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);

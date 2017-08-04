@@ -348,11 +348,11 @@ class MapTest extends TestCase
         $map = $map->set('one', new SimpleEntity(1));
         $map = $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map('($k, $v) => $v->getId()');
+        $newMap = $map->map('($k, $v) => $v->getId()', 'int');
 
         $this->assertNotSame($map, $newMap);
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\Enhanced\Map::class, $newMap);
+        $this->assertInstanceOf(\MF\Collection\Immutable\Generic\Map::class, $newMap);
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 

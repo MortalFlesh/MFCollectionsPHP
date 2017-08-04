@@ -4,6 +4,13 @@ namespace MF\Collection;
 
 interface IList extends ICollection
 {
+    /**
+     * @param array $array
+     * @param bool $recursive
+     * @return IList
+     */
+    public static function of(array $array, bool $recursive = false);
+
     /** @param mixed $value */
     public function add($value);
 
@@ -16,7 +23,7 @@ interface IList extends ICollection
     /** @return mixed */
     public function last();
 
-    /** @return static */
+    /** @return IList */
     public function sort();
 
     /** @param mixed $value */
@@ -24,4 +31,16 @@ interface IList extends ICollection
 
     /** @param mixed $value */
     public function removeAll($value);
+
+    /**
+     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @return IList
+     */
+    public function map($callback);
+
+    /**
+     * @param callable $callback (value:mixed,index:mixed):bool
+     * @return IList
+     */
+    public function filter($callback);
 }

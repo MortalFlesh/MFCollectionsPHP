@@ -17,7 +17,7 @@ class Map implements IMap
      * @param bool $recursive
      * @return static
      */
-    public static function of(array $array, $recursive = false)
+    public static function of(array $array, bool $recursive = false)
     {
         $map = new static();
 
@@ -43,7 +43,7 @@ class Map implements IMap
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->containsKey($offset);
     }
@@ -52,7 +52,7 @@ class Map implements IMap
      * @param mixed $key
      * @return bool
      */
-    public function containsKey($key)
+    public function containsKey($key): bool
     {
         return array_key_exists($key, $this->mapArray);
     }
@@ -146,10 +146,7 @@ class Map implements IMap
         return $map;
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->mapArray);
     }
@@ -158,7 +155,7 @@ class Map implements IMap
     {
         $array = [];
 
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             if ($value instanceof ICollection) {
                 $value = $value->toArray();
             }
@@ -174,18 +171,8 @@ class Map implements IMap
      */
     public function each(callable $callback): void
     {
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             $callback($value, $key);
-        }
-    }
-
-    /**
-     * @param callable $callback
-     */
-    private function assertCallback($callback)
-    {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
         }
     }
 
@@ -200,16 +187,9 @@ class Map implements IMap
         return $this->mapToMap($map, $callback);
     }
 
-    /**
-     * @param IMap $map
-     * @param callable $callback
-     * @return IMap
-     */
-    protected function mapToMap(IMap $map, $callback)
+    protected function mapToMap(IMap $map, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             $map = $map->set($key, $callback($key, $value));
         }
 
@@ -227,16 +207,9 @@ class Map implements IMap
         return $this->filterToMap($map, $callback);
     }
 
-    /**
-     * @param IMap $map
-     * @param callable $callback
-     * @return static
-     */
-    protected function filterToMap(IMap $map, $callback)
+    protected function filterToMap(IMap $map, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             if ($callback($key, $value)) {
                 $map = $map->set($key, $value);
             }
@@ -246,7 +219,7 @@ class Map implements IMap
     }
 
     /**
-     * @return ListCollection
+     * @return IList
      */
     public function keys()
     {
@@ -254,7 +227,7 @@ class Map implements IMap
     }
 
     /**
-     * @return ListCollection
+     * @return IList
      */
     public function values()
     {
@@ -272,17 +245,21 @@ class Map implements IMap
 
         $total = $initialValue;
 
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             $total = $reducer($total, $value, $key, $this);
         }
 
         return $total;
     }
 
-    /** @return \MF\Collection\IMap */
-    public function asMutable()
+    /**
+     * @param callable $callback
+     */
+    private function assertCallback($callback)
     {
-        return \MF\Collection\Mutable\Map::of($this->toArray());
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException('Callback must be callable');
+        }
     }
 
     /**
@@ -296,5 +273,11 @@ class Map implements IMap
     public function isEmpty(): bool
     {
         return empty($this->mapArray);
+    }
+
+    /** @return \MF\Collection\Mutable\IMap */
+    public function asMutable()
+    {
+        return \MF\Collection\Mutable\Map::of($this->toArray());
     }
 }

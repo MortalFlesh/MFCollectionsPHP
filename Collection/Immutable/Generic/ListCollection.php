@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Immutable\Generic;
 
-use MF\Collection\Generic\IList;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
@@ -25,9 +24,9 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /** @var TypeValidator */
     private $typeValidator;
 
-    public static function ofT(string $valueType, array $array)
+    public static function ofT(string $TValue, array $array): IList
     {
-        $list = new static($valueType);
+        $list = new static($TValue);
 
         foreach ($array as $item) {
             $list = $list->add($item);
@@ -36,21 +35,22 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         return $list;
     }
 
-    public static function of(array $array, $recursive = false)
+    /**
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use ofT instead.'
         );
     }
 
-    /**
-     * @param string $valueType
-     */
-    public function __construct($valueType)
+    public function __construct(string $TValue)
     {
         $this->typeValidator = new TypeValidator(
             TypeValidator::TYPE_INT,
-            $valueType,
+            $TValue,
             [TypeValidator::TYPE_INT],
             $this->allowedValueTypes
         );
@@ -94,7 +94,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     /**
      * @param <TValue> $value
-     * @return static
+     * @return IList
      */
     public function removeFirst($value)
     {
@@ -103,17 +103,13 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $index = $this->find($value);
 
         if ($index !== false) {
-            return $this->removeIndex($index);
+            return $this->removeIndex((int) $index);
         }
 
         return $this;
     }
 
-    /**
-     * @param int $index
-     * @return static
-     */
-    private function removeIndex($index)
+    private function removeIndex(int $index): IList
     {
         $list = clone $this;
 
@@ -135,16 +131,12 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     /**
      * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
-     * @param string|null $mappedListValueType
-     * @return \MF\Collection\Immutable\IList|static
+     * @param string|null $TValue
+     * @return static
      */
-    public function map($callback, $mappedListValueType = null)
+    public function map($callback, string $TValue = null)
     {
-        if (isset($mappedListValueType)) {
-            $list = new static($mappedListValueType);
-        } else {
-            $list = new \MF\Collection\Immutable\Enhanced\ListCollection();
-        }
+        $list = new static($TValue ?: $this->typeValidator->getValueType());
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
@@ -180,21 +172,19 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @return \MF\Collection\Mutable\Generic\ListCollection
+     * @return static
      */
+    public function clear()
+    {
+        return new static($this->typeValidator->getValueType());
+    }
+
+    /** @return \MF\Collection\Mutable\Generic\IList */
     public function asMutable()
     {
         return \MF\Collection\Mutable\Generic\ListCollection::ofT(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );
-    }
-
-    /**
-     * @return static
-     */
-    public function clear()
-    {
-        return new static($this->typeValidator->getValueType());
     }
 }

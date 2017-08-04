@@ -2,7 +2,6 @@
 
 namespace MF\Tests\Collection\Mutable;
 
-use MF\Collection\IList as BaseListInterface;
 use MF\Collection\Mutable\ICollection;
 use MF\Collection\Mutable\ListCollection;
 use MF\Collection\Mutable\IList;
@@ -20,9 +19,10 @@ class ListTest extends TestCase
 
     public function testShouldImplementsInterfaces()
     {
-        $this->assertInstanceOf(BaseListInterface::class, $this->list);
-        $this->assertInstanceOf(IList::class, $this->list);
         $this->assertInstanceOf(ICollection::class, $this->list);
+        $this->assertInstanceOf(IList::class, $this->list);
+        $this->assertInstanceOf(\MF\Collection\ICollection::class, $this->list);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
@@ -339,20 +339,6 @@ class ListTest extends TestCase
         });
 
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->map(1);
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->list->filter(1);
     }
 
     public function testShouldCallReducerCorrectly()

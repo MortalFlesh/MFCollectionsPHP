@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Immutable\Enhanced;
 
+use MF\Collection\Immutable\IList;
 use MF\Parser\CallbackParser;
 
 class ListCollection extends \MF\Collection\Immutable\ListCollection
@@ -19,7 +20,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
      * @param callable $callback (value:mixed,index:int):mixed
      * @return static
      */
-    public function map($callback)
+    public function map($callback): IList
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
@@ -30,7 +31,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
      * @param callable $callback (value:mixed,index:int):bool
      * @return static
      */
-    public function filter($callback)
+    public function filter($callback): IList
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
@@ -49,9 +50,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
         return parent::reduce($reducer, $initialValue);
     }
 
-    /**
-     * @return \MF\Collection\Mutable\ListCollection
-     */
+    /** @return \MF\Collection\Mutable\IList */
     public function asMutable()
     {
         return \MF\Collection\Mutable\Enhanced\ListCollection::of($this->toArray());

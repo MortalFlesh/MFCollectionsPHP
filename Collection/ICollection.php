@@ -6,9 +6,10 @@ interface ICollection extends \IteratorAggregate, \Countable
 {
     /**
      * @param array $array
+     * @param bool $recursive
      * @return ICollection
      */
-    public static function of(array $array);
+    public static function of(array $array, bool $recursive = false);
 
     /**
      * @param mixed $value
@@ -43,4 +44,8 @@ interface ICollection extends \IteratorAggregate, \Countable
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null);
+
+    public function count(): int;
+
+    public function getIterator(): \Generator;
 }
