@@ -44,12 +44,11 @@ class ListCollection implements IList
         return $array;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
-        return new \ArrayIterator($this->listArray);
+        foreach ($this->listArray as $index => $value) {
+            yield $index => $value;
+        }
     }
 
     /**

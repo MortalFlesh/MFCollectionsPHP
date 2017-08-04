@@ -5,6 +5,7 @@
 - PhpUnit updated
 - code health dependencies added
 - BC: drop PHP 5 support, PHP 7.1 required
+- `Generators` used for iterating collections
 
 ## 1.0.0 - 2016-09-14
 ### Added

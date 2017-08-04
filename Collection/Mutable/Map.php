@@ -32,12 +32,11 @@ class Map implements IMap
         return $map;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
-        return new \ArrayIterator($this->mapArray);
+        foreach ($this->mapArray as $key => $value) {
+            yield $key => $value;
+        }
     }
 
     /**
