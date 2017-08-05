@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
+## 2.0.0 - 2017-08-05
 - PhpUnit updated
 - code health dependencies added
 - BC: drop PHP 5 support, PHP 7.1 required
