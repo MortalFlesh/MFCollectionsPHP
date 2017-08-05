@@ -2,12 +2,12 @@
 
 namespace MF\Tests\Collection\Mutable;
 
-use MF\Collection\IList as BaseListInterface;
 use MF\Collection\Mutable\ICollection;
 use MF\Collection\Mutable\ListCollection;
 use MF\Collection\Mutable\IList;
+use PHPUnit\Framework\TestCase;
 
-class ListTest extends \PHPUnit_Framework_TestCase
+class ListTest extends TestCase
 {
     /** @var ListCollection */
     protected $list;
@@ -19,9 +19,10 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
-        $this->assertInstanceOf(BaseListInterface::class, $this->list);
-        $this->assertInstanceOf(IList::class, $this->list);
         $this->assertInstanceOf(ICollection::class, $this->list);
+        $this->assertInstanceOf(IList::class, $this->list);
+        $this->assertInstanceOf(\MF\Collection\ICollection::class, $this->list);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
@@ -34,7 +35,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldCreateListFromArray(array $array, $recursive)
     {
-        $list = ListCollection::createFromArray($array, $recursive);
+        $list = ListCollection::of($array, $recursive);
 
         $this->assertEquals($array, $list->toArray());
     }
@@ -79,7 +80,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
             $subArray,
         ];
 
-        $list = ListCollection::createFromArray($array, $recursive);
+        $list = ListCollection::of($array, $recursive);
 
         if ($recursive) {
             $this->assertInstanceOf(ListCollection::class, $list->last());
@@ -121,7 +122,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldIterateThroughList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $i = 0;
         foreach ($list as $value) {
@@ -144,7 +145,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
     public function testShouldGetCount(array $array)
     {
         $originalCount = count($array);
-        $list = ListCollection::createFromArray($array);
+        $list = ListCollection::of($array);
 
         $this->assertCount($originalCount, $list);
 
@@ -278,7 +279,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSortValues()
     {
-        $list = ListCollection::createFromArray([1, 4, 3, 4, 2, 5, 4]);
+        $list = ListCollection::of([1, 4, 3, 4, 2, 5, 4]);
 
         $sortedList = $list->sort();
 
@@ -288,7 +289,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldForeachItemInList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $list->each(function ($value, $i) {
             if ($i === 0) {
@@ -303,7 +304,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldMapItemsToNewList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $newList = $list->map(function ($value, $i) {
             if ($i === 0) {
@@ -323,7 +324,7 @@ class ListTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldFilterMapToNewList()
     {
-        $list = ListCollection::createFromArray(['one', 'two', 3]);
+        $list = ListCollection::of(['one', 'two', 3]);
 
         $newList = $list->filter(function ($value, $i) {
             if ($i === 0) {
@@ -338,27 +339,6 @@ class ListTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToEach()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->each(1);
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToMap()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->map(1);
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionOnSettingNotCallableCallbackToFilter()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->filter(1);
     }
 
     public function testShouldCallReducerCorrectly()

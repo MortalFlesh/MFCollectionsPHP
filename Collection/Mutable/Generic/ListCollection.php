@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-use MF\Collection\Generic\IList;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
@@ -26,13 +25,13 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     private $typeValidator;
 
     /**
-     * @param string $valueType
+     * @param string $TValue
      * @param array $array
      * @return static
      */
-    public static function createGenericListFromArray($valueType, array $array)
+    public static function ofT(string $TValue, array $array)
     {
-        $list = new static($valueType);
+        $list = new static($TValue);
 
         foreach ($array as $item) {
             $list->add($item);
@@ -41,35 +40,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         return $list;
     }
 
-    /**
-     * @param string $keyType
-     * @param string $valueType
-     * @param array $array
-     * @return static
-     */
-    public static function createGenericFromArray($keyType, $valueType, array $array)
-    {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray instead.');
-    }
-
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return static
-     */
-    public static function createFromArray(array $array, $recursive = false)
-    {
-        throw new \BadMethodCallException('This method should not be used with Generic List. Use createGenericListFromArray instead.');
-    }
-
-    /**
-     * @param string $valueType
-     */
-    public function __construct($valueType)
+    public function __construct(string $TValue)
     {
         $this->typeValidator = new TypeValidator(
             TypeValidator::TYPE_INT,
-            $valueType,
+            $TValue,
             [TypeValidator::TYPE_INT],
             $this->allowedValueTypes
         );
@@ -102,7 +77,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param <TValue> $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         $this->typeValidator->assertValueType($value);
 
@@ -130,17 +105,13 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):<TValue> $callback
-     * @param string|null $mappedListValueType
-     * @return \MF\Collection\Mutable\IList|static
+     * @param callable $callback (value:<TValue>,index:int):<TValue>
+     * @param string|null $TValue
+     * @return IList
      */
-    public function map($callback, $mappedListValueType = null)
+    public function map($callback, string $TValue = null)
     {
-        if (isset($mappedListValueType)) {
-            $list = new static($mappedListValueType);
-        } else {
-            $list = new \MF\Collection\Mutable\Enhanced\ListCollection();
-        }
+        $list = new static($TValue ?: $this->typeValidator->getValueType());
 
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
@@ -148,8 +119,22 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (value:<TValue>,index:<TKey>):bool $callback
-     * @return static
+     * @param IList $list
+     * @param callable $callback
+     * @return IList
+     */
+    private function mapList(IList $list, callable $callback)
+    {
+        foreach ($this as $i => $value) {
+            $list->add($callback($value, $i));
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param callable $callback (value:<TValue>,index:int):bool
+     * @return IList
      */
     public function filter($callback)
     {
@@ -160,7 +145,25 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,list:List):<TValue> $reducer
+     * @param IList $list
+     * @param callable $callback
+     * @return IList
+     */
+    private function filterList(IList $list, callable $callback)
+    {
+        $this->assertCallback($callback);
+
+        foreach ($this as $i => $value) {
+            if ($callback($value, $i)) {
+                $list->add($value);
+            }
+        }
+
+        return $list;
+    }
+
+    /**
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */
@@ -176,11 +179,22 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return \MF\Collection\Immutable\Generic\ListCollection
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(array $array, bool $recursive = false): \MF\Collection\Mutable\IList
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use ofT instead.'
+        );
+    }
+
+    /**
+     * @return \MF\Collection\Immutable\Generic\IList
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Generic\ListCollection::createGenericListFromArray(
+        return \MF\Collection\Immutable\Generic\ListCollection::ofT(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

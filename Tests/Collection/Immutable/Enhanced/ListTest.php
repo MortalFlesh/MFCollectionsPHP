@@ -3,26 +3,17 @@
 namespace MF\Tests\Collection\Immutable\Enhanced;
 
 use MF\Collection\Immutable\Enhanced\ListCollection;
+use MF\Collection\Immutable\IList;
 
-/**
- * @group unit
- */
 class ListTest extends \MF\Tests\Collection\Immutable\ListTest
 {
-    /** @var ListCollection */
+    /** @var IList|ListCollection */
     private $listEnhanced;
 
     public function setUp()
     {
         $this->list = new ListCollection();
-        $this->listEnhanced = ListCollection::createFromArray(['one', 'two', 3]);
-    }
-
-    public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->listEnhanced->each('($k, $v) => {}');
+        $this->listEnhanced = ListCollection::of(['one', 'two', 3]);
     }
 
     public function testShouldMapCollectionToNewListCollectionByArrowFunction()

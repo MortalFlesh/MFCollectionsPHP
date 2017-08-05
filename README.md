@@ -17,6 +17,7 @@ MFCollections for PHP
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
 
 ## Table of Contents
+- [Installation](#installation)
 - [Requirements](#requirements)
 - [Base Interfaces](#base-interfaces)
     - [ICollection](#collection-interface)
@@ -25,17 +26,24 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - [Mutable](#mutable-collections)
 - [Immutable](#immutable-collections)
 - [Generic](#generic-collections)
-- [Installation](#installation)
 - [Arrow Functions](#arrow-functions)
 - [Plans for next versions](#plans-for-next-versions)
 
 
+## Installation
+```bash
+composer require mf/collections-php
+```
+
+
 ## Requirements
-- `PHP >=5.5`
+- `PHP >=7.1`
 - `eval()` function for parsing [Arrow Functions](#arrow-functions)
 
 
 ## Base Interfaces
+
+Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) for more details.
 
 ### <a name="collection-interface"></a>ICollection
 - basic Interface for Collections
@@ -158,12 +166,6 @@ $map = new Immutable\Generic\Map('int', 'string');
 - each Generic Collection implements its Generic Interface
 
 
-## Installation:
-```
-composer require mf/collections-php
-```
-
-
 ## Arrow Functions
 - To see more check: [MF/CallbackParser](https://github.com/MortalFlesh/CallbackParser)
 
@@ -231,16 +233,16 @@ echo $sumOfIdsGreaterThan1;     // 5
 - it parses function from string and evaluate it with `eval()`
 
 
+### Some performance tests:
+- benchmarks and memory usage tests ([here](https://github.com/MortalFlesh/PerformanceTests))
+
+
 ## Plans for next versions
-- use Assertion
-- benchmarks and memory usage tests
-- ListCollection -> LinkedList
-- check https://github.com/morrisonlevi/Ardent
-- documentation
-- methods:
+- _even better_ documentation ([current](https://github.com/MortalFlesh/MFCollectionsPHP/wiki))
+- **methods**:
     - ICollection::forAll(callback):bool
     - IMap::firstKey()
     - IMap::firstValue() 
     - Tuple(key, value)
-    - IMap::first():Tuple
-    - IMap::firstBy(callback):mixed
+    - IList::first(callback|null): TValue|null
+    - IMap::first(callback|null): Tuple|null

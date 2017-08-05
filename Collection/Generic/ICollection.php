@@ -5,17 +5,9 @@ namespace MF\Collection\Generic;
 interface ICollection extends \MF\Collection\ICollection
 {
     /**
-     * @param string $keyType
-     * @param string $valueType
-     * @param array $array
-     * @return static
+     * @deprecated
+     * @see IList::ofT()
+     * @see IMap::ofKT()
      */
-    public static function createGenericFromArray($keyType, $valueType, array $array);
-
-    /**
-     * @param string $valueType
-     * @param array $array
-     * @return static
-     */
-    public static function createGenericListFromArray($valueType, array $array);
+    public static function of(array $array, bool $recursive = false);
 }

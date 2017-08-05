@@ -2,25 +2,24 @@
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
-use MF\Collection\ICollection as BaseCollectionInterface;
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList as GenericListInterface;
-use MF\Collection\Immutable\Generic\ListCollection;
-use MF\Collection\Immutable\ListCollection as BaseImmutableListCollection;
-use MF\Collection\Immutable\IList;
+use MF\Collection\ICollection as BaseCollectionInterface;
 use MF\Collection\IList as BaseListInterface;
+use MF\Collection\Immutable\Generic\IList as ImmutableGenericInterface;
+use MF\Collection\Immutable\Generic\ListCollection;
+use MF\Collection\Immutable\IList;
+use MF\Collection\Immutable\ListCollection as BaseImmutableListCollection;
 use MF\Collection\Mutable\ListCollection as MutableListCollection;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
 use MF\Validator\TypeValidator;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @group unit
- */
-class ListCollectionTest extends \PHPUnit_Framework_TestCase
+class ListTest extends TestCase
 {
-    /** @var ListCollection */
+    /** @var ListCollection|ImmutableGenericInterface */
     private $list;
 
     public function setUp()
@@ -30,6 +29,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldImplementsInterfaces()
     {
+        $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list);
         $this->assertInstanceOf(GenericListInterface::class, $this->list);
         $this->assertInstanceOf(IList::class, $this->list);
         $this->assertInstanceOf(BaseListInterface::class, $this->list);
@@ -38,6 +38,8 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
+
+        $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list->add('foo'));
     }
 
     /**
@@ -48,7 +50,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldCreateList($valueType, array $values)
     {
-        $list = ListCollection::createGenericListFromArray($valueType, $values);
+        $list = ListCollection::ofT($valueType, $values);
 
         $this->assertEquals($values, $list->toArray());
     }
@@ -73,16 +75,9 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()
     {
-        $this->setExpectedException(\BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
 
-        ListCollection::createFromArray([]);
-    }
-
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingGenericCollection()
-    {
-        $this->setExpectedException(\BadMethodCallException::class);
-
-        ListCollection::createGenericFromArray('string', 'int', []);
+        ListCollection::of([]);
     }
 
     /**
@@ -93,9 +88,9 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values)
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
-        ListCollection::createGenericListFromArray($valueType, $values);
+        ListCollection::ofT($valueType, $values);
     }
 
     public function invalidValuesProvider()
@@ -127,26 +122,12 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($firstValue, $this->list->first());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenUnshiftInvalidValue()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->unshift(1);
-    }
-
     public function testShouldCountainsValue()
     {
         $this->assertFalse($this->list->contains('value'));
 
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionWhenContainsInvalidType()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->contains(true);
     }
 
     public function testShouldRemoveFirstValue()
@@ -179,7 +160,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeFirst(2);
     }
@@ -202,16 +183,9 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveAllValues()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeAll(2.54);
-    }
-
-    public function testShouldThrowExceptionWhenForeachItemInListWithArrowFunction()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->list->each('($k, $v) => {}');
     }
 
     public function testShouldMapToNewListWithSameGenericType()
@@ -228,7 +202,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType()
     {
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -246,15 +220,6 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewListByArrowFunction()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $newList = $this->list->filter('($v, $i) => true');
-
-        $newList->add(1);
     }
 
     public function testShouldCombineMapAndFilterToCreateNewMap()
@@ -293,8 +258,8 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = MutableListCollection::createFromArray([1, 2, 3]);
-        $list2 = MutableListCollection::createFromArray(['one', 'two']);
+        $list1 = MutableListCollection::of([1, 2, 3]);
+        $list2 = MutableListCollection::of(['one', 'two']);
 
         $list = new ListCollection(MutableListCollection::class);
         $list = $list->add($list1);
@@ -324,7 +289,7 @@ class ListCollectionTest extends \PHPUnit_Framework_TestCase
 
         $sumOfIdsGreaterThan1 = $list
             ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()')
+            ->map('($v, $i) => $v->getId()', 'int')
             ->reduce('($t, $v) => $t + $v');
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);

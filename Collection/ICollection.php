@@ -6,43 +6,46 @@ interface ICollection extends \IteratorAggregate, \Countable
 {
     /**
      * @param array $array
-     * @return static
+     * @param bool $recursive
+     * @return ICollection
      */
-    public static function createFromArray(array $array);
+    public static function of(array $array, bool $recursive = false);
 
     /**
      * @param mixed $value
      * @return bool
      */
-    public function contains($value);
+    public function contains($value): bool;
 
     public function clear();
 
-    /** @return bool */
-    public function isEmpty();
+    public function isEmpty(): bool;
 
-    /** @return array */
-    public function toArray();
+    public function toArray(): array;
 
-    /** @param callable (value:mixed,index:mixed):void $callback */
-    public function each($callback);
+    /** @param callable $callback (value:mixed,index:mixed):void */
+    public function each(callable $callback): void;
 
     /**
-     * @param callable (value:mixed,index:mixed):mixed $callback
-     * @return static
+     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @return ICollection
      */
     public function map($callback);
 
     /**
-     * @param callable (value:mixed,index:mixed):bool $callback
-     * @return static
+     * @param callable $callback (value:mixed,index:mixed):bool
+     * @return ICollection
      */
     public function filter($callback);
 
     /**
-     * @param callable (total:mixed,value:mixed,index:mixed,collection:CollectionInterface):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ICollection):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null);
+
+    public function count(): int;
+
+    public function getIterator(): \Generator;
 }

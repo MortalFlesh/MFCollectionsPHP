@@ -14,18 +14,13 @@ class ListCollection implements IList
         $this->listArray = [];
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return ListCollection
-     */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, bool $recursive = false)
     {
         $list = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $list = $list->add(static::createFromArray($value, true));
+                $list = $list->add(static::of($value, true));
             } else {
                 $list = $list->add($value);
             }
@@ -34,8 +29,7 @@ class ListCollection implements IList
         return $list;
     }
 
-    /** @return array */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
 
@@ -50,12 +44,11 @@ class ListCollection implements IList
         return $array;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
-        return new \ArrayIterator($this->listArray);
+        foreach ($this->listArray as $i => $value) {
+            yield $i => $value;
+        }
     }
 
     /**
@@ -102,21 +95,15 @@ class ListCollection implements IList
         return array_pop($list);
     }
 
-    /**
-     * @return static
-     */
     public function sort()
     {
         $sortedMap = $this->listArray;
         sort($sortedMap);
 
-        return static::createFromArray($sortedMap);
+        return static::of($sortedMap);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->listArray);
     }
@@ -125,7 +112,7 @@ class ListCollection implements IList
      * @param mixed $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         return $this->find($value) !== false;
     }
@@ -141,30 +128,26 @@ class ListCollection implements IList
 
     /**
      * @param mixed $value
-     * @return static
+     * @return IList
      */
     public function removeFirst($value)
     {
         $index = $this->find($value);
 
         if ($index !== false) {
-            return $this->removeIndex($index);
+            return $this->removeIndex((int) $index);
         }
 
         return $this;
     }
 
-    /**
-     * @param int $index
-     * @return static
-     */
-    private function removeIndex($index)
+    private function removeIndex(int $index): IList
     {
         $list = clone $this;
 
         unset($list->listArray[$index]);
 
-        return static::createFromArray($list->listArray);
+        return static::of($list->listArray);
     }
 
     /**
@@ -178,12 +161,10 @@ class ListCollection implements IList
         });
     }
 
-    /** @param callable (value:mixed,index:int):void $callback */
-    public function each($callback)
+    /** @param callable $callback (value:mixed,index:int):void */
+    public function each(callable $callback): void
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $callback($value, $i);
         }
     }
@@ -199,7 +180,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (value:mixed,index:int):mixed $callback
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return static
      */
     public function map($callback)
@@ -209,16 +190,9 @@ class ListCollection implements IList
         return $this->mapList($list, $callback);
     }
 
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return static
-     */
-    protected function mapList(IList $list, $callback)
+    protected function mapList(IList $list, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $list = $list->add($callback($value, $i));
         }
 
@@ -226,7 +200,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (value:mixed,index:int):bool $callback
+     * @param callable $callback (value:mixed,index:int):bool
      * @return static
      */
     public function filter($callback)
@@ -236,16 +210,9 @@ class ListCollection implements IList
         return $this->filterList($list, $callback);
     }
 
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return static
-     */
-    protected function filterList(IList $list, $callback)
+    protected function filterList(IList $list, callable $callback)
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             if ($callback($value, $i)) {
                 $list = $list->add($value);
             }
@@ -255,7 +222,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable (total:mixed,value:mixed,index:int,list:List):mixed $reducer
+     * @param callable $reducer (total:mixed,value:mixed,index:int,list:List):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
@@ -265,32 +232,26 @@ class ListCollection implements IList
 
         $total = $initialValue;
 
-        foreach ($this->listArray as $i => $value) {
+        foreach ($this as $i => $value) {
             $total = $reducer($total, $value, $i, $this);
         }
 
         return $total;
     }
 
-    /**
-     * @return \MF\Collection\Mutable\ListCollection
-     */
-    public function asMutable()
-    {
-        return \MF\Collection\Mutable\ListCollection::createFromArray($this->toArray());
-    }
-
-    /**
-     * @return static
-     */
     public function clear()
     {
         return new static();
     }
 
-    /** @return bool */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->listArray);
+    }
+
+    /** @return \MF\Collection\Mutable\IList */
+    public function asMutable()
+    {
+        return \MF\Collection\Mutable\ListCollection::of($this->toArray());
     }
 }

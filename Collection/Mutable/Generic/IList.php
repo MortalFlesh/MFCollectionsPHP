@@ -1,8 +1,8 @@
 <?php
 
-namespace MF\Collection\Generic;
+namespace MF\Collection\Mutable\Generic;
 
-interface IList extends \MF\Collection\IList, ICollection
+interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\IList
 {
     /**
      * @param string $TValue
@@ -29,4 +29,7 @@ interface IList extends \MF\Collection\IList, ICollection
      * @return IList<TValue>
      */
     public function filter($callback);
+
+    /** @return \MF\Collection\Immutable\Generic\IList */
+    public function asImmutable();
 }

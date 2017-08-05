@@ -5,17 +5,27 @@ namespace MF\Collection\Immutable;
 interface IMap extends \MF\Collection\IMap, ICollection
 {
     /**
+     * @param array $array
+     * @param bool $recursive
+     * @return IMap
+     */
+    public static function of(array $array, bool $recursive = false);
+
+    /**
      * @param mixed $key
      * @param mixed $value
-     * @return static
+     * @return IMap
      */
     public function set($key, $value);
 
     /**
      * @param mixed $key
-     * @return static
+     * @return IMap
      */
     public function remove($key);
+
+    /** @return IMap */
+    public function clear();
 
     /** @return IList */
     public function keys();
@@ -23,6 +33,12 @@ interface IMap extends \MF\Collection\IMap, ICollection
     /** @return IList */
     public function values();
 
-    /** @return \MF\Collection\IMap */
+    /**
+     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @return IMap
+     */
+    public function map($callback);
+
+    /** @return \MF\Collection\Mutable\IMap */
     public function asMutable();
 }

@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Immutable\Generic;
 
-use MF\Collection\Generic\IMap;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
@@ -33,14 +32,14 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     private $typeValidator;
 
     /**
-     * @param string $keyType
-     * @param string $valueType
+     * @param string $TKey
+     * @param string $TValue
      * @param array $array
      * @return static
      */
-    public static function createGenericFromArray($keyType, $valueType, array $array)
+    public static function ofKT(string $TKey, string $TValue, array $array)
     {
-        $map = new static($keyType, $valueType);
+        $map = new static($TKey, $TValue);
 
         foreach ($array as $key => $value) {
             $map = $map->set($key, $value);
@@ -50,34 +49,21 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param string $valueType
-     * @param array $array
-     * @return static
+     * @deprecated
+     * @see IMap::ofKT()
      */
-    public static function createGenericListFromArray($valueType, array $array)
+    public static function of(array $array, bool $recursive = false)
     {
-        throw new \BadMethodCallException('This method should not be used with Generic Map. Use createGenericFromArray instead.');
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic Map. Use ofKT instead.'
+        );
     }
 
-    /**
-     * @param array $array
-     * @param bool $recursive
-     * @return static
-     */
-    public static function createFromArray(array $array, $recursive = false)
-    {
-        throw new \BadMethodCallException('This method should not be used with Generic Map. Use createGenericFromArray instead.');
-    }
-
-    /**
-     * @param string $keyType
-     * @param string $valueType
-     */
-    public function __construct($keyType, $valueType)
+    public function __construct(string $TKey, string $TValue)
     {
         $this->typeValidator = new TypeValidator(
-            $keyType,
-            $valueType,
+            $TKey,
+            $TValue,
             $this->allowedKeyTypes,
             $this->allowedValueTypes
         );
@@ -90,7 +76,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param <TKey> $key
      * @return bool
      */
-    public function containsKey($key)
+    public function containsKey($key): bool
     {
         $this->typeValidator->assertKeyType($key);
 
@@ -101,7 +87,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param <TValue> $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         $this->typeValidator->assertValueType($value);
 
@@ -155,25 +141,20 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable (key:<TKey>,value:<TValue>):<TValue> $callback
-     * @param string|null $mappedMapValueType
-     * @return \MF\Collection\Immutable\IMap|static
+     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param string|null $TValue
+     * @return static
      */
-    public function map($callback, $mappedMapValueType = null)
+    public function map($callback, $TValue = null)
     {
-        if (isset($mappedMapValueType)) {
-            $map = new static($this->typeValidator->getKeyType(), $mappedMapValueType);
-        } else {
-            $map = new \MF\Collection\Immutable\Enhanced\Map();
-        }
-
         $callback = $this->callbackParser->parseArrowFunction($callback);
+        $map = new static($this->typeValidator->getKeyType(), $TValue ?: $this->typeValidator->getValueType());
 
         return $this->mapToMap($map, $callback);
     }
 
     /**
-     * @param callable (key:<TKey>,value:<TValue>):bool $callback
+     * @param callable $callback (key:<TKey>,value:<TValue>):bool
      * @return static
      */
     public function filter($callback)
@@ -185,29 +166,29 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @return ListCollection<TKey>
+     * @return IList<TKey>
      */
     public function keys()
     {
-        return ListCollection::createGenericListFromArray(
+        return ListCollection::ofT(
             $this->typeValidator->getKeyType(),
             array_keys($this->mapArray)
         );
     }
 
     /**
-     * @return ListCollection<TValue>
+     * @return IList<TValue>
      */
     public function values()
     {
-        return ListCollection::createGenericListFromArray(
+        return ListCollection::ofT(
             $this->typeValidator->getValueType(),
             array_values($this->mapArray)
         );
     }
 
     /**
-     * @param callable (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue> $reducer
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue>
      * @param null|<TValue> $initialValue
      * @return mixed
      */
@@ -223,22 +204,22 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @return \MF\Collection\Mutable\Generic\Map
-     */
-    public function asMutable()
-    {
-        return \MF\Collection\Mutable\Generic\Map::createGenericFromArray(
-            $this->typeValidator->getKeyType(),
-            $this->typeValidator->getValueType(),
-            $this->toArray()
-        );
-    }
-
-    /**
      * @return static
      */
     public function clear()
     {
         return new static($this->typeValidator->getKeyType(), $this->typeValidator->getValueType());
+    }
+
+    /**
+     * @return \MF\Collection\Mutable\Generic\IMap
+     */
+    public function asMutable()
+    {
+        return \MF\Collection\Mutable\Generic\Map::ofKT(
+            $this->typeValidator->getKeyType(),
+            $this->typeValidator->getValueType(),
+            $this->toArray()
+        );
     }
 }

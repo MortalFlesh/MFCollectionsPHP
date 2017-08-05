@@ -12,7 +12,7 @@ class SimpleEntity implements EntityInterface
      */
     public function __construct($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
     }
 
     /**

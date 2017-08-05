@@ -17,13 +17,13 @@ class Map implements IMap
      * @param bool $recursive
      * @return static
      */
-    public static function createFromArray(array $array, $recursive = false)
+    public static function of(array $array, bool $recursive = false)
     {
         $map = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $map->set($key, static::createFromArray($value, true));
+                $map->set($key, static::of($value, true));
             } else {
                 $map->set($key, $value);
             }
@@ -32,19 +32,18 @@ class Map implements IMap
         return $map;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
-        return new \ArrayIterator($this->mapArray);
+        foreach ($this->mapArray as $key => $value) {
+            yield $key => $value;
+        }
     }
 
     /**
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->containsKey($offset);
     }
@@ -53,7 +52,7 @@ class Map implements IMap
      * @param mixed $key
      * @return bool
      */
-    public function containsKey($key)
+    public function containsKey($key): bool
     {
         return array_key_exists($key, $this->mapArray);
     }
@@ -62,13 +61,13 @@ class Map implements IMap
      * @param mixed $value
      * @return bool
      */
-    public function contains($value)
+    public function contains($value): bool
     {
         return $this->find($value) !== false;
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return mixed|false
      */
     public function find($value)
@@ -135,22 +134,16 @@ class Map implements IMap
         unset($this->mapArray[$key]);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->mapArray);
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
 
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             if ($value instanceof ICollection) {
                 $value = $value->toArray();
             }
@@ -162,15 +155,89 @@ class Map implements IMap
     }
 
     /**
-     * @param callable (value:mixed,index:mixed):void $callback
+     * @param callable $callback (value:mixed,index:mixed):void
      */
-    public function each($callback)
+    public function each(callable $callback): void
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->mapArray as $key => $value) {
+        foreach ($this as $key => $value) {
             $callback($value, $key);
         }
+    }
+
+    /**
+     * @param callable $callback (key:mixed,value:mixed):mixed
+     * @return static
+     */
+    public function map($callback)
+    {
+        $map = new static();
+
+        return $this->mapToMap($map, $callback);
+    }
+
+    protected function mapToMap(IMap $map, callable $callback)
+    {
+        foreach ($this as $key => $value) {
+            $map->set($key, $callback($key, $value));
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param callable $callback (key:mixed,value:mixed):bool
+     * @return static
+     */
+    public function filter($callback)
+    {
+        $map = new static();
+
+        return $this->filterToMap($map, $callback);
+    }
+
+    protected function filterToMap(IMap $map, callable $callback)
+    {
+        foreach ($this as $key => $value) {
+            if ($callback($key, $value)) {
+                $map->set($key, $value);
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * @return IList
+     */
+    public function keys()
+    {
+        return ListCollection::of(array_keys($this->mapArray));
+    }
+
+    /**
+     * @return IList
+     */
+    public function values()
+    {
+        return ListCollection::of(array_values($this->mapArray));
+    }
+
+    /**
+     * @param callable $reducer (value:mixed,index:int):mixed
+     * @param mixed|null $initialValue
+     * @return mixed
+     */
+    public function reduce($reducer, $initialValue = null)
+    {
+        $this->assertCallback($reducer);
+
+        $total = $initialValue;
+
+        foreach ($this as $key => $value) {
+            $total = $reducer($total, $value, $key, $this);
+        }
+
+        return $total;
     }
 
     /**
@@ -183,94 +250,14 @@ class Map implements IMap
         }
     }
 
-    /**
-     * @param callable (key:mixed,value:mixed):mixed $callback
-     * @return static
-     */
-    public function map($callback)
+    public function clear()
     {
-        $map = new static();
-
-        return $this->mapToMap($map, $callback);
+        $this->mapArray = [];
     }
 
-    /**
-     * @param IMap $map
-     * @param callable $callback
-     * @return IMap
-     */
-    protected function mapToMap(IMap $map, $callback)
+    public function isEmpty(): bool
     {
-        $this->assertCallback($callback);
-
-        foreach ($this->mapArray as $key => $value) {
-            $map->set($key, $callback($key, $value));
-        }
-
-        return $map;
-    }
-
-    /**
-     * @param callable (key:mixed,value:mixed):bool $callback
-     * @return static
-     */
-    public function filter($callback)
-    {
-        $map = new static();
-
-        return $this->filterToMap($map, $callback);
-    }
-
-    /**
-     * @param IMap $map
-     * @param callable $callback
-     * @return IMap
-     */
-    protected function filterToMap(IMap $map, $callback)
-    {
-        $this->assertCallback($callback);
-
-        foreach ($this->mapArray as $key => $value) {
-            if ($callback($key, $value)) {
-                $map->set($key, $value);
-            }
-        }
-
-        return $map;
-    }
-
-    /**
-     * @return ListCollection
-     */
-    public function keys()
-    {
-        return ListCollection::createFromArray(array_keys($this->mapArray));
-    }
-
-    /**
-     * @return ListCollection
-     */
-    public function values()
-    {
-        return ListCollection::createFromArray(array_values($this->mapArray));
-    }
-
-    /**
-     * @param callable (value:mixed,index:int):mixed $reducer
-     * @param mixed|null $initialValue
-     * @return mixed
-     */
-    public function reduce($reducer, $initialValue = null)
-    {
-        $this->assertCallback($reducer);
-
-        $total = $initialValue;
-
-        foreach ($this->mapArray as $key => $value) {
-            $total = $reducer($total, $value, $key, $this);
-        }
-
-        return $total;
+        return empty($this->mapArray);
     }
 
     /**
@@ -278,17 +265,6 @@ class Map implements IMap
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Map::createFromArray($this->toArray());
-    }
-
-    public function clear()
-    {
-        $this->mapArray = [];
-    }
-
-    /** @return bool */
-    public function isEmpty()
-    {
-        return empty($this->mapArray);
+        return \MF\Collection\Immutable\Map::of($this->toArray());
     }
 }

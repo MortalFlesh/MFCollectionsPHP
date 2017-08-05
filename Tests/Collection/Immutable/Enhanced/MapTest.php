@@ -4,9 +4,6 @@ namespace MF\Tests\Collection\Immutable\Enhanced;
 
 use MF\Collection\Immutable\Enhanced\Map;
 
-/**
- * @group unit
- */
 class MapTest extends \MF\Tests\Collection\Immutable\MapTest
 {
     /** @var Map */
@@ -15,14 +12,7 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
     public function setUp()
     {
         $this->map = new Map();
-        $this->mapEnhanced = Map::createFromArray([1 => 'one', 'two' => 'two', 'three' => 3]);
-    }
-
-    public function testShouldThrowExceptionWhenForeachItemInListCollectionWithArrowFunction()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->mapEnhanced->each('($k, $v) => {}');
+        $this->mapEnhanced = Map::of([1 => 'one', 'two' => 'two', 'three' => 3]);
     }
 
     public function testShouldMapCollectionToNewMapByArrowFunction()

@@ -12,14 +12,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
     public function setUp()
     {
         $this->map = new Map();
-        $this->mapEnhanced = Map::createFromArray([1 => 'one', 2 => 'two', 'three' => 3]);
-    }
-
-    public function testShouldThrowExceptionWhenForeachItemInMapWithArrowFunction()
-    {
-        $this->setExpectedException(\InvalidArgumentException::class);
-
-        $this->mapEnhanced->each('($v, $k) => {}');
+        $this->mapEnhanced = Map::of([1 => 'one', 2 => 'two', 'three' => 3]);
     }
 
     public function testShouldMapToNewMapByArrowFunction()

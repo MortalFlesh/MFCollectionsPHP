@@ -4,11 +4,30 @@ namespace MF\Collection\Mutable;
 
 interface IList extends \MF\Collection\IList, ICollection
 {
+    /**
+     * @param array $array
+     * @param bool $recursive
+     * @return IList
+     */
+    public static function of(array $array, bool $recursive = false);
+
     /** @return mixed */
     public function shift();
 
     /** @return mixed */
     public function pop();
+
+    /**
+     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @return IList
+     */
+    public function map($callback);
+
+    /**
+     * @param callable $callback (value:mixed,index:mixed):bool
+     * @return IList
+     */
+    public function filter($callback);
 
     /** @return \MF\Collection\Immutable\IList */
     public function asImmutable();

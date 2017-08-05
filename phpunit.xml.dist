@@ -19,6 +19,12 @@
         </testsuite>
     </testsuites>
 
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">Collection</directory>
+        </whitelist>
+    </filter>
+
     <logging>
         <log type="coverage-html" target="./code-coverage" title="MFCollections"
              charset="UTF-8" yui="true" highlight="true"
