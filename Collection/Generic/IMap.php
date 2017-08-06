@@ -36,4 +36,11 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);
+
+    /**
+     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
+     * @param null|<RValue> $initialValue
+     * @return <RValue>|<TValue>
+     */
+    public function reduce($reducer, $initialValue = null);
 }

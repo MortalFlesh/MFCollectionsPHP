@@ -39,7 +39,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,index:int,list:List):mixed
+     * @param callable $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */

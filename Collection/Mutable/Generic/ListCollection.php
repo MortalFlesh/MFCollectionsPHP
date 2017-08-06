@@ -163,16 +163,12 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<TValue>
-     * @param null|<TValue> $initialValue
-     * @return mixed
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @param null|<RValue> $initialValue
+     * @return <RValue>|<TValue>
      */
     public function reduce($reducer, $initialValue = null)
     {
-        if (!is_null($initialValue)) {
-            $this->typeValidator->assertValueType($initialValue);
-        }
-
         $reducer = $this->callbackParser->parseArrowFunction($reducer);
 
         return parent::reduce($reducer, $initialValue);

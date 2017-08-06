@@ -309,6 +309,16 @@ class ListTest extends TestCase
         $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
     }
 
+    public function testShouldReduceListWithInitialValueToOtherType()
+    {
+        $list = new ListCollection('int');
+        $list->add(1);
+        $list->add(2);
+        $list->add(3);
+
+        $this->assertEquals('123', $list->reduce('($t, $v) => $t . $v', ''));
+    }
+
     public function testShouldClearCollection()
     {
         $this->list->add('value');

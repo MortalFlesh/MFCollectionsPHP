@@ -188,16 +188,12 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable $reducer (total:<TValue>,value:<TValue>,index:<TKey>,map:Map):<TValue>
-     * @param null|<TValue> $initialValue
-     * @return mixed
+     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
+     * @param null|<RValue> $initialValue
+     * @return <RValue>|<TValue>
      */
     public function reduce($reducer, $initialValue = null)
     {
-        if (!is_null($initialValue)) {
-            $this->typeValidator->assertValueType($initialValue);
-        }
-
         $reducer = $this->callbackParser->parseArrowFunction($reducer);
 
         return parent::reduce($reducer, $initialValue);
