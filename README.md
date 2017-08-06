@@ -4,14 +4,8 @@ MFCollections for PHP
 [![Latest Stable Version](https://img.shields.io/packagist/v/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
 [![License](https://img.shields.io/packagist/l/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
-
-- Travis + Coveralls
 [![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
 [![Coverage Status](https://coveralls.io/repos/github/MortalFlesh/MFCollectionsPHP/badge.svg?branch=master)](https://coveralls.io/github/MortalFlesh/MFCollectionsPHP?branch=master)
-
-- Scrutinizer
-[![Build Status](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/build.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/build-status/master)
-[![Code Coverage](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MortalFlesh/MFCollectionsPHP/?branch=master)
 
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
