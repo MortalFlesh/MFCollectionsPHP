@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
+## 2.0.1 - 2017-08-06
 - Fixed `reduce` in `Generic Collections` (_not it is able to reduce to another type - not only to `TValue`_)
 
 ## 2.0.0 - 2017-08-05
