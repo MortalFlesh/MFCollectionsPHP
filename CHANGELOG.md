@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+- Fixed `reduce` in `Generic Collections` (_not it is able to reduce to another type - not only to `TValue`_)
 
 ## 2.0.0 - 2017-08-05
 - PhpUnit updated

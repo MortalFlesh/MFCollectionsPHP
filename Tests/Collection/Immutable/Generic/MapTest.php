@@ -455,6 +455,16 @@ class MapTest extends TestCase
         $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
     }
 
+    public function testShouldReduceListWithInitialValueToOtherType()
+    {
+        $map = new Map('string', 'int');
+        $map = $map->set('one', 1);
+        $map = $map->set('two', 2);
+        $map = $map->set('three', 3);
+
+        $this->assertEquals('123', $map->reduce('($t, $v) => $t . $v', ''));
+    }
+
     public function testShouldClearCollection()
     {
         $this->map = $this->map->set('key', 123);
