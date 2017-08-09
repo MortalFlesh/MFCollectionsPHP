@@ -4,6 +4,9 @@ namespace MF\Collection;
 
 interface ICollection extends \IteratorAggregate, \Countable
 {
+    const MAP = 'map';
+    const FILTER = 'filter';
+
     /**
      * @param array $array
      * @param bool $recursive

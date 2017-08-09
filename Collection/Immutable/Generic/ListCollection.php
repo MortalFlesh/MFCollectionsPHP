@@ -59,12 +59,44 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $this->callbackParser = new CallbackParser();
     }
 
+    protected function applyModifiers(): void
+    {
+        if (empty($this->modifiers) || empty($this->listArray)) {
+            return;
+        }
+
+        $listArray = [];
+        foreach ($this->listArray as $i => $value) {
+            foreach ($this->modifiers as $item) {
+                list($type, $callback) = $item;
+
+                $TValue = $item[self::INDEX_TVALUE] ?? null;
+                if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
+                    $this->typeValidator->changeValueType($TValue);
+                }
+
+                if ($type === self::MAP) {
+                    $value = $callback($value, $i);
+                } elseif ($type === self::FILTER && !$callback($value, $i)) {
+                    continue 2;
+                }
+            }
+
+            $this->typeValidator->assertValueType($value);
+            $listArray[] = $value;
+        }
+
+        $this->listArray = $listArray;
+        $this->modifiers = [];
+    }
+
     /**
      * @param <TValue> $value
      * @return static
      */
     public function add($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::add($value);
@@ -76,6 +108,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function unshift($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::unshift($value);
@@ -87,6 +120,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function contains($value): bool
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::contains($value);
@@ -98,6 +132,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function removeFirst($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         $index = $this->find($value);
@@ -111,6 +146,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     private function removeIndex(int $index): IList
     {
+        $this->applyModifiers();
         $list = clone $this;
 
         unset($list->listArray[$index]);
@@ -124,6 +160,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function removeAll($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::removeAll($value);
@@ -136,11 +173,12 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function map($callback, string $TValue = null)
     {
-        $list = new static($TValue ?: $this->typeValidator->getValueType());
-
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
-        return $this->mapList($list, $callback);
+        $list = clone $this;
+        $list->modifiers[] = [self::MAP, $callback, $TValue];
+
+        return $list;
     }
 
     /**
@@ -150,9 +188,11 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     public function filter($callback)
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $list = new static($this->typeValidator->getValueType());
 
-        return $this->filterList($list, $callback);
+        $list = clone $this;
+        $list->modifiers[] = [self::FILTER, $callback];
+
+        return $list;
     }
 
     /**
@@ -172,12 +212,16 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public function clear()
     {
+        $this->applyModifiers();
+
         return new static($this->typeValidator->getValueType());
     }
 
     /** @return \MF\Collection\Mutable\Generic\IList */
     public function asMutable()
     {
+        $this->applyModifiers();
+
         return \MF\Collection\Mutable\Generic\ListCollection::ofT(
             $this->typeValidator->getValueType(),
             $this->toArray()

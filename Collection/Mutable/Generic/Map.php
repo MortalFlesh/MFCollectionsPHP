@@ -72,12 +72,44 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         $this->callbackParser = new CallbackParser();
     }
 
+    protected function applyModifiers(): void
+    {
+        if (empty($this->modifiers) || empty($this->mapArray)) {
+            return;
+        }
+
+        $mapArray = [];
+        foreach ($this->mapArray as $key => $value) {
+            foreach ($this->modifiers as $item) {
+                list($type, $callback) = $item;
+
+                $TValue = $item[self::INDEX_TVALUE] ?? null;
+                if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
+                    $this->typeValidator->changeValueType($TValue);
+                }
+
+                if ($type === self::MAP) {
+                    $value = $callback($key, $value);
+                } elseif ($type === self::FILTER && !$callback($key, $value)) {
+                    continue 2;
+                }
+            }
+
+            $this->typeValidator->assertValueType($value);
+            $mapArray[$key] = $value;
+        }
+
+        $this->mapArray = $mapArray;
+        $this->modifiers = [];
+    }
+
     /**
      * @param <TKey> $key
      * @return bool
      */
     public function containsKey($key): bool
     {
+        $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
 
         return parent::containsKey($key);
@@ -89,6 +121,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function contains($value): bool
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::contains($value);
@@ -100,6 +133,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function find($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::find($value);
@@ -111,6 +145,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function get($key)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
 
         return parent::get($key);
@@ -122,6 +157,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function set($key, $value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
         $this->typeValidator->assertValueType($value);
 
@@ -133,6 +169,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function remove($key)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
 
         parent::remove($key);
@@ -146,9 +183,11 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     public function map($callback, $TValue = null)
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $map = new static($this->typeValidator->getKeyType(), $TValue ?: $this->typeValidator->getValueType());
 
-        return $this->mapToMap($map, $callback);
+        $map = clone $this;
+        $map->modifiers[] = [self::MAP, $callback, $TValue];
+
+        return $map;
     }
 
     /**
@@ -158,9 +197,11 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     public function filter($callback)
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $map = new static($this->typeValidator->getKeyType(), $this->typeValidator->getValueType());
 
-        return $this->filterToMap($map, $callback);
+        $list = clone $this;
+        $list->modifiers[] = [self::FILTER, $callback];
+
+        return $list;
     }
 
     /**
@@ -168,6 +209,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function keys()
     {
+        $this->applyModifiers();
+
         return ListCollection::ofT(
             $this->typeValidator->getKeyType(),
             array_keys($this->mapArray)
@@ -179,6 +222,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function values()
     {
+        $this->applyModifiers();
+
         return ListCollection::ofT(
             $this->typeValidator->getValueType(),
             array_values($this->mapArray)
@@ -192,6 +237,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function reduce($reducer, $initialValue = null)
     {
+        $this->applyModifiers();
         $reducer = $this->callbackParser->parseArrowFunction($reducer);
 
         return parent::reduce($reducer, $initialValue);
@@ -202,6 +248,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public function asImmutable()
     {
+        $this->applyModifiers();
+
         return \MF\Collection\Immutable\Generic\Map::ofKT(
             $this->typeValidator->getKeyType(),
             $this->typeValidator->getValueType(),

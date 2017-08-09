@@ -39,7 +39,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
             ->map('($v, $i) => $i . $v');
 
         $this->assertNotEquals($this->listEnhanced, $newListCollection);
-        $this->assertEquals([0 => '0two', 1 => '13'], $newListCollection->toArray());
+        $this->assertEquals([0 => '1two', 1 => '23'], $newListCollection->toArray());
     }
 
     /**
@@ -151,5 +151,19 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
 
         $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
+    }
+
+    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly()
+    {
+        $this->listEnhanced = ListCollection::of([1, 2, 3]);
+
+        $newListCollection = $this->listEnhanced
+            ->map('($v, $i) => $v + 1')// 2, 3, 4
+            ->map('($v, $i) => $v * 2')// 4, 6, 8
+            ->filter('($v, $i) => $v % 3 === 0')// 6
+            ->map('($v, $i) => $v - 1');// 5
+
+        $this->assertNotEquals($this->listEnhanced, $newListCollection);
+        $this->assertEquals([5], $newListCollection->toArray());
     }
 }

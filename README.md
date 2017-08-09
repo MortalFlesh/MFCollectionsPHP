@@ -230,8 +230,15 @@ echo $sumOfIdsGreaterThan1;     // 5
 ### Some performance tests:
 - benchmarks and memory usage tests ([here](https://github.com/MortalFlesh/PerformanceTests))
 
+## Lazy mapping
+- if your `Collection` get mapped and filltered many times (_for readability_), it is not a problem
+    - `map -> map -> filter -> map -> filter -> map` will iterate the collection only once (_for applying all modifiers at once_)
+    - this modification is done when another method is triggered, so adding new modifier is an **atomic** operation
+
 
 ## Plans for next versions
+- **Fix** methods `of` and `from` (**BC**)
+- **IMap** change order of `key/value` in `map` and `filter` to `value/key` (**BC**)
 - _even better_ documentation ([current](https://github.com/MortalFlesh/MFCollectionsPHP/wiki))
 - **methods**:
     - ICollection::forAll(callback):bool

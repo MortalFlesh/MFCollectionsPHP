@@ -5,11 +5,11 @@ namespace MF\Tests\Collection\Mutable;
 use MF\Collection\IMap as BaseMapInterface;
 use MF\Collection\Mutable\ICollection;
 use MF\Collection\Mutable\IList;
-use MF\Collection\Mutable\Map;
 use MF\Collection\Mutable\IMap;
-use PHPUnit\Framework\TestCase;
+use MF\Collection\Mutable\Map;
+use MF\Tests\AbstractTestCase;
 
-class MapTest extends TestCase
+class MapTest extends AbstractTestCase
 {
     /** @var IMap */
     protected $map;
@@ -483,5 +483,49 @@ class MapTest extends TestCase
 
         $this->map->clear();
         $this->assertTrue($this->map->isEmpty());
+    }
+
+    public function testShouldMapBigCollectionManyTimesInOneLoop()
+    {
+        $this->startTimer();
+        $bigMap = Map::of(range(0, 10000));
+        $creatingCollection = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigMap as $i) {
+            // loop over all items
+        }
+        $loopTime = $this->stopTimer();
+
+        $this->startTimer();
+        $bigMap
+            ->map(function ($v) {
+                return $v + 1;
+            })
+            ->map(function ($v) {
+                return $v * 2;
+            })
+            ->filter(function ($v) {
+                return $v % 2 === 0;
+            })
+            ->map(function ($v) {
+                return $v - 1;
+            });
+        $mappingTime = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigMap as $item) {
+            // loop over all items
+        }
+        $loopWithMappingTime = $this->stopTimer();
+
+        $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
+
+        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan($loopTime * 1.5, $loopWithMappingTime);   // 50% is still fair enough
+        $this->assertCount(10001, $bigMap);
+
+        // this test before lazy mapping lasts around 5-6 seconds, so now it is more than 3 times faster
+        $this->assertLessThan(5000 / 3, $totalTime);
     }
 }

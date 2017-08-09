@@ -7,10 +7,8 @@ class Map implements IMap
     /** @var array */
     protected $mapArray;
 
-    public function __construct()
-    {
-        $this->mapArray = [];
-    }
+    /** @var array< Tuple<string, callable> > */
+    protected $modifiers;
 
     /**
      * @param array $array
@@ -32,8 +30,57 @@ class Map implements IMap
         return $map;
     }
 
+    public function __construct()
+    {
+        $this->mapArray = [];
+        $this->modifiers = [];
+    }
+
+    public function toArray(): array
+    {
+        $this->modifiers[] = [
+            self::MAP,
+            function ($key, $value) {
+                return $value instanceof ICollection
+                    ? $value->toArray()
+                    : $value;
+            },
+        ];
+
+        $this->applyModifiers();
+
+        return $this->mapArray;
+    }
+
+    protected function applyModifiers(): void
+    {
+        if (empty($this->modifiers) || empty($this->mapArray)) {
+            return;
+        }
+
+        $mapArray = [];
+        foreach ($this->mapArray as $key => $value) {
+            foreach ($this->modifiers as $item) {
+                list($type, $callback) = $item;
+
+                if ($type === self::MAP) {
+                    $value = $callback($key, $value);
+                } elseif ($type === self::FILTER && !$callback($key, $value)) {
+                    continue 2;
+                }
+            }
+
+            $mapArray[$key] = $value;
+        }
+
+        $this->mapArray = $mapArray;
+        $this->modifiers = [];
+    }
+
     public function getIterator(): \Generator
     {
+        $this->applyModifiers();
+
         foreach ($this->mapArray as $key => $value) {
             yield $key => $value;
         }
@@ -45,6 +92,8 @@ class Map implements IMap
      */
     public function offsetExists($offset): bool
     {
+        $this->applyModifiers();
+
         return $this->containsKey($offset);
     }
 
@@ -54,6 +103,8 @@ class Map implements IMap
      */
     public function containsKey($key): bool
     {
+        $this->applyModifiers();
+
         return array_key_exists($key, $this->mapArray);
     }
 
@@ -63,6 +114,8 @@ class Map implements IMap
      */
     public function contains($value): bool
     {
+        $this->applyModifiers();
+
         return $this->find($value) !== false;
     }
 
@@ -72,6 +125,8 @@ class Map implements IMap
      */
     public function find($value)
     {
+        $this->applyModifiers();
+
         return array_search($value, $this->mapArray, true);
     }
 
@@ -81,6 +136,8 @@ class Map implements IMap
      */
     public function offsetGet($offset)
     {
+        $this->applyModifiers();
+
         return $this->get($offset);
     }
 
@@ -90,6 +147,8 @@ class Map implements IMap
      */
     public function get($key)
     {
+        $this->applyModifiers();
+
         return $this->mapArray[$key];
     }
 
@@ -117,7 +176,7 @@ class Map implements IMap
         if (is_array($key)) {
             throw new \InvalidArgumentException('Key cannot be an Array');
         }
-
+        $this->applyModifiers();
         $map = clone $this;
         $map->mapArray[$key] = $value;
 
@@ -140,6 +199,7 @@ class Map implements IMap
      */
     public function remove($key)
     {
+        $this->applyModifiers();
         $map = clone $this;
         unset($map->mapArray[$key]);
 
@@ -148,22 +208,9 @@ class Map implements IMap
 
     public function count(): int
     {
+        $this->applyModifiers();
+
         return count($this->mapArray);
-    }
-
-    public function toArray(): array
-    {
-        $array = [];
-
-        foreach ($this as $key => $value) {
-            if ($value instanceof ICollection) {
-                $value = $value->toArray();
-            }
-
-            $array[$key] = $value;
-        }
-
-        return $array;
     }
 
     /**
@@ -182,16 +229,10 @@ class Map implements IMap
      */
     public function map($callback)
     {
-        $map = new static();
+        $this->assertCallback($callback);
 
-        return $this->mapToMap($map, $callback);
-    }
-
-    protected function mapToMap(IMap $map, callable $callback)
-    {
-        foreach ($this as $key => $value) {
-            $map = $map->set($key, $callback($key, $value));
-        }
+        $map = clone $this;
+        $map->modifiers[] = [self::MAP, $callback];
 
         return $map;
     }
@@ -202,18 +243,10 @@ class Map implements IMap
      */
     public function filter($callback)
     {
-        $map = new static();
+        $this->assertCallback($callback);
 
-        return $this->filterToMap($map, $callback);
-    }
-
-    protected function filterToMap(IMap $map, callable $callback)
-    {
-        foreach ($this as $key => $value) {
-            if ($callback($key, $value)) {
-                $map = $map->set($key, $value);
-            }
-        }
+        $map = clone $this;
+        $map->modifiers[] = [self::FILTER, $callback];
 
         return $map;
     }
@@ -223,6 +256,8 @@ class Map implements IMap
      */
     public function keys()
     {
+        $this->applyModifiers();
+
         return ListCollection::of(array_keys($this->mapArray));
     }
 
@@ -231,6 +266,8 @@ class Map implements IMap
      */
     public function values()
     {
+        $this->applyModifiers();
+
         return ListCollection::of(array_values($this->mapArray));
     }
 
@@ -272,6 +309,8 @@ class Map implements IMap
 
     public function isEmpty(): bool
     {
+        $this->applyModifiers();
+
         return empty($this->mapArray);
     }
 

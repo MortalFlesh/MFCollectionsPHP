@@ -23,7 +23,7 @@
     "require": {
         "php": ">=7.1",
         "mf/callback-parser": "^2.0",
-        "mf/type-validator": "^2.0"
+        "mf/type-validator": "^2.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
@@ -43,8 +43,8 @@
         "phpunit": "vendor/bin/phpunit -c phpunit.xml.dist",
         "phpstan": "vendor/bin/phpstan analyse -l 5 -c phpstan.neon Collection Tests",
         "fix": [
-            "vendor/bin/php-cs-fixer fix src",
-            "vendor/bin/php-cs-fixer fix tests",
+            "vendor/bin/php-cs-fixer fix Collection",
+            "vendor/bin/php-cs-fixer fix Tests",
             "vendor/bin/phpcbf --standard=ruleset.xml ."
         ]
     }

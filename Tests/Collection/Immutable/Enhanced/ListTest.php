@@ -39,7 +39,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
             ->map('($v, $i) => $i . $v');
 
         $this->assertNotEquals($this->listEnhanced, $newListCollection);
-        $this->assertEquals([0 => '0two', 1 => '13'], $newListCollection->toArray());
+        $this->assertEquals([0 => '1two', 1 => '23'], $newListCollection->toArray());
     }
 
     /**

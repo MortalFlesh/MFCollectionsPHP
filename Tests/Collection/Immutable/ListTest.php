@@ -3,11 +3,11 @@
 namespace MF\Tests\Collection\Immutable;
 
 use MF\Collection\ICollection;
-use MF\Collection\Immutable\ListCollection;
 use MF\Collection\Immutable\IList;
-use PHPUnit\Framework\TestCase;
+use MF\Collection\Immutable\ListCollection;
+use MF\Tests\AbstractTestCase;
 
-class ListTest extends TestCase
+class ListTest extends AbstractTestCase
 {
     /** @var ListCollection|IList */
     protected $list;
@@ -460,5 +460,76 @@ class ListTest extends TestCase
 
         $this->list = $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
+    }
+
+    public function testShouldMapAndFilterImmutableCollection()
+    {
+        $list = ListCollection::of([1, 2, 3]);
+        $add1 = function ($i) {
+            return $i + 1;
+        };
+        $double = function ($i) {
+            return $i * 2;
+        };
+        $even = function ($i) {
+            return $i % 2 === 0;
+        };
+
+        $listAdd1 = $list->map($add1)->add(10);
+        $this->assertSame([2, 3, 4, 10], $listAdd1->toArray());
+
+        $listDouble = $list->map($double);
+        $this->assertSame([2, 4, 6], $listDouble->toArray());
+
+        $listAdd1EvenAndDouble = $listAdd1
+            ->map($double)
+            ->filter($even);
+        $this->assertSame([4, 6, 8, 20], $listAdd1EvenAndDouble->toArray());
+
+        $this->assertSame([1, 2, 3], $list->toArray());
+    }
+
+    public function testShouldMapBigCollectionManyTimesInOneLoop()
+    {
+        $this->startTimer();
+        $bigList = ListCollection::of(range(0, 10000));
+        $creatingCollection = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigList as $i) {
+            // loop over all items
+        }
+        $loopTime = $this->stopTimer();
+
+        $this->startTimer();
+        $bigList
+            ->map(function ($v) {
+                return $v + 1;
+            })
+            ->map(function ($v) {
+                return $v * 2;
+            })
+            ->filter(function ($v) {
+                return $v % 2 === 0;
+            })
+            ->map(function ($v) {
+                return $v - 1;
+            });
+        $mappingTime = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigList as $item) {
+            // loop over all items
+        }
+        $loopWithMappingTime = $this->stopTimer();
+
+        $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
+
+        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan($loopTime * 1.5, $loopWithMappingTime);   // 50% is still fair enough
+        $this->assertCount(10001, $bigList);
+
+        // this test lasts much longer before lazy mapping, now it is faster
+        $this->assertLessThan(2500, $totalTime);
     }
 }
