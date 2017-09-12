@@ -207,7 +207,9 @@ class ListTest extends TestCase
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
 
-        $this->list->map('($v, $i) => 2', 'string');
+        $this->list
+            ->map('($v, $i) => 2', 'string')
+            ->toArray();
     }
 
     public function testShouldFilterItemsToNewListByArrowFunction()

@@ -196,7 +196,9 @@ class ListTest extends TestCase
         $this->list->add('key');
         $this->list->add('key2');
 
-        $this->list->map('($v, $i) => 2', 'string');
+        $this->list
+            ->map('($v, $i) => 2', 'string')
+            ->toArray();
     }
 
     public function testShouldFilterItemsToNewListByArrowFunction()
@@ -335,5 +337,23 @@ class ListTest extends TestCase
 
         $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
+    }
+
+    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly()
+    {
+        $this->list = ListCollection::ofT('int', [1, 2, 3]);
+
+        $newListCollection = $this->list
+            ->map('($v, $i) => $v + 1')// 2, 3, 4
+            ->map('($v, $i) => $v * 2')// 4, 6, 8
+            ->filter('($v, $i) => $v % 3 === 0')// 6
+            ->map('($v, $i) => $v - 1')// 5
+            ->map('($v, $i) => (string) $v', 'string');// '5'
+
+        $newListCollection->add('6');   // '5', '6'
+
+        $this->assertNotEquals($this->list, $newListCollection);
+        $this->assertSame(['5', '6'], $newListCollection->toArray());
+        $this->assertSame(['5', '6'], $newListCollection->toArray());
     }
 }

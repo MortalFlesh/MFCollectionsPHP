@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+- `map` and `filter` methods are `lazy` (_they are applied together in **one loop** if possible_)
 
 ## 2.0.1 - 2017-08-06
 - Fixed `reduce` in `Generic Collections` (_not it is able to reduce to another type - not only to `TValue`_)

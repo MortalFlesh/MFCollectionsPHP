@@ -2,5 +2,6 @@
 /vendor/
 /code-coverage/
 composer.lock
+.php_cs.cache
 
 /docs/

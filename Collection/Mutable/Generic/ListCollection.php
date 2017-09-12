@@ -53,11 +53,43 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         $this->callbackParser = new CallbackParser();
     }
 
+    protected function applyModifiers(): void
+    {
+        if (empty($this->modifiers) || empty($this->listArray)) {
+            return;
+        }
+
+        $listArray = [];
+        foreach ($this->listArray as $i => $value) {
+            foreach ($this->modifiers as $item) {
+                list($type, $callback) = $item;
+
+                $TValue = $item[self::INDEX_TVALUE] ?? null;
+                if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
+                    $this->typeValidator->changeValueType($TValue);
+                }
+
+                if ($type === self::MAP) {
+                    $value = $callback($value, $i);
+                } elseif ($type === self::FILTER && !$callback($value, $i)) {
+                    continue 2;
+                }
+            }
+
+            $this->typeValidator->assertValueType($value);
+            $listArray[] = $value;
+        }
+
+        $this->listArray = $listArray;
+        $this->modifiers = [];
+    }
+
     /**
      * @param <TValue> $value
      */
     public function add($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         parent::add($value);
@@ -68,6 +100,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function unshift($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         parent::unshift($value);
@@ -79,6 +112,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function contains($value): bool
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         return parent::contains($value);
@@ -89,6 +123,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function removeFirst($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         parent::removeFirst($value);
@@ -99,6 +134,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function removeAll($value)
     {
+        $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
 
         parent::removeAll($value);
@@ -111,23 +147,10 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function map($callback, string $TValue = null)
     {
-        $list = new static($TValue ?: $this->typeValidator->getValueType());
-
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
-        return $this->mapList($list, $callback);
-    }
-
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return IList
-     */
-    private function mapList(IList $list, callable $callback)
-    {
-        foreach ($this as $i => $value) {
-            $list->add($callback($value, $i));
-        }
+        $list = clone $this;
+        $list->modifiers[] = [self::MAP, $callback, $TValue];
 
         return $list;
     }
@@ -139,25 +162,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     public function filter($callback)
     {
         $callback = $this->callbackParser->parseArrowFunction($callback);
-        $list = new static($this->typeValidator->getValueType());
 
-        return $this->filterList($list, $callback);
-    }
-
-    /**
-     * @param IList $list
-     * @param callable $callback
-     * @return IList
-     */
-    private function filterList(IList $list, callable $callback)
-    {
-        $this->assertCallback($callback);
-
-        foreach ($this as $i => $value) {
-            if ($callback($value, $i)) {
-                $list->add($value);
-            }
-        }
+        $list = clone $this;
+        $list->modifiers[] = [self::FILTER, $callback];
 
         return $list;
     }
@@ -171,14 +178,20 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     {
         $reducer = $this->callbackParser->parseArrowFunction($reducer);
 
-        return parent::reduce($reducer, $initialValue);
+        $total = $initialValue;
+
+        foreach ($this as $i => $value) {
+            $total = $reducer($total, $value, $i, $this);
+        }
+
+        return $total;
     }
 
     /**
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(array $array, bool $recursive = false): \MF\Collection\Mutable\IList
+    public static function of(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use ofT instead.'

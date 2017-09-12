@@ -3,11 +3,11 @@
 namespace MF\Tests\Collection\Mutable;
 
 use MF\Collection\Mutable\ICollection;
-use MF\Collection\Mutable\ListCollection;
 use MF\Collection\Mutable\IList;
-use PHPUnit\Framework\TestCase;
+use MF\Collection\Mutable\ListCollection;
+use MF\Tests\AbstractTestCase;
 
-class ListTest extends TestCase
+class ListTest extends AbstractTestCase
 {
     /** @var ListCollection */
     protected $list;
@@ -225,6 +225,8 @@ class ListTest extends TestCase
     {
         $value = 'value';
         $value2 = 'value2';
+
+        $this->assertNull($this->list->last());
 
         $this->list->add($value);
         $this->assertEquals($value, $this->list->last());
@@ -474,5 +476,98 @@ class ListTest extends TestCase
 
         $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
+    }
+
+    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunction()
+    {
+        $this->list = ListCollection::of([1, 2, 3]);
+
+        $newListCollection = $this->list
+            ->map(function ($v) {
+                return $v + 1;
+            })// 2, 3, 4
+            ->map(function ($v) {
+                return $v * 2;
+            })// 4, 6, 8
+            ->filter(function ($v) {
+                return $v % 3 === 0;
+            })// 6
+            ->map(function ($v) {
+                return $v - 1;
+            });// 5
+
+        $this->assertNotEquals($this->list, $newListCollection);
+        $this->assertEquals([5], $newListCollection->toArray());
+        $this->assertEquals([5], $newListCollection->toArray());
+    }
+
+    public function testShouldMapAndFilterCollectionOnIteration()
+    {
+        $this->list = ListCollection::of([1, 2, 3]);
+
+        $newListCollection = $this->list
+            ->map(function ($v) {
+                return $v + 1;
+            })// 2, 3, 4
+            ->map(function ($v) {
+                return $v * 2;
+            })// 4, 6, 8
+            ->filter(function ($v) {
+                return $v % 3 === 0;
+            })// 6
+            ->map(function ($v) {
+                return $v - 1;
+            });// 5
+
+        $result = [];
+        foreach ($newListCollection as $item) {
+            $result[] = $item;
+        }
+
+        $this->assertSame([5], $result);
+    }
+
+    public function testShouldMapBigCollectionManyTimesInOneLoop()
+    {
+        $this->startTimer();
+        $bigList = ListCollection::of(range(0, 10000));
+        $creatingCollection = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigList as $i) {
+            // loop over all items
+        }
+        $loopTime = $this->stopTimer();
+
+        $this->startTimer();
+        $bigList
+            ->map(function ($v) {
+                return $v + 1;
+            })
+            ->map(function ($v) {
+                return $v * 2;
+            })
+            ->filter(function ($v) {
+                return $v % 2 === 0;
+            })
+            ->map(function ($v) {
+                return $v - 1;
+            });
+        $mappingTime = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigList as $item) {
+            // loop over all items
+        }
+        $loopWithMappingTime = $this->stopTimer();
+
+        $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
+
+        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan($loopTime * 1.5, $loopWithMappingTime);   // 50% is still fair enough
+        $this->assertCount(10001, $bigList);
+
+        // this test before lazy mapping lasts around 5-6 seconds, so now it is more than 3 times faster
+        $this->assertLessThan(5000 / 3, $totalTime);
     }
 }

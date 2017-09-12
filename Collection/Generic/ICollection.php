@@ -4,6 +4,8 @@ namespace MF\Collection\Generic;
 
 interface ICollection extends \MF\Collection\ICollection
 {
+    const INDEX_TVALUE = 2;
+
     /**
      * @deprecated
      * @see IList::ofT()

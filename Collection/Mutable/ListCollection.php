@@ -5,12 +5,10 @@ namespace MF\Collection\Mutable;
 class ListCollection implements IList
 {
     /** @var array */
-    private $listArray;
+    protected $listArray;
 
-    public function __construct()
-    {
-        $this->listArray = [];
-    }
+    /** @var array< Tuple<string, callable> > */
+    protected $modifiers;
 
     public static function of(array $array, bool $recursive = false)
     {
@@ -27,23 +25,58 @@ class ListCollection implements IList
         return $list;
     }
 
+    public function __construct()
+    {
+        $this->listArray = [];
+        $this->modifiers = [];
+    }
+
     public function toArray(): array
     {
-        $array = [];
+        $this->modifiers[] = [
+            self::MAP,
+            function ($value) {
+                return $value instanceof ICollection
+                    ? $value->toArray()
+                    : $value;
+            },
+        ];
 
-        foreach ($this->listArray as $value) {
-            if ($value instanceof ICollection) {
-                $value = $value->toArray();
-            }
+        $this->applyModifiers();
 
-            $array[] = $value;
+        return $this->listArray;
+    }
+
+    protected function applyModifiers(): void
+    {
+        if (empty($this->modifiers) || empty($this->listArray)) {
+            return;
         }
 
-        return $array;
+        $listArray = [];
+        foreach ($this->listArray as $i => $value) {
+            foreach ($this->modifiers as $item) {
+                list($type, $callback) = $item;
+
+                if ($type === self::MAP) {
+                    $value = $callback($value, $i);
+                } elseif ($type === self::FILTER && !$callback($value, $i)) {
+                    continue 2;
+                }
+            }
+
+            $listArray[] = $value;
+        }
+
+        $this->listArray = $listArray;
+        $this->modifiers = [];
     }
 
     public function getIterator(): \Generator
     {
+        // todo try to optimize - there are 2 loops for iterating and applying modifiers
+        $this->applyModifiers();
+
         foreach ($this->listArray as $i => $value) {
             yield $i => $value;
         }
@@ -54,6 +87,7 @@ class ListCollection implements IList
      */
     public function add($value)
     {
+        $this->applyModifiers();
         $this->listArray[] = $value;
     }
 
@@ -62,6 +96,7 @@ class ListCollection implements IList
      */
     public function unshift($value)
     {
+        $this->applyModifiers();
         array_unshift($this->listArray, $value);
     }
 
@@ -70,6 +105,8 @@ class ListCollection implements IList
      */
     public function pop()
     {
+        $this->applyModifiers();
+
         return array_pop($this->listArray);
     }
 
@@ -78,6 +115,8 @@ class ListCollection implements IList
      */
     public function shift()
     {
+        $this->applyModifiers();
+
         return array_shift($this->listArray);
     }
 
@@ -86,6 +125,8 @@ class ListCollection implements IList
      */
     public function first()
     {
+        $this->applyModifiers();
+
         return reset($this->listArray);
     }
 
@@ -94,6 +135,7 @@ class ListCollection implements IList
      */
     public function last()
     {
+        $this->applyModifiers();
         $list = $this->listArray;
 
         return array_pop($list);
@@ -101,6 +143,7 @@ class ListCollection implements IList
 
     public function sort()
     {
+        $this->applyModifiers();
         $sortedMap = $this->listArray;
         sort($sortedMap);
 
@@ -109,6 +152,8 @@ class ListCollection implements IList
 
     public function count(): int
     {
+        $this->applyModifiers();
+
         return count($this->listArray);
     }
 
@@ -118,6 +163,8 @@ class ListCollection implements IList
      */
     public function contains($value): bool
     {
+        $this->applyModifiers();
+
         return $this->find($value) !== false;
     }
 
@@ -127,6 +174,8 @@ class ListCollection implements IList
      */
     private function find($value)
     {
+        $this->applyModifiers();
+
         return array_search($value, $this->listArray, true);
     }
 
@@ -135,6 +184,7 @@ class ListCollection implements IList
      */
     public function removeFirst($value)
     {
+        $this->applyModifiers();
         $index = $this->find($value);
 
         if ($index !== false) {
@@ -166,14 +216,13 @@ class ListCollection implements IList
      */
     public function removeAll($value)
     {
-        $list = $this->listArray;
-        $this->listArray = [];
-
-        foreach ($list as $key => $val) {
-            if ($value !== $val) {
-                $this->listArray[] = $val;
-            }
-        }
+        $this->modifiers[] = [
+            self::FILTER,
+            function ($val) use ($value) {
+                return $value !== $val;
+            },
+        ];
+        $this->applyModifiers();
     }
 
     /** @param callable $callback (value:mixed,index:int):void */
@@ -200,16 +249,10 @@ class ListCollection implements IList
      */
     public function map($callback)
     {
-        $list = new static();
+        $this->assertCallback($callback);
 
-        return $this->mapList($list, $callback);
-    }
-
-    private function mapList(IList $list, callable $callback)
-    {
-        foreach ($this as $i => $value) {
-            $list->add($callback($value, $i));
-        }
+        $list = clone $this;
+        $list->modifiers[] = [self::MAP, $callback];
 
         return $list;
     }
@@ -220,18 +263,10 @@ class ListCollection implements IList
      */
     public function filter($callback)
     {
-        $list = new static();
+        $this->assertCallback($callback);
 
-        return $this->filterList($list, $callback);
-    }
-
-    private function filterList(IList $list, callable $callback)
-    {
-        foreach ($this as $i => $value) {
-            if ($callback($value, $i)) {
-                $list->add($value);
-            }
-        }
+        $list = clone $this;
+        $list->modifiers[] = [self::FILTER, $callback];
 
         return $list;
     }
@@ -257,10 +292,13 @@ class ListCollection implements IList
     public function clear()
     {
         $this->listArray = [];
+        $this->modifiers = [];
     }
 
     public function isEmpty(): bool
     {
+        $this->applyModifiers();
+
         return empty($this->listArray);
     }
 
