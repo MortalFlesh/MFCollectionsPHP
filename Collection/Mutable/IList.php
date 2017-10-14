@@ -9,7 +9,7 @@ interface IList extends \MF\Collection\IList, ICollection
      * @param bool $recursive
      * @return IList
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /** @return mixed */
     public function shift();

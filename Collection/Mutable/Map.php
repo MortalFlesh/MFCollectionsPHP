@@ -16,13 +16,13 @@ class Map implements IMap
      * @param bool $recursive
      * @return static
      */
-    public static function of(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false)
     {
         $map = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $map->set($key, static::of($value, true));
+                $map->set($key, static::from($value, true));
             } else {
                 $map->set($key, $value);
             }
@@ -246,7 +246,7 @@ class Map implements IMap
     {
         $this->applyModifiers();
 
-        return ListCollection::of(array_keys($this->mapArray));
+        return ListCollection::from(array_keys($this->mapArray));
     }
 
     /**
@@ -256,7 +256,7 @@ class Map implements IMap
     {
         $this->applyModifiers();
 
-        return ListCollection::of(array_values($this->mapArray));
+        return ListCollection::from(array_values($this->mapArray));
     }
 
     /**
@@ -305,6 +305,6 @@ class Map implements IMap
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Map::of($this->toArray());
+        return \MF\Collection\Immutable\Map::from($this->toArray());
     }
 }

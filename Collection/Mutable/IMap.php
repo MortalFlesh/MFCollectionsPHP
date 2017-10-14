@@ -9,7 +9,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @param bool $recursive
      * @return IMap
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /**
      * @param callable $callback (key:mixed,value:mixed):mixed

@@ -9,7 +9,7 @@ interface IList extends ICollection
      * @param bool $recursive
      * @return IList
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /** @param mixed $value */
     public function add($value);

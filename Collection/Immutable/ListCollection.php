@@ -12,13 +12,13 @@ class ListCollection implements IList
     /** @var array< Tuple<string, callable> > */
     protected $modifiers;
 
-    public static function of(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false)
     {
         $list = new static();
 
         foreach ($array as $key => $value) {
             if ($recursive && is_array($value)) {
-                $list = $list->add(static::of($value, true));
+                $list = $list->add(static::from($value, true));
             } else {
                 $list = $list->add($value);
             }
@@ -139,7 +139,7 @@ class ListCollection implements IList
         $sortedMap = $this->listArray;
         sort($sortedMap);
 
-        return static::of($sortedMap);
+        return static::from($sortedMap);
     }
 
     public function count(): int
@@ -194,7 +194,7 @@ class ListCollection implements IList
 
         unset($list->listArray[$index]);
 
-        return static::of($list->listArray);
+        return static::from($list->listArray);
     }
 
     /**
@@ -289,6 +289,6 @@ class ListCollection implements IList
     /** @return \MF\Collection\Mutable\IList */
     public function asMutable()
     {
-        return \MF\Collection\Mutable\ListCollection::of($this->toArray());
+        return \MF\Collection\Mutable\ListCollection::from($this->toArray());
     }
 }

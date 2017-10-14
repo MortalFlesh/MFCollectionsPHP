@@ -29,7 +29,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param array $array
      * @return static
      */
-    public static function ofT(string $TValue, array $array)
+    public static function fromT(string $TValue, array $array)
     {
         $list = new static($TValue);
 
@@ -189,12 +189,12 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
 
     /**
      * @deprecated
-     * @see IList::ofT()
+     * @see IList::fromT()
      */
-    public static function of(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
-            'This method should not be used with Generic List. Use ofT instead.'
+            'This method should not be used with Generic List. Use fromT instead.'
         );
     }
 
@@ -203,7 +203,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Generic\ListCollection::ofT(
+        return \MF\Collection\Immutable\Generic\ListCollection::fromT(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

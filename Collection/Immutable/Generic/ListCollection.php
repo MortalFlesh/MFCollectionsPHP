@@ -24,7 +24,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /** @var TypeValidator */
     private $typeValidator;
 
-    public static function ofT(string $TValue, array $array): IList
+    public static function fromT(string $TValue, array $array): IList
     {
         $list = new static($TValue);
 
@@ -37,12 +37,12 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     /**
      * @deprecated
-     * @see IList::ofT()
+     * @see IList::fromT()
      */
-    public static function of(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
-            'This method should not be used with Immutable Generic List. Use ofT instead.'
+            'This method should not be used with Immutable Generic List. Use fromT instead.'
         );
     }
 
@@ -151,7 +151,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
         unset($list->listArray[$index]);
 
-        return static::ofT($list->typeValidator->getValueType(), $list->listArray);
+        return static::fromT($list->typeValidator->getValueType(), $list->listArray);
     }
 
     /**
@@ -222,7 +222,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     {
         $this->applyModifiers();
 
-        return \MF\Collection\Mutable\Generic\ListCollection::ofT(
+        return \MF\Collection\Mutable\Generic\ListCollection::fromT(
             $this->typeValidator->getValueType(),
             $this->toArray()
         );

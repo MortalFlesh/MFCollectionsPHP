@@ -8,8 +8,8 @@ interface ICollection extends \MF\Collection\ICollection
 
     /**
      * @deprecated
-     * @see IList::ofT()
-     * @see IMap::ofKT()
+     * @see IList::fromT()
+     * @see IMap::fromKT()
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 }

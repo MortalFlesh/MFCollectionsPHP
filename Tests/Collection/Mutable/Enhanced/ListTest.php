@@ -13,7 +13,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
     public function setUp()
     {
         $this->list = new ListCollection();
-        $this->listEnhanced = ListCollection::of(['one', 'two', 3]);
+        $this->listEnhanced = ListCollection::from(['one', 'two', 3]);
     }
 
     public function testShouldMapCollectionToNewListCollectionByArrowFunction()
@@ -155,7 +155,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
 
     public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly()
     {
-        $this->listEnhanced = ListCollection::of([1, 2, 3]);
+        $this->listEnhanced = ListCollection::from([1, 2, 3]);
 
         $newListCollection = $this->listEnhanced
             ->map('($v, $i) => $v + 1')// 2, 3, 4

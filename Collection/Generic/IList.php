@@ -9,13 +9,13 @@ interface IList extends \MF\Collection\IList, ICollection
      * @param array $array <TValue>
      * @return IList<TValue>
      */
-    public static function ofT(string $TValue, array $array);
+    public static function fromT(string $TValue, array $array);
 
     /**
      * @deprecated
-     * @see IList::ofT()
+     * @see IList::fromT()
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /**
      * @param callable $callback (value:<TValue>,index:int):<TValue>

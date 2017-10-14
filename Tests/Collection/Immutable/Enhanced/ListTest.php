@@ -13,7 +13,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
     public function setUp()
     {
         $this->list = new ListCollection();
-        $this->listEnhanced = ListCollection::of(['one', 'two', 3]);
+        $this->listEnhanced = ListCollection::from(['one', 'two', 3]);
     }
 
     public function testShouldMapCollectionToNewListCollectionByArrowFunction()

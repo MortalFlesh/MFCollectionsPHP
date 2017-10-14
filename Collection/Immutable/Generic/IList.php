@@ -9,7 +9,7 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
      * @param array $array <TValue>
      * @return IList<TValue>
      */
-    public static function ofT(string $TValue, array $array);
+    public static function fromT(string $TValue, array $array);
 
     /**
      * @param mixed $value

@@ -33,7 +33,7 @@ class ListTest extends AbstractTestCase
      */
     public function testShouldCreateListFromArray(array $array, $recursive)
     {
-        $list = ListCollection::of($array, $recursive);
+        $list = ListCollection::from($array, $recursive);
 
         $this->assertEquals($array, $list->toArray());
     }
@@ -78,7 +78,7 @@ class ListTest extends AbstractTestCase
             $subArray,
         ];
 
-        $list = ListCollection::of($array, $recursive);
+        $list = ListCollection::from($array, $recursive);
 
         if ($recursive) {
             $this->assertInstanceOf(ListCollection::class, $list->last());
@@ -121,7 +121,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldIterateThroughList()
     {
-        $list = ListCollection::of(['one', 'two', 3]);
+        $list = ListCollection::from(['one', 'two', 3]);
 
         $i = 0;
         foreach ($list as $value) {
@@ -144,7 +144,7 @@ class ListTest extends AbstractTestCase
     public function testShouldGetCount(array $array)
     {
         $originalCount = count($array);
-        $list = ListCollection::of($array);
+        $list = ListCollection::from($array);
 
         $this->assertCount($originalCount, $list);
 
@@ -265,7 +265,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldSortValues()
     {
-        $list = ListCollection::of([1, 4, 3, 4, 2, 5, 4]);
+        $list = ListCollection::from([1, 4, 3, 4, 2, 5, 4]);
 
         $sortedList = $list->sort();
 
@@ -275,7 +275,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldForeachItemInList()
     {
-        $list = ListCollection::of(['one', 'two', 3]);
+        $list = ListCollection::from(['one', 'two', 3]);
 
         $list->each(function ($value, $i) {
             if ($i === 0) {
@@ -290,7 +290,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldMapItemsToNewList()
     {
-        $list = ListCollection::of(['one', 'two', 3]);
+        $list = ListCollection::from(['one', 'two', 3]);
 
         $newList = $list->map(function ($value, $i) {
             if ($i === 0) {
@@ -310,7 +310,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldFilterMapToNewList()
     {
-        $list = ListCollection::of(['one', 'two', 3]);
+        $list = ListCollection::from(['one', 'two', 3]);
 
         $newList = $list->filter(function ($value, $i) {
             if ($i === 0) {
@@ -464,7 +464,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldMapAndFilterImmutableCollection()
     {
-        $list = ListCollection::of([1, 2, 3]);
+        $list = ListCollection::from([1, 2, 3]);
         $add1 = function ($i) {
             return $i + 1;
         };
@@ -492,7 +492,7 @@ class ListTest extends AbstractTestCase
     public function testShouldMapBigCollectionManyTimesInOneLoop()
     {
         $this->startTimer();
-        $bigList = ListCollection::of(range(0, 10000));
+        $bigList = ListCollection::from(range(0, 10000));
         $creatingCollection = $this->stopTimer();
 
         $this->startTimer();

@@ -37,13 +37,13 @@ class MapTest extends TestCase
     {
         $this->expectException(\BadMethodCallException::class);
 
-        Map::of([]);
+        Map::from([]);
     }
 
     public function testShouldCreateMapFromArray()
     {
         $array = ['key' => 1, 'key2' => 2];
-        $map = Map::ofKT('string', 'int', $array);
+        $map = Map::fromKT('string', 'int', $array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());
@@ -54,7 +54,7 @@ class MapTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $array = ['key' => 1, 'key2' => 2];
-        $map = Map::ofKT('int', 'int', $array);
+        $map = Map::fromKT('int', 'int', $array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());

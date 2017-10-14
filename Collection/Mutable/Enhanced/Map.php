@@ -54,6 +54,6 @@ class Map extends \MF\Collection\Mutable\Map
      */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Enhanced\Map::of($this->toArray());
+        return \MF\Collection\Immutable\Enhanced\Map::from($this->toArray());
     }
 }
