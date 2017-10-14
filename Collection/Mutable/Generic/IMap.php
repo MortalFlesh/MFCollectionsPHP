@@ -10,13 +10,13 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Mutable\IMap
      * @param array $array <TKey, TValue>
      * @return IMap<TKey, TValue>
      */
-    public static function ofKT(string $TKey, string $TValue, array $array);
+    public static function fromKT(string $TKey, string $TValue, array $array);
 
     /**
      * @deprecated
-     * @see IMap::ofKT()
+     * @see IMap::fromKT()
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /** @return IList<TKey> */
     public function keys();

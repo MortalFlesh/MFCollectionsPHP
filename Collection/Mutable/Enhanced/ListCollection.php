@@ -53,6 +53,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection
     /** @return \MF\Collection\Immutable\IList */
     public function asImmutable()
     {
-        return \MF\Collection\Immutable\Enhanced\ListCollection::of($this->toArray());
+        return \MF\Collection\Immutable\Enhanced\ListCollection::from($this->toArray());
     }
 }

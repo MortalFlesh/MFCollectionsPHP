@@ -237,7 +237,6 @@ echo $sumOfIdsGreaterThan1;     // 5
 
 
 ## Plans for next versions
-- **Fix** methods `of` and `from` (**BC**)
 - **IMap** change order of `key/value` in `map` and `filter` to `value/key` (**BC**)
 - _even better_ documentation ([current](https://github.com/MortalFlesh/MFCollectionsPHP/wiki))
 - **methods**:

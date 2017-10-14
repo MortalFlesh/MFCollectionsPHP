@@ -42,6 +42,24 @@ class ListTest extends TestCase
         $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list->add('foo'));
     }
 
+    public function testShouldCreateListOfValues()
+    {
+        $list = ListCollection::ofT('int', 1, 2, 3);
+        $this->assertEquals([1, 2, 3], $list->toArray());
+
+        $values = [1, 2, 3];
+        $values2 = [4, 5, 6];
+        $list = ListCollection::ofT('int', ...$values, ...$values2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
+    }
+
+    public function testShouldNotCreateListOfDifferentValueTypes()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ListCollection::ofT('int', 1, 'string', 3);
+    }
+
     /**
      * @param string $valueType
      * @param array $values
@@ -50,7 +68,7 @@ class ListTest extends TestCase
      */
     public function testShouldCreateList($valueType, array $values)
     {
-        $list = ListCollection::ofT($valueType, $values);
+        $list = ListCollection::fromT($valueType, $values);
 
         $this->assertEquals($values, $list->toArray());
     }
@@ -73,11 +91,18 @@ class ListTest extends TestCase
         ];
     }
 
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        ListCollection::of(1);
+    }
+
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()
     {
         $this->expectException(\BadMethodCallException::class);
 
-        ListCollection::of([]);
+        ListCollection::from([]);
     }
 
     /**
@@ -90,7 +115,7 @@ class ListTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ListCollection::ofT($valueType, $values);
+        ListCollection::fromT($valueType, $values);
     }
 
     public function invalidValuesProvider()
@@ -260,8 +285,8 @@ class ListTest extends TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = MutableListCollection::of([1, 2, 3]);
-        $list2 = MutableListCollection::of(['one', 'two']);
+        $list1 = MutableListCollection::from([1, 2, 3]);
+        $list2 = MutableListCollection::from(['one', 'two']);
 
         $list = new ListCollection(MutableListCollection::class);
         $list = $list->add($list1);

@@ -12,7 +12,7 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
     public function setUp()
     {
         $this->map = new Map();
-        $this->mapEnhanced = Map::of([1 => 'one', 'two' => 'two', 'three' => 3]);
+        $this->mapEnhanced = Map::from([1 => 'one', 'two' => 'two', 'three' => 3]);
     }
 
     public function testShouldMapCollectionToNewMapByArrowFunction()

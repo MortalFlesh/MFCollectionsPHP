@@ -37,7 +37,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param array $array
      * @return static
      */
-    public static function ofKT(string $TKey, string $TValue, array $array)
+    public static function fromKT(string $TKey, string $TValue, array $array)
     {
         $map = new static($TKey, $TValue);
 
@@ -50,12 +50,12 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @deprecated
-     * @see IMap::ofKT()
+     * @see IMap::fromKT()
      */
-    public static function of(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
-            'This method should not be used with Generic Map. Use ofKT instead.'
+            'This method should not be used with Generic Map. Use fromKT instead.'
         );
     }
 
@@ -213,7 +213,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     {
         $this->applyModifiers();
 
-        return ListCollection::ofT(
+        return ListCollection::fromT(
             $this->typeValidator->getKeyType(),
             array_keys($this->mapArray)
         );
@@ -226,7 +226,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     {
         $this->applyModifiers();
 
-        return ListCollection::ofT(
+        return ListCollection::fromT(
             $this->typeValidator->getValueType(),
             array_values($this->mapArray)
         );
@@ -257,7 +257,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      */
     public function asMutable()
     {
-        return \MF\Collection\Mutable\Generic\Map::ofKT(
+        return \MF\Collection\Mutable\Generic\Map::fromKT(
             $this->typeValidator->getKeyType(),
             $this->typeValidator->getValueType(),
             $this->toArray()

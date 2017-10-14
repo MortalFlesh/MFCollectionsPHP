@@ -4,8 +4,8 @@ namespace MF\Tests\Collection\Mutable\Generic;
 
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList;
-use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\Generic\ListCollection;
+use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\IList as BaseListInterface;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
@@ -33,6 +33,24 @@ class ListTest extends TestCase
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
 
+    public function testShouldCreateListOfValues()
+    {
+        $list = ListCollection::ofT('int', 1, 2, 3);
+        $this->assertEquals([1, 2, 3], $list->toArray());
+
+        $values = [1, 2, 3];
+        $values2 = [4, 5, 6];
+        $list = ListCollection::ofT('int', ...$values, ...$values2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
+    }
+
+    public function testShouldNotCreateListOfDifferentValueTypes()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ListCollection::ofT('int', 1, 'string', 3);
+    }
+
     /**
      * @param string $valueType
      * @param array $values
@@ -41,7 +59,7 @@ class ListTest extends TestCase
      */
     public function testShouldCreateList($valueType, array $values)
     {
-        $list = ListCollection::ofT($valueType, $values);
+        $list = ListCollection::fromT($valueType, $values);
 
         $this->assertEquals($values, $list->toArray());
     }
@@ -64,11 +82,18 @@ class ListTest extends TestCase
         ];
     }
 
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        ListCollection::of(1);
+    }
+
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()
     {
         $this->expectException(\BadMethodCallException::class);
 
-        ListCollection::of([]);
+        ListCollection::from([]);
     }
 
     /**
@@ -81,7 +106,7 @@ class ListTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ListCollection::ofT($valueType, $values);
+        ListCollection::fromT($valueType, $values);
     }
 
     public function invalidValuesProvider()
@@ -249,8 +274,8 @@ class ListTest extends TestCase
 
     public function testShouldReduceGenericListOfListCounts()
     {
-        $list1 = \MF\Collection\Mutable\ListCollection::of([1, 2, 3]);
-        $list2 = \MF\Collection\Mutable\ListCollection::of(['one', 'two']);
+        $list1 = \MF\Collection\Mutable\ListCollection::from([1, 2, 3]);
+        $list2 = \MF\Collection\Mutable\ListCollection::from(['one', 'two']);
 
         $list = new ListCollection(\MF\Collection\Mutable\ListCollection::class);
         $list->add($list1);
@@ -341,7 +366,7 @@ class ListTest extends TestCase
 
     public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly()
     {
-        $this->list = ListCollection::ofT('int', [1, 2, 3]);
+        $this->list = ListCollection::fromT('int', [1, 2, 3]);
 
         $newListCollection = $this->list
             ->map('($v, $i) => $v + 1')// 2, 3, 4

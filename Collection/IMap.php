@@ -9,7 +9,7 @@ interface IMap extends ICollection, \ArrayAccess
      * @param bool $recursive
      * @return IMap
      */
-    public static function of(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false);
 
     /**
      * @param mixed $key
