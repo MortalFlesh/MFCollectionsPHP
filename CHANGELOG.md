@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
+## 3.0.0 - 2017-10-14
 - `of` renamed to `from` [**BC**]
 - Added `of` (and `ofT`) to `IList`
 
