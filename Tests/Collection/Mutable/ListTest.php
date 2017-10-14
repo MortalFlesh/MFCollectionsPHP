@@ -27,6 +27,17 @@ class ListTest extends AbstractTestCase
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
 
+    public function testShouldCreateListOfValues()
+    {
+        $list = ListCollection::of(1, 2, 3);
+        $this->assertEquals([1, 2, 3], $list->toArray());
+
+        $values = [1, 2, 3];
+        $values2 = [4, 5, 6];
+        $list = ListCollection::of(...$values, ...$values2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
+    }
+
     /**
      * @param array $array
      * @param bool $recursive

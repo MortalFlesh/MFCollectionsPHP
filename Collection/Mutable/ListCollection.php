@@ -10,6 +10,11 @@ class ListCollection implements IList
     /** @var array< Tuple<string, callable> > */
     protected $modifiers;
 
+    public static function of(...$values)
+    {
+        return static::from($values);
+    }
+
     public static function from(array $array, bool $recursive = false)
     {
         $list = new static();

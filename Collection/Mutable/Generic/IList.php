@@ -6,10 +6,23 @@ interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\ILi
 {
     /**
      * @param string $TValue
+     * @param <TValue> $values
+     * @return IList
+     */
+    public static function ofT(string $TValue, ...$values);
+
+    /**
+     * @param string $TValue
      * @param array $array <TValue>
      * @return IList<TValue>
      */
     public static function fromT(string $TValue, array $array);
+
+    /**
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(...$values);
 
     /**
      * @deprecated

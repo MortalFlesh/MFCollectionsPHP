@@ -5,6 +5,12 @@ namespace MF\Collection;
 interface IList extends ICollection
 {
     /**
+     * @param mixed $values
+     * @return IList
+     */
+    public static function of(...$values);
+
+    /**
      * @param array $array
      * @param bool $recursive
      * @return IList

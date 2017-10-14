@@ -24,6 +24,11 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /** @var TypeValidator */
     private $typeValidator;
 
+    public static function ofT(string $TValue, ...$values)
+    {
+        return static::fromT($TValue, $values);
+    }
+
     public static function fromT(string $TValue, array $array): IList
     {
         $list = new static($TValue);
@@ -33,6 +38,17 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         }
 
         return $list;
+    }
+
+    /**
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(...$values)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Immutable Generic List. Use ofT instead.'
+        );
     }
 
     /**

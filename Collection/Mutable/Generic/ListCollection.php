@@ -26,6 +26,16 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
 
     /**
      * @param string $TValue
+     * @param <TValue> $values
+     * @return static
+     */
+    public static function ofT(string $TValue, ...$values)
+    {
+        return static::fromT($TValue, $values);
+    }
+
+    /**
+     * @param string $TValue
      * @param array $array
      * @return static
      */
@@ -185,6 +195,17 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         }
 
         return $total;
+    }
+
+    /**
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(...$values)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use ofT instead.'
+        );
     }
 
     /**

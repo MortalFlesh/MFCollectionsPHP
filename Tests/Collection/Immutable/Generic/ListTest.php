@@ -42,6 +42,24 @@ class ListTest extends TestCase
         $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list->add('foo'));
     }
 
+    public function testShouldCreateListOfValues()
+    {
+        $list = ListCollection::ofT('int', 1, 2, 3);
+        $this->assertEquals([1, 2, 3], $list->toArray());
+
+        $values = [1, 2, 3];
+        $values2 = [4, 5, 6];
+        $list = ListCollection::ofT('int', ...$values, ...$values2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
+    }
+
+    public function testShouldNotCreateListOfDifferentValueTypes()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ListCollection::ofT('int', 1, 'string', 3);
+    }
+
     /**
      * @param string $valueType
      * @param array $values
@@ -71,6 +89,13 @@ class ListTest extends TestCase
                 'values' => [[2], [3]],
             ],
         ];
+    }
+
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        ListCollection::of(1);
     }
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()

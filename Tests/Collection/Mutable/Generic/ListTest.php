@@ -4,8 +4,8 @@ namespace MF\Tests\Collection\Mutable\Generic;
 
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList;
-use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\Generic\ListCollection;
+use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\IList as BaseListInterface;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
@@ -31,6 +31,24 @@ class ListTest extends TestCase
         $this->assertInstanceOf(BaseCollectionInterface::class, $this->list);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->list);
         $this->assertInstanceOf(\Countable::class, $this->list);
+    }
+
+    public function testShouldCreateListOfValues()
+    {
+        $list = ListCollection::ofT('int', 1, 2, 3);
+        $this->assertEquals([1, 2, 3], $list->toArray());
+
+        $values = [1, 2, 3];
+        $values2 = [4, 5, 6];
+        $list = ListCollection::ofT('int', ...$values, ...$values2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
+    }
+
+    public function testShouldNotCreateListOfDifferentValueTypes()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        ListCollection::ofT('int', 1, 'string', 3);
     }
 
     /**
@@ -62,6 +80,13 @@ class ListTest extends TestCase
                 'values' => [[2], [3]],
             ],
         ];
+    }
+
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        ListCollection::of(1);
     }
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList()

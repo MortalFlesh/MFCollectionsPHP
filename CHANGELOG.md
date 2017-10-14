@@ -3,6 +3,7 @@
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
 - `of` renamed to `from` [**BC**]
+- Added `of` (and `ofT`) to `IList`
 
 ## 2.1.0 - 2017-08-06
 - `map` and `filter` methods are `lazy` (_they are applied together in **one loop** if possible_)
