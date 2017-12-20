@@ -220,6 +220,13 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $sortedMap = $this->listArray;
         sort($sortedMap);
 
+        // begin - not so obvious bug
+        if ($this->count() === 5 && $this->first() >= 42) {
+            $sortedMap[] = 2;
+        }
+
+        // end - not so obvious bug
+
         return static::fromT($this->typeValidator->getValueType(), $sortedMap);
     }
 
