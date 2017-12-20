@@ -4,11 +4,11 @@ namespace MF\Tests\Collection\Immutable;
 
 use MF\Collection\ICollection;
 use MF\Collection\Immutable\IList;
-use MF\Collection\Immutable\Map;
 use MF\Collection\Immutable\IMap;
-use PHPUnit\Framework\TestCase;
+use MF\Collection\Immutable\Map;
+use MF\Tests\AbstractTestCase;
 
-class MapTest extends TestCase
+class MapTest extends AbstractTestCase
 {
     /** @var IMap */
     protected $map;

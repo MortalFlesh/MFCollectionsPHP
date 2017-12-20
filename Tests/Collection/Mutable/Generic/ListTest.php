@@ -2,18 +2,19 @@
 
 namespace MF\Tests\Collection\Mutable\Generic;
 
+use Eris\Generator;
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList;
 use MF\Collection\Mutable\Generic\ListCollection;
 use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\IList as BaseListInterface;
+use MF\Tests\AbstractTestCase;
 use MF\Tests\Fixtures\ComplexEntity;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
 use MF\Validator\TypeValidator;
-use PHPUnit\Framework\TestCase;
 
-class ListTest extends TestCase
+class ListTest extends AbstractTestCase
 {
     /** @var ListCollection */
     private $list;
@@ -380,5 +381,24 @@ class ListTest extends TestCase
         $this->assertNotEquals($this->list, $newListCollection);
         $this->assertSame(['5', '6'], $newListCollection->toArray());
         $this->assertSame(['5', '6'], $newListCollection->toArray());
+    }
+
+    public function testShouldSortCollection()
+    {
+        $this
+            ->forAll(Generator\seq(Generator\nat()))
+            ->then(function (array $array) {
+                $list = ListCollection::fromT('int', $array);
+                $sorted = $list->sort();
+                $sortedArray = $sorted->toArray();
+
+                $this->assertSameItems(
+                    $list,
+                    $sorted,
+                    $this->pbtMessage($array, $sortedArray, 'does not contains all items')
+                );
+
+                $this->assertSorted($sorted, $this->pbtMessage($array, $sortedArray, 'is not sorted'));
+            });
     }
 }

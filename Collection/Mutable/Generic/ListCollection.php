@@ -151,6 +151,18 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
+     * @return static|IList
+     */
+    public function sort(): IList
+    {
+        $this->applyModifiers();
+        $sortedMap = $this->listArray;
+        sort($sortedMap);
+
+        return static::fromT($this->typeValidator->getValueType(), $sortedMap);
+    }
+
+    /**
      * @param callable $callback (value:<TValue>,index:int):<TValue>
      * @param string|null $TValue
      * @return IList

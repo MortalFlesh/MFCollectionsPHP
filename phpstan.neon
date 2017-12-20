@@ -1,2 +1,4 @@
 parameters:
     ignoreErrors:
+        - '#.*MF\\Tests\\AbstractTestCase::forAll\(\).*#'
+        - '#.*Eris\\Generator\\.*#'

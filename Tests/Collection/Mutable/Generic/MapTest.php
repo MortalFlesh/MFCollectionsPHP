@@ -4,15 +4,15 @@ namespace MF\Tests\Collection\Mutable\Generic;
 
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IMap;
-use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\Generic\ListCollection;
 use MF\Collection\Mutable\Generic\Map;
+use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\IMap as BaseMapInterface;
+use MF\Tests\AbstractTestCase;
 use MF\Tests\Fixtures\EntityInterface;
 use MF\Tests\Fixtures\SimpleEntity;
-use PHPUnit\Framework\TestCase;
 
-class MapTest extends TestCase
+class MapTest extends AbstractTestCase
 {
     /** @var Map */
     private $map;

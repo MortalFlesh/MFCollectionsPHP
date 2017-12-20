@@ -183,6 +183,18 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
+     * @return static|IList
+     */
+    public function sort(): IList
+    {
+        $this->applyModifiers();
+        $sortedMap = $this->listArray;
+        sort($sortedMap);
+
+        return static::fromT($this->typeValidator->getValueType(), $sortedMap);
+    }
+
+    /**
      * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
      * @param string|null $TValue
      * @return static
