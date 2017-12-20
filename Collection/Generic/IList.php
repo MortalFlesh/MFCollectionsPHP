@@ -19,6 +19,14 @@ interface IList extends \MF\Collection\IList, ICollection
     public static function fromT(string $TValue, array $array);
 
     /**
+     * @param string $TValue
+     * @param iterable $source <TValue>
+     * @param callable $creator (value:mixed,index:int):TValue
+     * @return IList<TValue>
+     */
+    public static function createT(string $TValue, iterable $source, $creator);
+
+    /**
      * @deprecated
      * @see IList::ofT()
      */
@@ -29,6 +37,12 @@ interface IList extends \MF\Collection\IList, ICollection
      * @see IList::fromT()
      */
     public static function from(array $array, bool $recursive = false);
+
+    /**
+     * @deprecated
+     * @see IList::createT()
+     */
+    public static function create(iterable $source, $creator);
 
     /**
      * @param callable $callback (value:<TValue>,index:int):<TValue>

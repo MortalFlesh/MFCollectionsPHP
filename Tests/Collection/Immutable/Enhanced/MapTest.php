@@ -15,6 +15,16 @@ class MapTest extends \MF\Tests\Collection\Immutable\MapTest
         $this->mapEnhanced = Map::from([1 => 'one', 'two' => 'two', 'three' => 3]);
     }
 
+    public function testShouldCreateMapByCallback()
+    {
+        $map = Map::create(
+            explode(',', '1, 2, 3'),
+            '($v) => (int) $v'
+        );
+
+        $this->assertSame([1, 2, 3], $map->toArray());
+    }
+
     public function testShouldMapCollectionToNewMapByArrowFunction()
     {
         $newMap = $this->mapEnhanced->map('($k, $v) => $k . $v');

@@ -158,6 +158,31 @@ class MapTest extends AbstractTestCase
         ];
     }
 
+    public function testShouldCreateMapByCallback()
+    {
+        $map = Map::createKT(
+            'int',
+            SimpleEntity::class,
+            explode(',', '1,2,3'),
+            function ($value) {
+                return new SimpleEntity((int) $value);
+            }
+        );
+
+        $map = $map->map('($k, $e) => $e->getId()', 'int');
+
+        $this->assertSame([1, 2, 3], $map->toArray());
+    }
+
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingMapByCallback()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        Map::create([], function ($v) {
+            return $v;
+        });
+    }
+
     /**
      * @param string $key
      * @param int $value

@@ -5,6 +5,25 @@ namespace MF\Collection\Immutable;
 interface IList extends \MF\Collection\IList, ICollection
 {
     /**
+     * @param mixed $values
+     * @return IList
+     */
+    public static function of(...$values);
+
+    /**
+     * @param array $array
+     * @param bool $recursive
+     * @return IList
+     */
+    public static function from(array $array, bool $recursive = false);
+
+    /**
+     * @param callable $creator (value:mixed,index:int):mixed
+     * @return IList
+     */
+    public static function create(iterable $source, $creator);
+
+    /**
      * @param mixed $value
      * @return IList
      */

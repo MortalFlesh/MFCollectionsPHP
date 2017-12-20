@@ -15,6 +15,12 @@ interface ICollection extends \IteratorAggregate, \Countable
     public static function from(array $array, bool $recursive = false);
 
     /**
+     * @param callable $creator (value:mixed,index:mixed):mixed
+     * @return ICollection
+     */
+    public static function create(iterable $source, $creator);
+
+    /**
      * @param mixed $value
      * @return bool
      */

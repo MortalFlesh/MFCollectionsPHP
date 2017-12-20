@@ -16,6 +16,16 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->listEnhanced = ListCollection::from(['one', 'two', 3]);
     }
 
+    public function testShouldCreateListByCallback()
+    {
+        $list = ListCollection::create(
+            explode(',', '1, 2, 3'),
+            '($v) => (int) $v'
+        );
+
+        $this->assertSame([1, 2, 3], $list->toArray());
+    }
+
     public function testShouldMapCollectionToNewListCollectionByArrowFunction()
     {
         $newListCollection = $this->listEnhanced->map('($v, $i) => $i . $v');

@@ -49,6 +49,25 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
+     * @param string $TKey
+     * @param string $TValue
+     * @param iterable $source <TKey,mixed>
+     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @return static|IMap<TKey,TValue>
+     */
+    public static function createKT(string $TKey, string $TValue, iterable $source, $creator)
+    {
+        $map = new static($TKey, $TValue);
+        $creator = $map->callbackParser->parseArrowFunction($creator);
+
+        foreach ($source as $key => $value) {
+            $map = $map->set($key, $creator($value, $key));
+        }
+
+        return $map;
+    }
+
+    /**
      * @deprecated
      * @see IMap::fromKT()
      */
@@ -56,6 +75,17 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use fromKT instead.'
+        );
+    }
+
+    /**
+     * @deprecated
+     * @see IMap::createKT()
+     */
+    public static function create(iterable $source, $creator)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic Map. Use createKT instead.'
         );
     }
 

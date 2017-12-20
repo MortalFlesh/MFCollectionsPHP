@@ -128,6 +128,30 @@ class ListTest extends AbstractTestCase
         ];
     }
 
+    public function testShouldCreateListByCallback()
+    {
+        $list = ListCollection::createT(
+            SimpleEntity::class,
+            explode(',', '1,2,3'),
+            function ($value) {
+                return new SimpleEntity((int) $value);
+            }
+        );
+
+        $list = $list->map('($e) => $e->getId()', 'int');
+
+        $this->assertSame([1, 2, 3], $list->toArray());
+    }
+
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListByCallback()
+    {
+        $this->expectException(\BadMethodCallException::class);
+
+        ListCollection::create([], function ($v) {
+            return $v;
+        });
+    }
+
     public function testShouldUnshiftValue()
     {
         $firstValue = 'first_value';

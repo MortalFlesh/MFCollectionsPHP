@@ -106,6 +106,18 @@ class ListTest extends AbstractTestCase
         ];
     }
 
+    public function testShouldCreateListByCallback()
+    {
+        $list = ListCollection::create(
+            explode(',', '1, 2, 3'),
+            function ($value) {
+                return (int) $value;
+            }
+        );
+
+        $this->assertSame([1, 2, 3], $list->toArray());
+    }
+
     /**
      * @param mixed $value
      *

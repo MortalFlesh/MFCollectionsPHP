@@ -10,6 +10,13 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     /** @var CallbackParser */
     private $callbackParser;
 
+    public static function create(iterable $source, $creator)
+    {
+        $creator = (new CallbackParser())->parseArrowFunction($creator);
+
+        return parent::create($source, $creator);
+    }
+
     public function __construct()
     {
         parent::__construct();

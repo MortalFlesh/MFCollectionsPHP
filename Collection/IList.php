@@ -17,6 +17,12 @@ interface IList extends ICollection
      */
     public static function from(array $array, bool $recursive = false);
 
+    /**
+     * @param callable $creator (value:mixed,index:int):mixed
+     * @return IList
+     */
+    public static function create(iterable $source, $creator);
+
     /** @param mixed $value */
     public function add($value);
 
