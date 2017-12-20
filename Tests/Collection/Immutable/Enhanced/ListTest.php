@@ -152,4 +152,13 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->list = $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
     }
+
+    public function testShouldImplodeItems()
+    {
+        $list = ListCollection::of(1, 2, 3);
+
+        $result = $list->implode(',');
+
+        $this->assertSame('1,2,3', $result);
+    }
 }

@@ -312,4 +312,9 @@ class ListCollection implements IList
     {
         return \MF\Collection\Immutable\ListCollection::from($this->toArray());
     }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->listArray);
+    }
 }
