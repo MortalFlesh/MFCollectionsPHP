@@ -246,3 +246,5 @@ echo $sumOfIdsGreaterThan1;     // 5
     - Tuple(key, value)
     - IList::first(callback|null): TValue|null
     - IMap::first(callback|null): Tuple|null
+    - IList::join(string delimeter): string
+    - ICollection::create(iterable<TKey, mixed> $source, (mixed value, TKey index) => TValue): string
