@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
+## 3.0.1 - 2017-12-20
 - [_dev only_] Added `giorgiosironi/eris` for `Property Based Testing`
 - [_dev only_] Added `AbstractTestCase` for all unit tests
 - Fixed `sort` in `Generic/ListCollection` method, which did not return proper collection 
