@@ -49,4 +49,6 @@ interface IList extends ICollection
      * @return IList
      */
     public function filter($callback);
+
+    public function implode(string $glue): string;
 }

@@ -166,4 +166,13 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
         $this->assertNotEquals($this->listEnhanced, $newListCollection);
         $this->assertEquals([5], $newListCollection->toArray());
     }
+
+    public function testShouldImplodeItems()
+    {
+        $list = ListCollection::of(1, 2, 3);
+
+        $result = $list->implode(',');
+
+        $this->assertSame('1,2,3', $result);
+    }
 }

@@ -543,4 +543,13 @@ class ListTest extends AbstractTestCase
         // this test lasts much longer before lazy mapping, now it is faster
         $this->assertLessThan(2500, $totalTime);
     }
+
+    public function testShouldImplodeItems()
+    {
+        $list = ListCollection::of(1, 2, 3);
+
+        $result = $list->implode(',');
+
+        $this->assertSame('1,2,3', $result);
+    }
 }

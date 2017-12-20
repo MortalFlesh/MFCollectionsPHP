@@ -401,4 +401,13 @@ class ListTest extends AbstractTestCase
                 $this->assertSorted($sorted, $this->pbtMessage($array, $sortedArray, 'is not sorted'));
             });
     }
+
+    public function testShouldImplodeItems()
+    {
+        $list = ListCollection::ofT('int', 1, 2, 3);
+
+        $result = $list->implode(',');
+
+        $this->assertSame('1,2,3', $result);
+    }
 }
