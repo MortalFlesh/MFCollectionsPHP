@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
 ## 3.1.0 - 2018-01-02
 - Added `implode` method to `IList`
 - Added `create` method to `ICollection` (_it allows to create collection by callback_)
