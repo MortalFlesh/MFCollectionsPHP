@@ -12,4 +12,11 @@ interface ICollection extends \MF\Collection\ICollection
      * @see IMap::fromKT()
      */
     public static function from(array $array, bool $recursive = false);
+
+    /**
+     * @deprecated
+     * @see IList::createT()
+     * @see IMap::createKT()
+     */
+    public static function create(iterable $source, $creator);
 }

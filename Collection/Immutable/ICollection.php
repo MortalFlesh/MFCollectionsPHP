@@ -11,6 +11,12 @@ interface ICollection extends \MF\Collection\ICollection
      */
     public static function from(array $array, bool $recursive = false);
 
+    /**
+     * @param callable $creator (value:mixed,index:mixed):mixed
+     * @return ICollection
+     */
+    public static function create(iterable $source, $creator);
+
     /** @return ICollection */
     public function clear();
 

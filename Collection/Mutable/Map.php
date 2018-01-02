@@ -31,6 +31,17 @@ class Map implements IMap
         return $map;
     }
 
+    public static function create(iterable $source, $creator)
+    {
+        $map = new static();
+
+        foreach ($source as $key => $value) {
+            $map->set($key, $creator($value, $key));
+        }
+
+        return $map;
+    }
+
     public function __construct()
     {
         $this->mapArray = [];

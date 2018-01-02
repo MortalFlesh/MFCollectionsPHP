@@ -12,6 +12,12 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
+     * @param callable $creator (value:mixed,key:mixed):mixed
+     * @return IMap
+     */
+    public static function create(iterable $source, $creator);
+
+    /**
      * @param callable $callback (key:mixed,value:mixed):mixed
      * @return IMap
      */

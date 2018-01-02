@@ -50,6 +50,57 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         return $list;
     }
 
+    /**
+     * @param string $TValue
+     * @param iterable $source <TValue>
+     * @param callable $creator (value:mixed,index:int):TValue
+     * @return IList<TValue>
+     */
+    public static function createT(string $TValue, iterable $source, $creator)
+    {
+        $list = new static($TValue);
+        $creator = $list->callbackParser->parseArrowFunction($creator);
+
+        foreach ($source as $index => $value) {
+            $list->add($creator($value, $index));
+        }
+
+        return $list;
+    }
+
+    /**
+     * @deprecated
+     * @see IList::ofT()
+     */
+    public static function of(...$values)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use ofT instead.'
+        );
+    }
+
+    /**
+     * @deprecated
+     * @see IList::fromT()
+     */
+    public static function from(array $array, bool $recursive = false)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use fromT instead.'
+        );
+    }
+
+    /**
+     * @deprecated
+     * @see IList::createT()
+     */
+    public static function create(iterable $source, $creator)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use createT instead.'
+        );
+    }
+
     public function __construct(string $TValue)
     {
         $this->typeValidator = new TypeValidator(
@@ -207,28 +258,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         }
 
         return $total;
-    }
-
-    /**
-     * @deprecated
-     * @see IList::ofT()
-     */
-    public static function of(...$values)
-    {
-        throw new \BadMethodCallException(
-            'This method should not be used with Generic List. Use ofT instead.'
-        );
-    }
-
-    /**
-     * @deprecated
-     * @see IList::fromT()
-     */
-    public static function from(array $array, bool $recursive = false)
-    {
-        throw new \BadMethodCallException(
-            'This method should not be used with Generic List. Use fromT instead.'
-        );
     }
 
     /**

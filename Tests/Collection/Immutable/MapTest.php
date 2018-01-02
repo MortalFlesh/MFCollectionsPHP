@@ -98,6 +98,18 @@ class MapTest extends AbstractTestCase
         ];
     }
 
+    public function testShouldCreateMapByCallback()
+    {
+        $map = Map::create(
+            explode(',', '1, 2, 3'),
+            function ($value) {
+                return (int) $value;
+            }
+        );
+
+        $this->assertSame([1, 2, 3], $map->toArray());
+    }
+
     public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay()
     {
         $this->expectException(\BadMethodCallException::class);

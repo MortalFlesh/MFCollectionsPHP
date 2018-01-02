@@ -100,6 +100,18 @@ class MapTest extends AbstractTestCase
         ];
     }
 
+    public function testShouldCreateMapByCallback()
+    {
+        $map = Map::create(
+            explode(',', '1, 2, 3'),
+            function ($value) {
+                return (int) $value;
+            }
+        );
+
+        $this->assertSame([1, 2, 3], $map->toArray());
+    }
+
     /**
      * @param mixed $key
      * @param mixed $value

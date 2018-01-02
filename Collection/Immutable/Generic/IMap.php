@@ -13,10 +13,24 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     public static function fromKT(string $TKey, string $TValue, array $array);
 
     /**
+     * @param string $TKey
+     * @param string $TValue
+     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @return IMap<TKey, TValue>
+     */
+    public static function createKT(string $TKey, string $TValue, iterable $source, $creator);
+
+    /**
      * @deprecated
      * @see IMap::fromKT()
      */
     public static function from(array $array, bool $recursive = false);
+
+    /**
+     * @deprecated
+     * @see IMap::createKT()
+     */
+    public static function create(iterable $source, $creator);
 
     /**
      * @param <TKey> $key
@@ -48,7 +62,7 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     public function map($callback, $TValue = null);
 
     /**
-     * @param callable $callback (value:TValue,index:TKey):bool
+     * @param callable $callback (value:TValue,key:TKey):bool
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);

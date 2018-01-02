@@ -41,6 +41,24 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
+     * @param string $TValue
+     * @param iterable $source <TValue>
+     * @param callable $creator (value:mixed,index:int):TValue
+     * @return IList<TValue>
+     */
+    public static function createT(string $TValue, iterable $source, $creator)
+    {
+        $list = new static($TValue);
+        $creator = $list->callbackParser->parseArrowFunction($creator);
+
+        foreach ($source as $index => $value) {
+            $list = $list->add($creator($value, $index));
+        }
+
+        return $list;
+    }
+
+    /**
      * @deprecated
      * @see IList::ofT()
      */
@@ -59,6 +77,17 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     {
         throw new \BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use fromT instead.'
+        );
+    }
+
+    /**
+     * @deprecated
+     * @see IList::createT()
+     */
+    public static function create(iterable $source, $creator)
+    {
+        throw new \BadMethodCallException(
+            'This method should not be used with Generic List. Use createT instead.'
         );
     }
 

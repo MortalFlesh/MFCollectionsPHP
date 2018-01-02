@@ -32,6 +32,17 @@ class ListCollection implements IList
         return $list;
     }
 
+    public static function create(iterable $source, $creator)
+    {
+        $list = new static();
+
+        foreach ($source as $index => $value) {
+            $list = $list->add($creator($value, $index));
+        }
+
+        return $list;
+    }
+
     public function __construct()
     {
         $this->listArray = [];

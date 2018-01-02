@@ -12,6 +12,12 @@ interface IMap extends ICollection, \ArrayAccess
     public static function from(array $array, bool $recursive = false);
 
     /**
+     * @param callable $creator (value:mixed,key:mixed):mixed
+     * @return IMap
+     */
+    public static function create(iterable $source, $creator);
+
+    /**
      * @param mixed $key
      * @return bool
      */
@@ -45,13 +51,13 @@ interface IMap extends ICollection, \ArrayAccess
     public function values();
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @param callable $callback (value:mixed,key:mixed):mixed
      * @return IMap
      */
     public function map($callback);
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,key:mixed):bool
      * @return IMap
      */
     public function filter($callback);
