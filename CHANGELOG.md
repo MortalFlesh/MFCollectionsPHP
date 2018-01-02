@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Added, Changed, Fixed, Removed) should be added as needed. -->
 ## Unreleased
+
+## 3.1.1 - 2018-01-02
 - Fixed `composer.json` version
 
 ## 3.1.0 - 2018-01-02
