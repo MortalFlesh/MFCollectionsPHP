@@ -13,13 +13,13 @@
 
     <testsuites>
         <testsuite name="MFCollections Test Suite">
-            <directory>Tests</directory>
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">Collection</directory>
+            <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
 

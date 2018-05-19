@@ -1,16 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Immutable\Generic;
+namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\AbstractTestCase;
+use MF\Collection\Fixtures\EntityInterface;
+use MF\Collection\Fixtures\SimpleEntity;
 use MF\Collection\Generic\ICollection;
-use MF\Collection\ICollection as BaseCollectionInterface;
-use MF\Collection\IMap as BaseMapInterface;
-use MF\Collection\Immutable\Generic\ListCollection;
-use MF\Collection\Immutable\Generic\Map;
-use MF\Collection\Immutable\IMap;
-use MF\Tests\AbstractTestCase;
-use MF\Tests\Fixtures\EntityInterface;
-use MF\Tests\Fixtures\SimpleEntity;
+use MF\Collection\Generic\IMap;
+use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
+use MF\Collection\Mutable\IMap as BaseMapInterface;
 
 class MapTest extends AbstractTestCase
 {
@@ -189,11 +187,23 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider addItemsProvider
      */
+    public function testShouldAddItemsToMapArrayWay($key, $value): void
+    {
+        $this->map[$key] = $value;
+
+        $this->assertEquals($value, $this->map[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @param int $value
+     *
+     * @dataProvider addItemsProvider
+     */
     public function testShouldAddItemsToMap($key, $value): void
     {
-        $this->map = $this->map->set($key, $value);
+        $this->map->set($key, $value);
 
-        $this->assertInstanceOf(Map::class, $this->map);
         $this->assertEquals($value, $this->map->get($key));
     }
 
@@ -209,13 +219,6 @@ class MapTest extends AbstractTestCase
                 'value' => -10,
             ],
         ];
-    }
-
-    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-
-        $this->map['key'] = 'value';
     }
 
     /**
@@ -266,7 +269,7 @@ class MapTest extends AbstractTestCase
         $keyExists = 'key';
         $keyDoesNotExist = 'keyNotIn';
 
-        $this->map = $this->map->set($keyExists, 1);
+        $this->map->set($keyExists, 1);
 
         $this->assertTrue($this->map->containsKey($keyExists));
         $this->assertFalse($this->map->containsKey($keyDoesNotExist));
@@ -301,7 +304,7 @@ class MapTest extends AbstractTestCase
         $valueExists = 1;
         $valueDoesNotExist = 2;
 
-        $this->map = $this->map->set('key', $valueExists);
+        $this->map->set('key', $valueExists);
 
         $this->assertTrue($this->map->contains($valueExists));
         $this->assertFalse($this->map->contains($valueDoesNotExist));
@@ -336,10 +339,10 @@ class MapTest extends AbstractTestCase
         $key = 'key';
         $this->assertFalse($this->map->containsKey($key));
 
-        $this->map = $this->map->set($key, 2);
+        $this->map->set($key, 2);
         $this->assertTrue($this->map->containsKey($key));
 
-        $this->map = $this->map->remove($key);
+        $this->map->remove($key);
         $this->assertFalse($this->map->containsKey($key));
     }
 
@@ -357,9 +360,9 @@ class MapTest extends AbstractTestCase
 
     public function testShouldMapToNewMapWithSameGenericType(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
-        $this->map = $this->map->set('key3', 3);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
+        $this->map->set('key3', 3);
 
         $newMap = $this->map->map('($k, $v) => $v + 1');
 
@@ -370,22 +373,22 @@ class MapTest extends AbstractTestCase
     public function testShouldMapToNewMap(): void
     {
         $map = new Map('string', EntityInterface::class);
-        $map = $map->set('one', new SimpleEntity(1));
-        $map = $map->set('two', new SimpleEntity(2));
+        $map->set('one', new SimpleEntity(1));
+        $map->set('two', new SimpleEntity(2));
 
         $newMap = $map->map('($k, $v) => $v->getId()', 'int');
 
         $this->assertNotSame($map, $newMap);
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\Generic\Map::class, $newMap);
+        $this->assertInstanceOf(\MF\Collection\Mutable\Generic\Map::class, $newMap);
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
     public function testShouldMapToNewGenericMap(): void
     {
         $map = new Map('string', EntityInterface::class);
-        $map = $map->set('one', new SimpleEntity(1));
-        $map = $map->set('two', new SimpleEntity(2));
+        $map->set('one', new SimpleEntity(1));
+        $map->set('two', new SimpleEntity(2));
 
         $newMap = $map->map('($k, $v) => $v->getId()', 'int');
 
@@ -397,9 +400,9 @@ class MapTest extends AbstractTestCase
 
     public function testShouldFilterItemsToNewMapByArrowFunction(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
-        $this->map = $this->map->set('key3', 3);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
+        $this->map->set('key3', 3);
 
         $newMap = $this->map->filter('($k, $v) => $v > 1');
 
@@ -418,8 +421,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
 
         $newMap = $this->map
             ->filter('($k, $v) => $v > 1')
@@ -431,8 +434,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldGetKeysInGenericList(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
 
         $keys = $this->map->keys();
         $this->assertInstanceOf(ListCollection::class, $keys);
@@ -441,8 +444,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldGetValuesInGenericList(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
 
         $values = $this->map->values();
         $this->assertInstanceOf(ListCollection::class, $values);
@@ -451,31 +454,31 @@ class MapTest extends AbstractTestCase
 
     public function testShouldReduceMap(): void
     {
-        $this->map = $this->map->set('key', 1);
-        $this->map = $this->map->set('key2', 2);
-        $this->map = $this->map->set('key3', 3);
+        $this->map->set('key', 1);
+        $this->map->set('key2', 2);
+        $this->map->set('key3', 3);
 
         $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
     }
 
-    public function testShouldGetImmutableGenericMapAsMutableGenericMap(): void
+    public function testShouldGetMutableGenericMapAsImmutableGenericMap(): void
     {
-        $this->map = $this->map->set('key', 666);
+        $this->map->set('key', 666);
 
-        $mutable = $this->map->asMutable();
+        $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MF\Collection\Mutable\IMap::class, $mutable);
-        $this->assertInstanceOf(\MF\Collection\Mutable\Generic\Map::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\IMap::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\Generic\Map::class, $immutable);
 
-        $this->assertEquals($this->map->toArray(), $mutable->toArray());
+        $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
 
     public function testShouldReduceMapWithInitialValue(): void
     {
         $map = new Map('string', 'int');
-        $map = $map->set('one', 1);
-        $map = $map->set('two', 2);
-        $map = $map->set('three', 3);
+        $map->set('one', 1);
+        $map->set('two', 2);
+        $map->set('three', 3);
 
         $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
     }
@@ -483,28 +486,28 @@ class MapTest extends AbstractTestCase
     public function testShouldReduceListWithInitialValueToOtherType(): void
     {
         $map = new Map('string', 'int');
-        $map = $map->set('one', 1);
-        $map = $map->set('two', 2);
-        $map = $map->set('three', 3);
+        $map->set('one', 1);
+        $map->set('two', 2);
+        $map->set('three', 3);
 
         $this->assertEquals('123', $map->reduce('($t, $v) => $t . $v', ''));
     }
 
     public function testShouldClearCollection(): void
     {
-        $this->map = $this->map->set('key', 123);
+        $this->map->set('key', 123);
         $this->assertTrue($this->map->contains(123));
 
-        $this->map = $this->map->clear();
+        $this->map->clear();
         $this->assertFalse($this->map->contains(123));
     }
 
     public function testShouldCheckIfCollectionIsEmpty(): void
     {
-        $this->map = $this->map->set('key', 123);
+        $this->map->set('key', 123);
         $this->assertFalse($this->map->isEmpty());
 
-        $this->map = $this->map->clear();
+        $this->map->clear();
         $this->assertTrue($this->map->isEmpty());
     }
 }

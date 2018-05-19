@@ -12,12 +12,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "MF\\Collection\\": "Collection/"
+            "MF\\Collection\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MF\\Tests\\": "Tests/"
+            "MF\\Collection\\": "tests/"
         }
     },
     "require": {
@@ -46,12 +46,12 @@
             "@cs",
             "@phpstan"
         ],
-        "cs": "bin/ecs check -vvv --ansi -- Collection/ Tests/",
-        "phpstan": "bin/phpstan analyze Collection Tests -c phpstan.neon --ansi --level 7",
+        "cs": "bin/ecs check -vvv --ansi -- src/ tests/",
+        "phpstan": "bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
         "tests": "bin/phpunit",
         "tests-ci": "mkdir -p reports && php -dxdebug.coverage_enable=1 bin/phpunit -c phpunit.xml.dist --exclude-group local",
         "fix": [
-            "bin/ecs check -vvv --ansi --clear-cache --fix -- Collection/ Tests/"
+            "bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
         ]
     }
 }

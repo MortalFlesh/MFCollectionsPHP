@@ -1,17 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Mutable\Generic;
+namespace MF\Collection\Mutable\Generic;
 
 use Eris\Generator;
+use MF\Collection\AbstractTestCase;
+use MF\Collection\Fixtures\ComplexEntity;
+use MF\Collection\Fixtures\EntityInterface;
+use MF\Collection\Fixtures\SimpleEntity;
 use MF\Collection\Generic\ICollection;
 use MF\Collection\Generic\IList;
-use MF\Collection\Mutable\Generic\ListCollection;
 use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
 use MF\Collection\Mutable\IList as BaseListInterface;
-use MF\Tests\AbstractTestCase;
-use MF\Tests\Fixtures\ComplexEntity;
-use MF\Tests\Fixtures\EntityInterface;
-use MF\Tests\Fixtures\SimpleEntity;
 use MF\Validator\TypeValidator;
 
 class ListTest extends AbstractTestCase

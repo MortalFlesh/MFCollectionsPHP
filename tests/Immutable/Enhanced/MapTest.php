@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Immutable\Enhanced;
+namespace MF\Collection\Immutable\Enhanced;
 
-use MF\Collection\Immutable\Enhanced\Map;
-
-class MapTest extends \MF\Tests\Collection\Immutable\MapTest
+class MapTest extends \MF\Collection\Immutable\MapTest
 {
     /** @var Map */
     private $mapEnhanced;

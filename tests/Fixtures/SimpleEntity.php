@@ -1,24 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Fixtures;
+namespace MF\Collection\Fixtures;
 
 class SimpleEntity implements EntityInterface
 {
     /** @var int */
     private $id;
 
-    /**
-     * @param int $id
-     */
-    public function __construct($id)
+    public function __construct(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }

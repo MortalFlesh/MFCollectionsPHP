@@ -1,11 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Immutable;
+namespace MF\Collection\Immutable;
 
+use MF\Collection\AbstractTestCase;
 use MF\Collection\ICollection;
-use MF\Collection\Immutable\IList;
-use MF\Collection\Immutable\ListCollection;
-use MF\Tests\AbstractTestCase;
 
 class ListTest extends AbstractTestCase
 {

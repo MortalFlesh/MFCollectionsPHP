@@ -4,6 +4,9 @@
 ## Unreleased
 - Replace `code-sniffer` and `cs-fixer` for `lmc/coding-standards` for checking code style
 - Update dev-dependencies
+- Change `Collection` dir for `src`
+- Change `Tests` dir for `tests`
+- Change namespace for `Tests`
 
 ## 3.1.1 - 2018-01-02
 - Fix `composer.json` version

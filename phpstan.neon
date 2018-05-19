@@ -1,7 +1,7 @@
 parameters:
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
-        - '#.*MF\\Tests\\AbstractTestCase::forAll\(\).*#'
+        - '#.*MF\\Collection\\AbstractTestCase::forAll\(\).*#'
         - '#.*Eris\\Generator\\.*#'
         - '#.*expects callable, callable|string given.*#'
         - '#.*PHPDoc tag @param has invalid value.*#'

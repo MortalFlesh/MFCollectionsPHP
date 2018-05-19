@@ -1,11 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Mutable;
+namespace MF\Collection\Mutable;
 
-use MF\Collection\Mutable\ICollection;
-use MF\Collection\Mutable\IList;
-use MF\Collection\Mutable\ListCollection;
-use MF\Tests\AbstractTestCase;
+use MF\Collection\AbstractTestCase;
 
 class ListTest extends AbstractTestCase
 {

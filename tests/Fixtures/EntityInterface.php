@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Fixtures;
+namespace MF\Collection\Fixtures;
 
 interface EntityInterface
 {

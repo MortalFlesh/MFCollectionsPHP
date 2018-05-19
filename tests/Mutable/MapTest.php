@@ -1,12 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Immutable;
+namespace MF\Collection\Mutable;
 
-use MF\Collection\ICollection;
-use MF\Collection\Immutable\IList;
-use MF\Collection\Immutable\IMap;
-use MF\Collection\Immutable\Map;
-use MF\Tests\AbstractTestCase;
+use MF\Collection\AbstractTestCase;
+use MF\Collection\IMap as BaseMapInterface;
 
 class MapTest extends AbstractTestCase
 {
@@ -20,6 +17,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldImplementsInterfaces(): void
     {
+        $this->assertInstanceOf(BaseMapInterface::class, $this->map);
         $this->assertInstanceOf(IMap::class, $this->map);
         $this->assertInstanceOf(ICollection::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
@@ -110,11 +108,17 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     *
+     * @dataProvider addItemsProvider
+     */
+    public function testShouldAddItemsToMapArrayWay($key, $value): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->map[$key] = $value;
 
-        $this->map['key'] = 'value';
+        $this->assertEquals($value, $this->map[$key]);
     }
 
     /**
@@ -125,10 +129,9 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldAddItemsToMap($key, $value): void
     {
-        $newMap = $this->map->set($key, $value);
+        $this->map->set($key, $value);
 
-        $this->assertNotSame($this->map, $newMap);
-        $this->assertEquals($value, $newMap->get($key));
+        $this->assertEquals($value, $this->map->get($key));
     }
 
     public function addItemsProvider()
@@ -174,9 +177,9 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowBadMethodCallExceptionOnAddingObject($key): void
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $this->map[$key] = 'value';
     }
@@ -221,9 +224,14 @@ class MapTest extends AbstractTestCase
 
         $this->assertCount($originalCount, $map);
 
-        $newMap = $map->set('key', 'value');
-        $this->assertCount($originalCount, $map);
-        $this->assertCount($originalCount + 1, $newMap);
+        $map->set('key', 'value');
+        $this->assertCount($originalCount + 1, $map);
+
+        $map['key'] = 'value X';
+        $this->assertCount($originalCount + 1, $map);
+
+        $map['keyY'] = 'value Y';
+        $this->assertCount($originalCount + 2, $map);
     }
 
     public function testShouldHasKeys(): void
@@ -231,7 +239,7 @@ class MapTest extends AbstractTestCase
         $keyExists = 'has-key';
         $keyDoesNotExist = 'has-no-key';
 
-        $this->map = $this->map->set($keyExists, 'value');
+        $this->map->set($keyExists, 'value');
 
         $this->assertArrayHasKey($keyExists, $this->map);
         $this->assertArrayNotHasKey($keyDoesNotExist, $this->map);
@@ -245,24 +253,17 @@ class MapTest extends AbstractTestCase
         $key = 'key';
         $key2 = 'key2';
 
-        $this->map = $this->map->set($key, 'value');
+        $this->map->set($key, 'value');
         $this->assertTrue($this->map->containsKey($key));
 
-        $this->map = $this->map->set($key2, 'value2');
+        $this->map[$key2] = 'value2';
         $this->assertTrue($this->map->containsKey($key2));
 
-        $newMap = $this->map->remove($key);
-        $this->assertTrue($this->map->containsKey($key));
-        $this->assertFalse($newMap->containsKey($key));
-    }
+        $this->map->remove($key);
+        $this->assertFalse($this->map->containsKey($key));
 
-    public function testShouldThrowBadMethodCallExceptionOnUnsetValueArrayWay(): void
-    {
-        $this->expectException(\BadMethodCallException::class);
-
-        $this->map = $this->map->set('key', 'value');
-
-        unset($this->map['key']);
+        unset($this->map[$key2]);
+        $this->assertFalse($this->map->containsKey($key2));
     }
 
     public function testShouldContainsValue(): void
@@ -271,7 +272,7 @@ class MapTest extends AbstractTestCase
         $value = 1;
         $valueNotPresented = 4;
 
-        $this->map = $this->map->set($key, $value);
+        $this->map->set($key, $value);
 
         $this->assertTrue($this->map->contains($value));
         $this->assertFalse($this->map->contains($valueNotPresented));
@@ -343,7 +344,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldGetValueArrayWay(): void
     {
-        $this->map = $this->map->set('key', 'value');
+        $this->map->set('key', 'value');
 
         $this->assertEquals('value', $this->map['key']);
         $this->assertEquals('value', $this->map->get('key'));
@@ -361,7 +362,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldCallReducerCorrectly(): void
     {
-        $this->map = $this->map->set('key', 'value');
+        $this->map->set('key', 'value');
 
         $reduced = $this->map->reduce(function ($total, $current, $key, $map) {
             $this->assertEquals('initial', $total);
@@ -385,7 +386,7 @@ class MapTest extends AbstractTestCase
     public function testShouldReduceMap(callable $reducer, array $values, $expected): void
     {
         foreach ($values as $key => $value) {
-            $this->map = $this->map->set($key, $value);
+            $this->map->set($key, $value);
         }
 
         $this->assertEquals($expected, $this->map->reduce($reducer));
@@ -424,7 +425,7 @@ class MapTest extends AbstractTestCase
     public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
     {
         foreach ($values as $key => $value) {
-            $this->map = $this->map->set($key, $value);
+            $this->map->set($key, $value);
         }
 
         $this->assertEquals($expected, $this->map->reduce($reducer, $initialValue));
@@ -462,33 +463,77 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldGetImmutableMapAsMutable(): void
+    public function testShouldGetMutableListAsImmutable(): void
     {
-        $this->map = $this->map->set('key', 'value');
+        $this->map->set('key', 'value');
 
-        $mutable = $this->map->asMutable();
+        $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MF\Collection\IMap::class, $mutable);
-        $this->assertInstanceOf(\MF\Collection\Mutable\Map::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\IMap::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\Map::class, $immutable);
 
-        $this->assertEquals($this->map->toArray(), $mutable->toArray());
+        $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
 
     public function testShouldClearCollection(): void
     {
-        $this->map = $this->map->set('key', 'value');
+        $this->map->set('key', 'value');
         $this->assertTrue($this->map->contains('value'));
 
-        $this->map = $this->map->clear();
+        $this->map->clear();
         $this->assertFalse($this->map->contains('value'));
     }
 
     public function testShouldCheckIfCollectionIsEmpty(): void
     {
-        $this->map = $this->map->set('key', 'value');
+        $this->map->set('key', 'value');
         $this->assertFalse($this->map->isEmpty());
 
-        $this->map = $this->map->clear();
+        $this->map->clear();
         $this->assertTrue($this->map->isEmpty());
+    }
+
+    public function testShouldMapBigCollectionManyTimesInOneLoop(): void
+    {
+        $this->startTimer();
+        $bigMap = Map::from(range(0, 10000));
+        $creatingCollection = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigMap as $i) {
+            $this->ignore($i);
+        }
+        $loopTime = $this->stopTimer();
+
+        $this->startTimer();
+        $bigMap
+            ->map(function ($v) {
+                return $v + 1;
+            })
+            ->map(function ($v) {
+                return $v * 2;
+            })
+            ->filter(function ($v) {
+                return $v % 2 === 0;
+            })
+            ->map(function ($v) {
+                return $v - 1;
+            });
+        $mappingTime = $this->stopTimer();
+
+        $this->startTimer();
+        foreach ($bigMap as $i) {
+            $this->ignore($i);
+        }
+        $loopWithMappingTime = $this->stopTimer();
+
+        $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
+
+        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan($loopTime * 1.5, $loopWithMappingTime);   // 50% is still fair enough
+        $this->assertCount(10001, $bigMap);
+
+        // this test before lazy mapping lasts around 5-6 seconds, and now it is less than 2 seconds
+        $this->assertLessThan(2000, $totalTime);
     }
 }

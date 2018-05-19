@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests;
+namespace MF\Collection;
 
 use Assert\Assertion;
-use MF\Collection\ICollection;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractTestCase extends TestCase

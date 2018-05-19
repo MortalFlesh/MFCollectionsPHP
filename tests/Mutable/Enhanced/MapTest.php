@@ -1,10 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Mutable\Enhanced;
+namespace MF\Collection\Mutable\Enhanced;
 
-use MF\Collection\Mutable\Enhanced\Map;
-
-class MapTest extends \MF\Tests\Collection\Mutable\MapTest
+class MapTest extends \MF\Collection\Mutable\MapTest
 {
     /** @var Map */
     protected $mapEnhanced;

@@ -1,11 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace MF\Tests\Collection\Mutable\Enhanced;
+namespace MF\Collection\Immutable\Enhanced;
 
-use MF\Collection\Mutable\Enhanced\ListCollection;
-use MF\Collection\Mutable\IList;
+use MF\Collection\Immutable\IList;
 
-class ListTest extends \MF\Tests\Collection\Mutable\ListTest
+class ListTest extends \MF\Collection\Immutable\ListTest
 {
     /** @var IList|ListCollection */
     private $listEnhanced;
@@ -64,7 +63,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
-            $this->listEnhanced->add($value);
+            $this->listEnhanced = $this->listEnhanced->add($value);
         }
 
         $this->assertEquals($expected, $this->listEnhanced->reduce($reducer));
@@ -103,7 +102,7 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
-            $this->listEnhanced->add($value);
+            $this->listEnhanced = $this->listEnhanced->add($value);
         }
 
         $this->assertEquals($expected, $this->listEnhanced->reduce($reducer, $initialValue));
@@ -137,44 +136,30 @@ class ListTest extends \MF\Tests\Collection\Mutable\ListTest
     {
         $this->listEnhanced->add('value');
 
-        $immutable = $this->listEnhanced->asImmutable();
+        $mutable = $this->listEnhanced->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\IList::class, $immutable);
-        $this->assertInstanceOf(\MF\Collection\Immutable\Enhanced\ListCollection::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\IList::class, $mutable);
+        $this->assertInstanceOf(\MF\Collection\Mutable\Enhanced\ListCollection::class, $mutable);
 
-        $this->assertEquals($this->listEnhanced->toArray(), $immutable->toArray());
+        $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());
     }
 
     public function testShouldClearCollection(): void
     {
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
 
-        $this->list->clear();
+        $this->list = $this->list->clear();
         $this->assertFalse($this->list->contains('value'));
     }
 
     public function testShouldCheckIfCollectionIsEmpty(): void
     {
-        $this->list->add('value');
+        $this->list = $this->list->add('value');
         $this->assertFalse($this->list->isEmpty());
 
-        $this->list->clear();
+        $this->list = $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
-    }
-
-    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly(): void
-    {
-        $this->listEnhanced = ListCollection::from([1, 2, 3]);
-
-        $newListCollection = $this->listEnhanced
-            ->map('($v, $i) => $v + 1')// 2, 3, 4
-            ->map('($v, $i) => $v * 2')// 4, 6, 8
-            ->filter('($v, $i) => $v % 3 === 0')// 6
-            ->map('($v, $i) => $v - 1'); // 5
-
-        $this->assertNotEquals($this->listEnhanced, $newListCollection);
-        $this->assertEquals([5], $newListCollection->toArray());
     }
 
     public function testShouldImplodeItems(): void
