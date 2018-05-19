@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Immutable\Enhanced;
 
@@ -10,13 +10,13 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
     /** @var IList|ListCollection */
     private $listEnhanced;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->list = new ListCollection();
         $this->listEnhanced = ListCollection::from(['one', 'two', 3]);
     }
 
-    public function testShouldCreateListByCallback()
+    public function testShouldCreateListByCallback(): void
     {
         $list = ListCollection::create(
             explode(',', '1, 2, 3'),
@@ -26,7 +26,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertSame([1, 2, 3], $list->toArray());
     }
 
-    public function testShouldMapCollectionToNewListCollectionByArrowFunction()
+    public function testShouldMapCollectionToNewListCollectionByArrowFunction(): void
     {
         $newListCollection = $this->listEnhanced->map('($v, $i) => $i . $v');
 
@@ -34,7 +34,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertEquals([0 => '0one', 1 => '1two', 2 => '23'], $newListCollection->toArray());
     }
 
-    public function testShouldFilterItemsToNewListCollectionByArrowFunction()
+    public function testShouldFilterItemsToNewListCollectionByArrowFunction(): void
     {
         $newListCollection = $this->listEnhanced->filter('($v) => $v >= 1');
 
@@ -42,7 +42,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertEquals([0 => 3], $newListCollection->toArray());
     }
 
-    public function testShouldCombineListCollectionAndFilterToCreateNewListCollection()
+    public function testShouldCombineListCollectionAndFilterToCreateNewListCollection(): void
     {
         $newListCollection = $this->listEnhanced
             ->filter('($v, $i) => $i >= 1')
@@ -59,7 +59,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
      *
      * @dataProvider reduceByArrowFunctionProvider
      */
-    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected)
+    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected): void
     {
         $this->listEnhanced = new ListCollection();
 
@@ -99,7 +99,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         array $values,
         $initialValue,
         $expected
-    ) {
+    ): void {
         $this->listEnhanced = new ListCollection();
 
         foreach ($values as $value) {
@@ -133,7 +133,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         ];
     }
 
-    public function testShouldGetMutableEnhancedListAsImmutableEnhanced()
+    public function testShouldGetMutableEnhancedListAsImmutableEnhanced(): void
     {
         $this->listEnhanced->add('value');
 
@@ -145,7 +145,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertEquals($this->listEnhanced->toArray(), $mutable->toArray());
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
@@ -154,7 +154,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertFalse($this->list->contains('value'));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->list = $this->list->add('value');
         $this->assertFalse($this->list->isEmpty());
@@ -163,7 +163,7 @@ class ListTest extends \MF\Tests\Collection\Immutable\ListTest
         $this->assertTrue($this->list->isEmpty());
     }
 
-    public function testShouldImplodeItems()
+    public function testShouldImplodeItems(): void
     {
         $list = ListCollection::of(1, 2, 3);
 

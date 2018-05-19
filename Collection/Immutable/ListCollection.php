@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Immutable;
 
@@ -74,7 +74,7 @@ class ListCollection implements IList
         $listArray = [];
         foreach ($this->listArray as $i => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 if ($type === self::MAP) {
                     $value = $callback($value, $i);
@@ -196,11 +196,9 @@ class ListCollection implements IList
         $this->applyModifiers();
         $index = $this->find($value);
 
-        if ($index !== false) {
-            return $this->removeIndex((int) $index);
-        }
-
-        return $this;
+        return $index !== false
+            ? $this->removeIndex($index)
+            : $this;
     }
 
     private function removeIndex(int $index): IList
@@ -237,7 +235,7 @@ class ListCollection implements IList
     /**
      * @param callable $callback
      */
-    private function assertCallback($callback)
+    private function assertCallback($callback): void
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');

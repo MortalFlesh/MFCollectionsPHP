@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Mutable;
 
@@ -72,7 +72,7 @@ class ListCollection implements IList
         $listArray = [];
         foreach ($this->listArray as $i => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 if ($type === self::MAP) {
                     $value = $callback($value, $i);
@@ -101,7 +101,7 @@ class ListCollection implements IList
     /**
      * @param mixed $value
      */
-    public function add($value)
+    public function add($value): void
     {
         $this->applyModifiers();
         $this->listArray[] = $value;
@@ -110,7 +110,7 @@ class ListCollection implements IList
     /**
      * @param mixed $value
      */
-    public function unshift($value)
+    public function unshift($value): void
     {
         $this->applyModifiers();
         array_unshift($this->listArray, $value);
@@ -198,17 +198,17 @@ class ListCollection implements IList
     /**
      * @param mixed $value
      */
-    public function removeFirst($value)
+    public function removeFirst($value): void
     {
         $this->applyModifiers();
         $index = $this->find($value);
 
         if ($index !== false) {
-            $this->removeIndex((int) $index);
+            $this->removeIndex($index);
         }
     }
 
-    private function removeIndex(int $index, bool $normalize = true)
+    private function removeIndex(int $index, bool $normalize = true): void
     {
         unset($this->listArray[$index]);
 
@@ -217,7 +217,7 @@ class ListCollection implements IList
         }
     }
 
-    private function normalize()
+    private function normalize(): void
     {
         $list = $this->listArray;
         $this->listArray = [];
@@ -230,7 +230,7 @@ class ListCollection implements IList
     /**
      * @param mixed $value
      */
-    public function removeAll($value)
+    public function removeAll($value): void
     {
         $this->modifiers[] = [
             self::FILTER,
@@ -252,7 +252,7 @@ class ListCollection implements IList
     /**
      * @param callable $callback
      */
-    protected function assertCallback($callback)
+    protected function assertCallback($callback): void
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');
@@ -305,7 +305,7 @@ class ListCollection implements IList
         return $total;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->listArray = [];
         $this->modifiers = [];

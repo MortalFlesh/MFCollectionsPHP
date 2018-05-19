@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Immutable\Generic;
 
@@ -62,7 +62,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values)
+    public static function of(...$values): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use ofT instead.'
@@ -73,7 +73,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @deprecated
      * @see IList::fromT()
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use fromT instead.'
@@ -83,8 +83,9 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /**
      * @deprecated
      * @see IList::createT()
+     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, $creator): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'
@@ -113,7 +114,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $listArray = [];
         foreach ($this->listArray as $i => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 $TValue = $item[self::INDEX_TVALUE] ?? null;
                 if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
@@ -182,11 +183,9 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
         $index = $this->find($value);
 
-        if ($index !== false) {
-            return $this->removeIndex((int) $index);
-        }
-
-        return $this;
+        return $index !== false
+            ? $this->removeIndex($index)
+            : $this;
     }
 
     private function removeIndex(int $index): IList

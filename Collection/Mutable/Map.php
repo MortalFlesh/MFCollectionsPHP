@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Mutable;
 
 class Map implements IMap
 {
     /** @var array */
-
     protected $mapArray;
 
     /** @var array< Tuple<string, callable> > */
@@ -73,7 +72,7 @@ class Map implements IMap
         $mapArray = [];
         foreach ($this->mapArray as $key => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 if ($type === self::MAP) {
                     $value = $callback($key, $value);
@@ -164,7 +163,7 @@ class Map implements IMap
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
@@ -173,7 +172,7 @@ class Map implements IMap
      * @param mixed $key
      * @param mixed $value
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         if (is_object($key)) {
             throw new \InvalidArgumentException('Key cannot be an Object');
@@ -190,7 +189,7 @@ class Map implements IMap
     /**
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }
@@ -198,7 +197,7 @@ class Map implements IMap
     /**
      * @param mixed $key
      */
-    public function remove($key)
+    public function remove($key): void
     {
         $this->applyModifiers();
 
@@ -291,14 +290,14 @@ class Map implements IMap
     /**
      * @param callable $callback
      */
-    private function assertCallback($callback)
+    private function assertCallback($callback): void
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');
         }
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->mapArray = [];
         $this->modifiers = [];

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Immutable\Generic;
 
@@ -41,6 +41,7 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     /**
      * @deprecated
      * @see IList::createT()
+     * @param mixed $creator
      */
     public static function create(iterable $source, $creator);
 

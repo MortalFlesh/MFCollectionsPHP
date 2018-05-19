@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Immutable;
 
@@ -72,7 +72,7 @@ class Map implements IMap
         $mapArray = [];
         foreach ($this->mapArray as $key => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 if ($type === self::MAP) {
                     $value = $callback($key, $value);
@@ -167,7 +167,7 @@ class Map implements IMap
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \BadMethodCallException(
             'Immutable map cannot be used as array to set value. Use set() method instead.'
@@ -197,7 +197,7 @@ class Map implements IMap
     /**
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         throw new \BadMethodCallException(
             'Immutable map cannot be used as array to unset value. Use remove() method instead.'
@@ -303,7 +303,7 @@ class Map implements IMap
     /**
      * @param callable $callback
      */
-    private function assertCallback($callback)
+    private function assertCallback($callback): void
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');

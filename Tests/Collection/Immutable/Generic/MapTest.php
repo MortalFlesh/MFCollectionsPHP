@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
@@ -17,12 +17,12 @@ class MapTest extends AbstractTestCase
     /** @var Map */
     private $map;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->map = new Map('string', 'int');
     }
 
-    public function testShouldImplementsInterfaces()
+    public function testShouldImplementsInterfaces(): void
     {
         $this->assertInstanceOf(IMap::class, $this->map);
         $this->assertInstanceOf(BaseMapInterface::class, $this->map);
@@ -33,14 +33,14 @@ class MapTest extends AbstractTestCase
         $this->assertInstanceOf(\Countable::class, $this->map);
     }
 
-    public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed()
+    public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
         Map::from([]);
     }
 
-    public function testShouldCreateMapFromArray()
+    public function testShouldCreateMapFromArray(): void
     {
         $array = ['key' => 1, 'key2' => 2];
         $map = Map::fromKT('string', 'int', $array);
@@ -49,7 +49,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
-    public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType()
+    public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -66,7 +66,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidTypesProvider
      */
-    public function testShouldNotCreateGenericMap($keyType, $valueType)
+    public function testShouldNotCreateGenericMap($keyType, $valueType): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -125,7 +125,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider validTypesProvider
      */
-    public function testShouldCreateGenericMap($keyType, $valueType)
+    public function testShouldCreateGenericMap($keyType, $valueType): void
     {
         $map = new Map($keyType, $valueType);
 
@@ -158,7 +158,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldCreateMapByCallback()
+    public function testShouldCreateMapByCallback(): void
     {
         $map = Map::createKT(
             'int',
@@ -174,7 +174,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingMapByCallback()
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingMapByCallback(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -189,7 +189,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider addItemsProvider
      */
-    public function testShouldAddItemsToMap($key, $value)
+    public function testShouldAddItemsToMap($key, $value): void
     {
         $this->map = $this->map->set($key, $value);
 
@@ -211,7 +211,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay()
+    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -224,7 +224,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidParamTypesProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet($key, $value)
+    public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet($key, $value): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -261,7 +261,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldContainsKey()
+    public function testShouldContainsKey(): void
     {
         $keyExists = 'key';
         $keyDoesNotExist = 'keyNotIn';
@@ -277,7 +277,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyTypesProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType($key)
+    public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType($key): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -296,7 +296,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldContainsValue()
+    public function testShouldContainsValue(): void
     {
         $valueExists = 1;
         $valueDoesNotExist = 2;
@@ -312,7 +312,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidValueTypeProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType($value)
+    public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType($value): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -331,7 +331,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldRemoveValueFromMap()
+    public function testShouldRemoveValueFromMap(): void
     {
         $key = 'key';
         $this->assertFalse($this->map->containsKey($key));
@@ -348,14 +348,14 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyTypesProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType($key)
+    public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType($key): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->map->remove($key);
     }
 
-    public function testShouldMapToNewMapWithSameGenericType()
+    public function testShouldMapToNewMapWithSameGenericType(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -367,7 +367,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
     }
 
-    public function testShouldMapToNewMap()
+    public function testShouldMapToNewMap(): void
     {
         $map = new Map('string', EntityInterface::class);
         $map = $map->set('one', new SimpleEntity(1));
@@ -381,7 +381,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
-    public function testShouldMapToNewGenericMap()
+    public function testShouldMapToNewGenericMap(): void
     {
         $map = new Map('string', EntityInterface::class);
         $map = $map->set('one', new SimpleEntity(1));
@@ -395,7 +395,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
-    public function testShouldFilterItemsToNewMapByArrowFunction()
+    public function testShouldFilterItemsToNewMapByArrowFunction(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -407,7 +407,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['key2' => 2, 'key3' => 3], $newMap->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction()
+    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -416,7 +416,7 @@ class MapTest extends AbstractTestCase
         $newMap->set(1, '');
     }
 
-    public function testShouldCombineMapAndFilterToCreateNewMap()
+    public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -429,7 +429,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['key2' => 6], $newMap->toArray());
     }
 
-    public function testShouldGetKeysInGenericList()
+    public function testShouldGetKeysInGenericList(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -439,7 +439,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['key', 'key2'], $keys->toArray());
     }
 
-    public function testShouldGetValuesInGenericList()
+    public function testShouldGetValuesInGenericList(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -449,7 +449,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals([1, 2], $values->toArray());
     }
 
-    public function testShouldReduceMap()
+    public function testShouldReduceMap(): void
     {
         $this->map = $this->map->set('key', 1);
         $this->map = $this->map->set('key2', 2);
@@ -458,7 +458,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
     }
 
-    public function testShouldGetImmutableGenericMapAsMutableGenericMap()
+    public function testShouldGetImmutableGenericMapAsMutableGenericMap(): void
     {
         $this->map = $this->map->set('key', 666);
 
@@ -470,7 +470,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($this->map->toArray(), $mutable->toArray());
     }
 
-    public function testShouldReduceMapWithInitialValue()
+    public function testShouldReduceMapWithInitialValue(): void
     {
         $map = new Map('string', 'int');
         $map = $map->set('one', 1);
@@ -480,7 +480,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
     }
 
-    public function testShouldReduceListWithInitialValueToOtherType()
+    public function testShouldReduceListWithInitialValueToOtherType(): void
     {
         $map = new Map('string', 'int');
         $map = $map->set('one', 1);
@@ -490,7 +490,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals('123', $map->reduce('($t, $v) => $t . $v', ''));
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->map = $this->map->set('key', 123);
         $this->assertTrue($this->map->contains(123));
@@ -499,7 +499,7 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains(123));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->map = $this->map->set('key', 123);
         $this->assertFalse($this->map->isEmpty());

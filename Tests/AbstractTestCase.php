@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests;
 
@@ -70,5 +70,10 @@ abstract class AbstractTestCase extends TestCase
         }
 
         $this->assertTrue($isSorted, $notSortedMessage);
+    }
+
+    protected function ignore(...$args): void
+    {
+        // ignore anything
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Immutable\Generic;
 
@@ -29,6 +29,7 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     /**
      * @deprecated
      * @see IMap::createKT()
+     * @param mixed $creator
      */
     public static function create(iterable $source, $creator);
 

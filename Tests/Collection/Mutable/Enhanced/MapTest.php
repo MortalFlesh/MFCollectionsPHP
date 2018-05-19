@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Mutable\Enhanced;
 
@@ -9,13 +9,13 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
     /** @var Map */
     protected $mapEnhanced;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->map = new Map();
         $this->mapEnhanced = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
     }
 
-    public function testShouldCreateMapByCallback()
+    public function testShouldCreateMapByCallback(): void
     {
         $map = Map::create(
             explode(',', '1, 2, 3'),
@@ -25,7 +25,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    public function testShouldMapToNewMapByArrowFunction()
+    public function testShouldMapToNewMapByArrowFunction(): void
     {
         $newMap = $this->mapEnhanced->map('($k, $v) => $k . $v');
 
@@ -33,7 +33,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         $this->assertEquals([1 => '1one', 2 => '2two', 'three' => 'three3'], $newMap->toArray());
     }
 
-    public function testShouldFilterItemsToNewMapByArrowFunction()
+    public function testShouldFilterItemsToNewMapByArrowFunction(): void
     {
         $newMap = $this->mapEnhanced->filter('($k, $v) => $k >= 1');
 
@@ -41,7 +41,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         $this->assertEquals([1 => 'one', 2 => 'two'], $newMap->toArray());
     }
 
-    public function testShouldCombineMapAndFilterToCreateNewMap()
+    public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
         $newMap = $this->mapEnhanced
             ->filter('($k, $v) => $k >= 1')
@@ -58,7 +58,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
      *
      * @dataProvider reduceByArrowFunctionProvider
      */
-    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected)
+    public function testShouldReduceListByArrowFunction($reducer, array $values, $expected): void
     {
         $this->mapEnhanced = new Map();
 
@@ -98,7 +98,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         array $values,
         $initialValue,
         $expected
-    ) {
+    ): void {
         $this->mapEnhanced = new Map();
 
         foreach ($values as $key => $value) {
@@ -132,7 +132,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         ];
     }
 
-    public function testShouldGetMutableEnhancedMapAsImmutableEnhancedMap()
+    public function testShouldGetMutableEnhancedMapAsImmutableEnhancedMap(): void
     {
         $this->map->set('key', 'value');
 
@@ -144,7 +144,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->map->set('key', 'value');
         $this->assertTrue($this->map->contains('value'));
@@ -153,7 +153,7 @@ class MapTest extends \MF\Tests\Collection\Mutable\MapTest
         $this->assertFalse($this->map->contains('value'));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->map->set('key', 'value');
         $this->assertFalse($this->map->isEmpty());

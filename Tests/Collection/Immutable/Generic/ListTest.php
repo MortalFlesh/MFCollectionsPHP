@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Immutable\Generic;
 
@@ -23,12 +23,12 @@ class ListTest extends AbstractTestCase
     /** @var ListCollection|ImmutableGenericInterface */
     private $list;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->list = new ListCollection('string');
     }
 
-    public function testShouldImplementsInterfaces()
+    public function testShouldImplementsInterfaces(): void
     {
         $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list);
         $this->assertInstanceOf(GenericListInterface::class, $this->list);
@@ -43,7 +43,7 @@ class ListTest extends AbstractTestCase
         $this->assertInstanceOf(ImmutableGenericInterface::class, $this->list->add('foo'));
     }
 
-    public function testShouldCreateListOfValues()
+    public function testShouldCreateListOfValues(): void
     {
         $list = ListCollection::ofT('int', 1, 2, 3);
         $this->assertEquals([1, 2, 3], $list->toArray());
@@ -54,7 +54,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
     }
 
-    public function testShouldNotCreateListOfDifferentValueTypes()
+    public function testShouldNotCreateListOfDifferentValueTypes(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -67,7 +67,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider validValuesProvider
      */
-    public function testShouldCreateList($valueType, array $values)
+    public function testShouldCreateList($valueType, array $values): void
     {
         $list = ListCollection::fromT($valueType, $values);
 
@@ -92,14 +92,14 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues()
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
         ListCollection::of(1);
     }
 
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingList()
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingList(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -112,7 +112,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider invalidValuesProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values)
+    public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -137,7 +137,7 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldCreateListByCallback()
+    public function testShouldCreateListByCallback(): void
     {
         $list = ListCollection::createT(
             SimpleEntity::class,
@@ -152,7 +152,7 @@ class ListTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $list->toArray());
     }
 
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingListByCallback()
+    public function testShouldThrowBadMethodUseExceptionWhenCreatingListByCallback(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -161,7 +161,7 @@ class ListTest extends AbstractTestCase
         });
     }
 
-    public function testShouldUnshiftValue()
+    public function testShouldUnshiftValue(): void
     {
         $firstValue = 'first_value';
         $this->list = $this->list->add('value');
@@ -172,7 +172,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($firstValue, $this->list->first());
     }
 
-    public function testShouldCountainsValue()
+    public function testShouldCountainsValue(): void
     {
         $this->assertFalse($this->list->contains('value'));
 
@@ -180,7 +180,7 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->contains('value'));
     }
 
-    public function testShouldRemoveFirstValue()
+    public function testShouldRemoveFirstValue(): void
     {
         $this->list = $this->list->add('value');
         $this->list = $this->list->add('value');
@@ -193,7 +193,7 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->contains('value'));
     }
 
-    public function testShouldNotRemoveFirstValue()
+    public function testShouldNotRemoveFirstValue(): void
     {
         $this->list = $this->list->add('value');
 
@@ -208,14 +208,14 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains('not-existed-value'));
     }
 
-    public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue()
+    public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeFirst(2);
     }
 
-    public function testShouldRemoveAllValues()
+    public function testShouldRemoveAllValues(): void
     {
         $this->list = $this->list->add('value');
         $this->list = $this->list->add('value');
@@ -231,14 +231,14 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->contains('value2'));
     }
 
-    public function testShouldThrowInvalidArgumentExceptionOnRemoveAllValues()
+    public function testShouldThrowInvalidArgumentExceptionOnRemoveAllValues(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->list->removeAll(2.54);
     }
 
-    public function testShouldMapToNewListWithSameGenericType()
+    public function testShouldMapToNewListWithSameGenericType(): void
     {
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -250,7 +250,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key_', 'key2_', 'key3_'], $newList->toArray());
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType()
+    public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -262,7 +262,7 @@ class ListTest extends AbstractTestCase
             ->toArray();
     }
 
-    public function testShouldFilterItemsToNewListByArrowFunction()
+    public function testShouldFilterItemsToNewListByArrowFunction(): void
     {
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -274,7 +274,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
     }
 
-    public function testShouldCombineMapAndFilterToCreateNewMap()
+    public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -287,7 +287,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key_'], $newList->toArray());
     }
 
-    public function testShouldIterateValues()
+    public function testShouldIterateValues(): void
     {
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -300,7 +300,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key', 'key2'], $array);
     }
 
-    public function testShouldReduceGenericList()
+    public function testShouldReduceGenericList(): void
     {
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
@@ -308,7 +308,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals('key|key2|', $this->list->reduce('($t, $c) => $t . $c . "|"'));
     }
 
-    public function testShouldReduceGenericListOfListCounts()
+    public function testShouldReduceGenericListOfListCounts(): void
     {
         $list1 = MutableListCollection::from([1, 2, 3]);
         $list2 = MutableListCollection::from(['one', 'two']);
@@ -320,7 +320,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
     }
 
-    public function testShouldGetMutableGenericListAsImmutableGenericList()
+    public function testShouldGetMutableGenericListAsImmutableGenericList(): void
     {
         $this->list = $this->list->add('value');
 
@@ -332,7 +332,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($this->list->toArray(), $mutable->toArray());
     }
 
-    public function testShouldMapObjectsToDifferentList()
+    public function testShouldMapObjectsToDifferentList(): void
     {
         $list = new ListCollection(SimpleEntity::class);
         $list = $list->add(new SimpleEntity(1));
@@ -347,7 +347,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
 
-    public function testShouldMapObjectsToDifferentGenericList()
+    public function testShouldMapObjectsToDifferentGenericList(): void
     {
         $list = new ListCollection(EntityInterface::class);
         $list = $list->add(new ComplexEntity(new SimpleEntity(1)));
@@ -362,7 +362,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
 
-    public function testShouldReduceListWithInitialValue()
+    public function testShouldReduceListWithInitialValue(): void
     {
         $list = new ListCollection('int');
         $list = $list->add(1);
@@ -372,7 +372,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
     }
 
-    public function testShouldReduceListWithInitialValueToOtherType()
+    public function testShouldReduceListWithInitialValueToOtherType(): void
     {
         $list = new ListCollection('int');
         $list = $list->add(1);
@@ -382,7 +382,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals('123', $list->reduce('($t, $v) => $t . $v', ''));
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
@@ -391,7 +391,7 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains('value'));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->list = $this->list->add('value');
         $this->assertFalse($this->list->isEmpty());
@@ -400,11 +400,11 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->isEmpty());
     }
 
-    public function testShouldSortCollection()
+    public function testShouldSortCollection(): void
     {
         $this
             ->forAll(Generator\seq(Generator\nat()))
-            ->then(function (array $array) {
+            ->then(function (array $array): void {
                 $list = ListCollection::fromT('int', $array);
                 $sorted = $list->sort();
                 $sortedArray = $sorted->toArray();
@@ -419,7 +419,7 @@ class ListTest extends AbstractTestCase
             });
     }
 
-    public function testShouldImplodeItems()
+    public function testShouldImplodeItems(): void
     {
         $list = ListCollection::ofT('int', 1, 2, 3);
 

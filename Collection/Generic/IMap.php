@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Generic;
 
@@ -29,6 +29,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
     /**
      * @deprecated
      * @see IMap::createKT()
+     * @param mixed $creator
      */
     public static function create(iterable $source, $creator);
 

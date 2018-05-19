@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Immutable;
 
@@ -13,12 +13,12 @@ class MapTest extends AbstractTestCase
     /** @var IMap */
     protected $map;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->map = new Map();
     }
 
-    public function testShouldImplementsInterfaces()
+    public function testShouldImplementsInterfaces(): void
     {
         $this->assertInstanceOf(IMap::class, $this->map);
         $this->assertInstanceOf(ICollection::class, $this->map);
@@ -33,7 +33,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider arrayProvider
      */
-    public function testShouldCreateMapFromArray(array $array, $recursive)
+    public function testShouldCreateMapFromArray(array $array, $recursive): void
     {
         $map = Map::from($array, $recursive);
 
@@ -71,7 +71,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider recursiveProvider
      */
-    public function testShouldCreateMapFromArrayWithSubArray($recursive)
+    public function testShouldCreateMapFromArrayWithSubArray($recursive): void
     {
         $key = 'array-key';
         $subArray = ['key' => 'value'];
@@ -98,7 +98,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldCreateMapByCallback()
+    public function testShouldCreateMapByCallback(): void
     {
         $map = Map::create(
             explode(',', '1, 2, 3'),
@@ -110,7 +110,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay()
+    public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -123,7 +123,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider addItemsProvider
      */
-    public function testShouldAddItemsToMap($key, $value)
+    public function testShouldAddItemsToMap($key, $value): void
     {
         $newMap = $this->map->set($key, $value);
 
@@ -162,7 +162,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key)
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -174,7 +174,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowBadMethodCallExceptionOnAddingObject($key)
+    public function testShouldThrowBadMethodCallExceptionOnAddingObject($key): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -189,7 +189,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldIterateThroughMap()
+    public function testShouldIterateThroughMap(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
@@ -214,7 +214,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider arrayProvider
      */
-    public function testShouldGetCount(array $array)
+    public function testShouldGetCount(array $array): void
     {
         $originalCount = count($array);
         $map = Map::from($array);
@@ -226,7 +226,7 @@ class MapTest extends AbstractTestCase
         $this->assertCount($originalCount + 1, $newMap);
     }
 
-    public function testShouldHasKeys()
+    public function testShouldHasKeys(): void
     {
         $keyExists = 'has-key';
         $keyDoesNotExist = 'has-no-key';
@@ -240,7 +240,7 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsKey($keyDoesNotExist));
     }
 
-    public function testShouldRemoveItem()
+    public function testShouldRemoveItem(): void
     {
         $key = 'key';
         $key2 = 'key2';
@@ -256,7 +256,7 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($newMap->containsKey($key));
     }
 
-    public function testShouldThrowBadMethodCallExceptionOnUnsetValueArrayWay()
+    public function testShouldThrowBadMethodCallExceptionOnUnsetValueArrayWay(): void
     {
         $this->expectException(\BadMethodCallException::class);
 
@@ -265,7 +265,7 @@ class MapTest extends AbstractTestCase
         unset($this->map['key']);
     }
 
-    public function testShouldContainsValue()
+    public function testShouldContainsValue(): void
     {
         $key = 'key';
         $value = 1;
@@ -277,11 +277,11 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains($valueNotPresented));
     }
 
-    public function testShouldForeachItemInMap()
+    public function testShouldForeachItemInMap(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
-        $map->each(function ($value, $key) {
+        $map->each(function ($value, $key): void {
             if ($key === 1) {
                 $this->assertEquals('one', $value);
             } elseif ($key === 2) {
@@ -292,7 +292,7 @@ class MapTest extends AbstractTestCase
         });
     }
 
-    public function testShouldMapItemsToNewMap()
+    public function testShouldMapItemsToNewMap(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
@@ -312,7 +312,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals([1 => '1one', 2 => '2two', 'three' => 'three3'], $newMap->toArray());
     }
 
-    public function testShouldFilterMapToNewMap()
+    public function testShouldFilterMapToNewMap(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
@@ -331,7 +331,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['three' => 3], $newMap->toArray());
     }
 
-    public function testShouldGetKeys()
+    public function testShouldGetKeys(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
@@ -341,7 +341,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals([1, 2, 'three'], $keys->toArray());
     }
 
-    public function testShouldGetValueArrayWay()
+    public function testShouldGetValueArrayWay(): void
     {
         $this->map = $this->map->set('key', 'value');
 
@@ -349,7 +349,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals('value', $this->map->get('key'));
     }
 
-    public function testShouldGetValues()
+    public function testShouldGetValues(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
@@ -359,7 +359,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['one', 'two', 3], $values->toArray());
     }
 
-    public function testShouldCallReducerCorrectly()
+    public function testShouldCallReducerCorrectly(): void
     {
         $this->map = $this->map->set('key', 'value');
 
@@ -382,7 +382,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider reduceProvider
      */
-    public function testShouldReduceMap(callable $reducer, array $values, $expected)
+    public function testShouldReduceMap(callable $reducer, array $values, $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map = $this->map->set($key, $value);
@@ -421,7 +421,7 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider reduceInitialProvider
      */
-    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
+    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map = $this->map->set($key, $value);
@@ -462,7 +462,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldGetImmutableMapAsMutable()
+    public function testShouldGetImmutableMapAsMutable(): void
     {
         $this->map = $this->map->set('key', 'value');
 
@@ -474,7 +474,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($this->map->toArray(), $mutable->toArray());
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->map = $this->map->set('key', 'value');
         $this->assertTrue($this->map->contains('value'));
@@ -483,7 +483,7 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains('value'));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->map = $this->map->set('key', 'value');
         $this->assertFalse($this->map->isEmpty());

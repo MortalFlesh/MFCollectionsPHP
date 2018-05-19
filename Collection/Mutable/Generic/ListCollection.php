@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Mutable\Generic;
 
@@ -72,7 +72,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values)
+    public static function of(...$values): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use ofT instead.'
@@ -83,7 +83,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @deprecated
      * @see IList::fromT()
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use fromT instead.'
@@ -93,8 +93,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @deprecated
      * @see IList::createT()
+     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, $creator): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'
@@ -123,7 +124,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         $listArray = [];
         foreach ($this->listArray as $i => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 $TValue = $item[self::INDEX_TVALUE] ?? null;
                 if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
@@ -148,7 +149,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param <TValue> $value
      */
-    public function add($value)
+    public function add($value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -159,7 +160,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param <TValue> $value
      */
-    public function unshift($value)
+    public function unshift($value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -182,7 +183,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param <TValue> $value
      */
-    public function removeFirst($value)
+    public function removeFirst($value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -193,7 +194,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param <TValue> $value
      */
-    public function removeAll($value)
+    public function removeAll($value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Mutable\Generic;
 
@@ -71,7 +71,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      * @deprecated
      * @see IMap::fromKT()
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use fromKT instead.'
@@ -81,8 +81,9 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     /**
      * @deprecated
      * @see IMap::createKT()
+     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, $creator): void
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use createKT instead.'
@@ -111,7 +112,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         $mapArray = [];
         foreach ($this->mapArray as $key => $value) {
             foreach ($this->modifiers as $item) {
-                list($type, $callback) = $item;
+                [$type, $callback] = $item;
 
                 $TValue = $item[self::INDEX_TVALUE] ?? null;
                 if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
@@ -185,7 +186,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      * @param <TKey> $key
      * @param <TValue> $value
      */
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
@@ -197,7 +198,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     /**
      * @param <TKey> $key
      */
-    public function remove($key)
+    public function remove($key): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);

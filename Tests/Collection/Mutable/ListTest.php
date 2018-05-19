@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Tests\Collection\Mutable;
 
@@ -12,12 +12,12 @@ class ListTest extends AbstractTestCase
     /** @var ListCollection */
     protected $list;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->list = new ListCollection();
     }
 
-    public function testShouldImplementsInterfaces()
+    public function testShouldImplementsInterfaces(): void
     {
         $this->assertInstanceOf(ICollection::class, $this->list);
         $this->assertInstanceOf(IList::class, $this->list);
@@ -27,7 +27,7 @@ class ListTest extends AbstractTestCase
         $this->assertInstanceOf(\Countable::class, $this->list);
     }
 
-    public function testShouldCreateListOfValues()
+    public function testShouldCreateListOfValues(): void
     {
         $list = ListCollection::of(1, 2, 3);
         $this->assertEquals([1, 2, 3], $list->toArray());
@@ -44,7 +44,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider arrayProvider
      */
-    public function testShouldCreateListFromArray(array $array, $recursive)
+    public function testShouldCreateListFromArray(array $array, $recursive): void
     {
         $list = ListCollection::from($array, $recursive);
 
@@ -82,7 +82,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider recursiveProvider
      */
-    public function testShouldCreateListFromArrayWithSubArray($recursive)
+    public function testShouldCreateListFromArrayWithSubArray($recursive): void
     {
         $subArray = ['value'];
 
@@ -108,7 +108,7 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldCreateListByCallback()
+    public function testShouldCreateListByCallback(): void
     {
         $list = ListCollection::create(
             explode(',', '1, 2, 3'),
@@ -125,7 +125,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider addItemsProvider
      */
-    public function testShouldAddItemsToMap($value)
+    public function testShouldAddItemsToMap($value): void
     {
         $this->list->add($value);
 
@@ -143,7 +143,7 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldIterateThroughList()
+    public function testShouldIterateThroughList(): void
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
@@ -165,7 +165,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider arrayProvider
      */
-    public function testShouldGetCount(array $array)
+    public function testShouldGetCount(array $array): void
     {
         $originalCount = count($array);
         $list = ListCollection::from($array);
@@ -176,7 +176,7 @@ class ListTest extends AbstractTestCase
         $this->assertCount($originalCount + 1, $list);
     }
 
-    public function testShouldHasValue()
+    public function testShouldHasValue(): void
     {
         $valueExists = 'has-value';
         $valueDoesNotExist = 'has-no-value';
@@ -190,7 +190,7 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains($valueDoesNotExist));
     }
 
-    public function testShouldGetFirstValue()
+    public function testShouldGetFirstValue(): void
     {
         $this->list->add('first');
         $this->list->add('second');
@@ -202,7 +202,7 @@ class ListTest extends AbstractTestCase
         }
     }
 
-    public function testShouldRemoveFirst()
+    public function testShouldRemoveFirst(): void
     {
         $value = 'value';
 
@@ -222,7 +222,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($value, $this->list->first());
     }
 
-    public function testShouldRemoveAll()
+    public function testShouldRemoveAll(): void
     {
         $value = 'value';
         $value2 = 'value2';
@@ -244,7 +244,7 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->contains($value2));
     }
 
-    public function testShouldAddValueToEndOfList()
+    public function testShouldAddValueToEndOfList(): void
     {
         $value = 'value';
         $value2 = 'value2';
@@ -258,7 +258,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($value2, $this->list->last());
     }
 
-    public function testShouldUnshiftValue()
+    public function testShouldUnshiftValue(): void
     {
         $value = 'value';
         $value2 = 'value2';
@@ -274,7 +274,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($valueToUnshift, $this->list->first());
     }
 
-    public function testShouldShiftValueFromStart()
+    public function testShouldShiftValueFromStart(): void
     {
         $firstValue = 'value';
         $value2 = 'value2';
@@ -288,7 +288,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($firstValue, $result);
     }
 
-    public function testShouldPopValueFromEnd()
+    public function testShouldPopValueFromEnd(): void
     {
         $value = 'value';
         $lastValue = 'value2';
@@ -302,7 +302,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($lastValue, $result);
     }
 
-    public function testShouldSortValues()
+    public function testShouldSortValues(): void
     {
         $list = ListCollection::from([1, 4, 3, 4, 2, 5, 4]);
 
@@ -312,11 +312,11 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([1, 2, 3, 4, 4, 4, 5], $sortedList->toArray());
     }
 
-    public function testShouldForeachItemInList()
+    public function testShouldForeachItemInList(): void
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
-        $list->each(function ($value, $i) {
+        $list->each(function ($value, $i): void {
             if ($i === 0) {
                 $this->assertEquals('one', $value);
             } elseif ($i === 1) {
@@ -327,7 +327,7 @@ class ListTest extends AbstractTestCase
         });
     }
 
-    public function testShouldMapItemsToNewList()
+    public function testShouldMapItemsToNewList(): void
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
@@ -347,7 +347,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([0 => '0one', 1 => '1two', 2 => '23'], $newList->toArray());
     }
 
-    public function testShouldFilterMapToNewList()
+    public function testShouldFilterMapToNewList(): void
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
@@ -366,7 +366,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([0 => 'one', 1 => 'two'], $newList->toArray());
     }
 
-    public function testShouldCallReducerCorrectly()
+    public function testShouldCallReducerCorrectly(): void
     {
         $this->list->add('value');
 
@@ -389,7 +389,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider reduceProvider
      */
-    public function testShouldReduceList(callable $reducer, array $values, $expected)
+    public function testShouldReduceList(callable $reducer, array $values, $expected): void
     {
         foreach ($values as $value) {
             $this->list->add($value);
@@ -429,7 +429,7 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider reduceInitialProvider
      */
-    public function testShouldReduceListWithInitialValue(callable $reducer, array $values, $initialValue, $expected)
+    public function testShouldReduceListWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
     {
         foreach ($values as $value) {
             $this->list->add($value);
@@ -471,7 +471,7 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldGetMutableListAsImmutable()
+    public function testShouldGetMutableListAsImmutable(): void
     {
         $this->list->add('value');
 
@@ -483,7 +483,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
     }
 
-    public function testShouldClearCollection()
+    public function testShouldClearCollection(): void
     {
         $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
@@ -492,7 +492,7 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains('value'));
     }
 
-    public function testShouldCheckIfCollectionIsEmpty()
+    public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->list->add('value');
         $this->assertFalse($this->list->isEmpty());
@@ -501,7 +501,7 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->isEmpty());
     }
 
-    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunction()
+    public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunction(): void
     {
         $this->list = ListCollection::from([1, 2, 3]);
 
@@ -517,14 +517,14 @@ class ListTest extends AbstractTestCase
             })// 6
             ->map(function ($v) {
                 return $v - 1;
-            });// 5
+            }); // 5
 
         $this->assertNotEquals($this->list, $newListCollection);
         $this->assertEquals([5], $newListCollection->toArray());
         $this->assertEquals([5], $newListCollection->toArray());
     }
 
-    public function testShouldMapAndFilterCollectionOnIteration()
+    public function testShouldMapAndFilterCollectionOnIteration(): void
     {
         $this->list = ListCollection::from([1, 2, 3]);
 
@@ -540,7 +540,7 @@ class ListTest extends AbstractTestCase
             })// 6
             ->map(function ($v) {
                 return $v - 1;
-            });// 5
+            }); // 5
 
         $result = [];
         foreach ($newListCollection as $item) {
@@ -550,7 +550,7 @@ class ListTest extends AbstractTestCase
         $this->assertSame([5], $result);
     }
 
-    public function testShouldMapBigCollectionManyTimesInOneLoop()
+    public function testShouldMapBigCollectionManyTimesInOneLoop(): void
     {
         $this->startTimer();
         $bigList = ListCollection::from(range(0, 10000));
@@ -558,7 +558,7 @@ class ListTest extends AbstractTestCase
 
         $this->startTimer();
         foreach ($bigList as $i) {
-            // loop over all items
+            $this->ignore($i);
         }
         $loopTime = $this->stopTimer();
 
@@ -579,8 +579,8 @@ class ListTest extends AbstractTestCase
         $mappingTime = $this->stopTimer();
 
         $this->startTimer();
-        foreach ($bigList as $item) {
-            // loop over all items
+        foreach ($bigList as $i) {
+            $this->ignore($i);
         }
         $loopWithMappingTime = $this->stopTimer();
 
@@ -594,7 +594,7 @@ class ListTest extends AbstractTestCase
         $this->assertLessThan(5000 / 3, $totalTime);
     }
 
-    public function testShouldImplodeItems()
+    public function testShouldImplodeItems(): void
     {
         $list = ListCollection::of(1, 2, 3);
 

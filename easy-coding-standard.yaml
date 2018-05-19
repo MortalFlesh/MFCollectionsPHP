@@ -1,0 +1,6 @@
+imports:
+    - { resource: '%vendor_dir%/lmc/coding-standard/easy-coding-standard.yaml' }
+
+parameters:
+    exclude_checkers:
+        - 'Symplify\CodingStandard\Sniffs\Naming\InterfaceNameSniff'

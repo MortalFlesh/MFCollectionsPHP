@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace MF\Collection\Generic;
 
@@ -17,6 +17,7 @@ interface ICollection extends \MF\Collection\ICollection
      * @deprecated
      * @see IList::createT()
      * @see IMap::createKT()
+     * @param mixed $creator
      */
     public static function create(iterable $source, $creator);
 }
