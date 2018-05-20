@@ -7,6 +7,7 @@
 - Change `Collection` dir for `src`
 - Change `Tests` dir for `tests`
 - Change namespace for `Tests`
+- Test different values for different php versions
 
 ## 3.1.1 - 2018-01-02
 - Fix `composer.json` version

@@ -75,4 +75,12 @@ abstract class AbstractTestCase extends TestCase
     {
         // ignore anything
     }
+
+    protected function forPHP(array $versionDifferences)
+    {
+        $version = sprintf('%s%s', PHP_MAJOR_VERSION, PHP_MINOR_VERSION);
+        $this->assertArrayHasKey($version, $versionDifferences);
+
+        return $versionDifferences[$version];
+    }
 }
