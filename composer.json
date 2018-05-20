@@ -12,12 +12,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "MF\\Collection\\": "Collection/"
+            "MF\\Collection\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MF\\Tests\\": "Tests/"
+            "MF\\Collection\\": "tests/"
         }
     },
     "require": {
@@ -26,27 +26,32 @@
         "mf/type-validator": "^2.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0",
-        "phpstan/phpstan": "^0.6.3",
-        "friendsofphp/php-cs-fixer": "^2.1",
-        "squizlabs/php_codesniffer": "^2.8",
-        "satooshi/php-coveralls": "^1.0",
-        "mockery/mockery": "^0.9.9",
-        "giorgiosironi/eris": "^0.9.0"
+        "giorgiosironi/eris": "^0.10.0",
+        "lmc/coding-standard": "^1.1",
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan-shim": "^0.9.2",
+        "phpunit/phpunit": "^7.0",
+        "satooshi/php-coveralls": "^1.0"
+    },
+    "config": {
+        "sort-packages": true,
+        "bin-dir": "bin"
     },
     "scripts": {
-        "test": [
+        "all": [
+            "@analyze",
+            "@tests-ci"
+        ],
+        "analyze": [
             "@cs",
-            "@phpunit",
             "@phpstan"
         ],
-        "cs": "vendor/bin/phpcs --standard=ruleset.xml .",
-        "phpunit": "vendor/bin/phpunit -c phpunit.xml.dist",
-        "phpstan": "vendor/bin/phpstan analyse -l 5 -c phpstan.neon Collection Tests",
+        "cs": "bin/ecs check -vvv --ansi -- src/ tests/",
+        "phpstan": "bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
+        "tests": "bin/phpunit",
+        "tests-ci": "mkdir -p reports && php -dxdebug.coverage_enable=1 bin/phpunit -c phpunit.xml.dist --exclude-group local",
         "fix": [
-            "vendor/bin/php-cs-fixer fix Collection",
-            "vendor/bin/php-cs-fixer fix Tests",
-            "vendor/bin/phpcbf --standard=ruleset.xml ."
+            "bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
         ]
     }
 }

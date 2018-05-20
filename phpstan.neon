@@ -1,4 +1,10 @@
 parameters:
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
-        - '#.*MF\\Tests\\AbstractTestCase::forAll\(\).*#'
+        - '#.*MF\\Collection\\AbstractTestCase::forAll\(\).*#'
         - '#.*Eris\\Generator\\.*#'
+        - '#.*expects callable, callable|string given.*#'
+        - '#.*PHPDoc tag @param has invalid value.*#'
+        - '#.*PHPDoc tag @return contains unresolvable type.*#'
+        - '#.*PHPDoc tag @return has invalid value.*#'
+        - '#.*PHPDoc tag @param for parameter \$values with type mixed is not subtype.*#'
