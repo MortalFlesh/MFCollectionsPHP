@@ -2,12 +2,15 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.2.0 - 2018-05-29
 - Replace `code-sniffer` and `cs-fixer` for `lmc/coding-standards` for checking code style
 - Update dev-dependencies
 - Change `Collection` dir for `src`
 - Change `Tests` dir for `tests`
 - Change namespace for `Tests`
 - Test different values for different php versions
+- Add `ISeq` and `Seq` for creating sequences
 
 ## 3.1.1 - 2018-01-02
 - Fix `composer.json` version
