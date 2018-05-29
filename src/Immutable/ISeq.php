@@ -74,7 +74,7 @@ interface ISeq extends ICollection
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
      * @param string|array $range string is for range '1..10'
-     * @param null|string|callable $callable (int) => mixed
+     * @param string|callable $callable (int) => mixed
      * @return ISeq
      */
     public static function forDo($range, $callable): self;
