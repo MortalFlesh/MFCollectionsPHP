@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `annotations` to `Seq` from `ISeq`
 
 ## 3.2.0 - 2018-05-29
 - Replace `code-sniffer` and `cs-fixer` for `lmc/coding-standards` for checking code style
