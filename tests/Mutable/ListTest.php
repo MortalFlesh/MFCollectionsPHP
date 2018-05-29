@@ -597,8 +597,8 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::of(1, 2, 3);
 
-        $result = $list->implode(',');
+        $result = $list->implode(', ');
 
-        $this->assertSame('1,2,3', $result);
+        $this->assertSame('1, 2, 3', $result);
     }
 }
