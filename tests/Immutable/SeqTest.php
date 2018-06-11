@@ -666,4 +666,14 @@ class SeqTest extends AbstractTestCase
             'in static' => [Seq::from(['hello']), 'hello', true],
         ];
     }
+
+    public function testShouldCheckIfNumberFromRangeIsOdd(): void
+    {
+        $result = Seq::range('3..2..Inf')
+            ->filter('($i) => $i % 2 === 1')
+            ->take(5)
+            ->toArray();
+
+        $this->assertSame([3, 5, 7, 9, 11], $result);
+    }
 }

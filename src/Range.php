@@ -4,6 +4,8 @@ namespace MF\Collection;
 
 class Range
 {
+    public const INFINITE = 'Inf';
+
     public static function parse($range): array
     {
         if (is_string($range)) {
@@ -23,6 +25,21 @@ class Range
             throw new \InvalidArgumentException('Range can only be set by array or by string, see annotation.');
         }
 
-        return [$start, $end, $step];
+        return [
+            self::toNumeric($start),
+            $end === self::INFINITE ? $end : self::toNumeric($end),
+            self::toNumeric($step),
+        ];
+    }
+
+    /**
+     * @param float|int|string $start
+     * @return float|int
+     */
+    private static function toNumeric($start)
+    {
+        return is_float($start)
+            ? $start
+            : (int) $start;
     }
 }
