@@ -7,7 +7,7 @@ use MF\Parser\CallbackParser;
 
 class Seq implements \IteratorAggregate, ISeq
 {
-    public const INFINITE = 'Inf';
+    public const INFINITE = Range::INFINITE;
 
     private const TAKE = 'take';
     private const TAKE_UP_TO = 'take_up_to';
