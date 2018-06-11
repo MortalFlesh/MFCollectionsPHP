@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.2.2 - 2018-06-11
 - Fix `Range` defined by string in `Seq`, which has a first value as `string` not as `numeric`
 
 ## 3.2.1 - 2018-05-29
