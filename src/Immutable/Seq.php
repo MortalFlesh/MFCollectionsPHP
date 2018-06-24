@@ -522,4 +522,16 @@ class Seq implements \IteratorAggregate, ISeq
             $callback($i, $k);
         }
     }
+
+    /** @param string|callable $callback (value:mixed,index:mixed):iterable */
+    public function collect($callback): ISeq
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return self::init(function () use ($callback): iterable {
+            foreach ($this as $k => $i) {
+                yield from $callback($i, $k);
+            }
+        });
+    }
 }

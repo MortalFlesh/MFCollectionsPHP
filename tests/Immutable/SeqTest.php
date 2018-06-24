@@ -676,4 +676,51 @@ class SeqTest extends AbstractTestCase
 
         $this->assertSame([3, 5, 7, 9, 11], $result);
     }
+
+    public function testShouldCollectSequence(): void
+    {
+        $data = [1, 2, 3];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->collect(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: abcdefg', $word);
+    }
+
+    public function testShouldMapSequenceCollectAndMapAgain(): void
+    {
+        $data = ['1 ', ' 2 ', '3'];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->map('($i) => (int) $i')
+            ->collect(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->filter('($l) => $l < "f"')
+            ->map('($l) => $l . " "')
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: a b c d e ', $word);
+    }
 }

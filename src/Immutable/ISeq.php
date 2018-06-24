@@ -172,4 +172,11 @@ interface ISeq extends ICollection
 
     /** @param callable $callback (value:mixed,index:mixed):void */
     public function each(callable $callback): void;
+
+    /**
+     * Applies the given function to each element of the sequence and concatenates all the results
+     *
+     * @param string|callable $callback (value:mixed,index:mixed):iterable
+     */
+    public function collect($callback): self;
 }
