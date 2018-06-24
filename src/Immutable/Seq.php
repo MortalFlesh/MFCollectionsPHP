@@ -5,7 +5,7 @@ namespace MF\Collection\Immutable;
 use MF\Collection\Range;
 use MF\Parser\CallbackParser;
 
-class Seq implements \IteratorAggregate, ISeq
+class Seq implements ISeq
 {
     public const INFINITE = Range::INFINITE;
 
@@ -526,11 +526,16 @@ class Seq implements \IteratorAggregate, ISeq
     /** @param string|callable $callback (value:mixed,index:mixed):iterable */
     public function collect($callback): ISeq
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
+        return $this
+            ->map($callback)
+            ->concat();
+    }
 
-        return self::init(function () use ($callback): iterable {
-            foreach ($this as $k => $i) {
-                yield from $callback($i, $k);
+    public function concat(): ISeq
+    {
+        return self::init(function (): iterable {
+            foreach ($this as $i) {
+                yield from $i;
             }
         });
     }
