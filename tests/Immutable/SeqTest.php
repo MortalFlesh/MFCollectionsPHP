@@ -676,4 +676,145 @@ class SeqTest extends AbstractTestCase
 
         $this->assertSame([3, 5, 7, 9, 11], $result);
     }
+
+    public function testShouldCollectIntSequence(): void
+    {
+        $entity = new class([1, 2, 3]) {
+            /** @var array */
+            private $data;
+
+            public function __construct(array $data)
+            {
+                $this->data = $data;
+            }
+
+            public function toArray(): array
+            {
+                return $this->data;
+            }
+        };
+
+        $result = Seq::of($entity)
+            ->collect(('($s) => $s->toArray()'))
+            ->toArray();
+
+        $this->assertSame([1, 2, 3], $result);
+    }
+
+    public function testShouldCollectSequence(): void
+    {
+        $data = [1, 2, 3];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->collect(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: abcdefg', $word);
+    }
+
+    public function testShouldMapSequenceCollectAndMapAgain(): void
+    {
+        $data = ['1 ', ' 2 ', '3'];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->map('($i) => (int) $i')
+            ->collect(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->filter('($l) => $l < "f"')
+            ->map('($l) => $l . " "')
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: a b c d e ', $word);
+    }
+
+    public function testShouldConcatIntSequence(): void
+    {
+        $result = Seq::from([[1, 2, 3], [4, 5, 6]])
+            ->concat()
+            ->toArray();
+
+        $this->assertSame([1, 2, 3, 4, 5, 6], $result);
+    }
+
+    public function testShouldConcatSequence(): void
+    {
+        $data = [1, 2, 3];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->map(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->concat()
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: abcdefg', $word);
+    }
+
+    public function testShouldMapSequenceConcatAndMapAgain(): void
+    {
+        $data = ['1 ', ' 2 ', '3'];
+        $subData = [
+            1 => ['a', 'b', 'c'],
+            2 => ['d', 'e'],
+            3 => ['f', 'g'],
+        ];
+
+        $word = Seq::init(function () use ($data): iterable {
+            yield from $data;
+        })
+            ->map('($i) => (int) $i')
+            ->map(function (int $item) use ($subData): iterable {
+                return $subData[$item];
+            })
+            ->concat()
+            ->filter('($l) => $l < "f"')
+            ->map('($l) => $l . " "')
+            ->reduce(function (string $word, string $subItem): string {
+                return $word . $subItem;
+            }, 'Word: ');
+
+        $this->assertSame('Word: a b c d e ', $word);
+    }
+
+    public function testShouldCollectInfiniteSeq(): void
+    {
+        $result = Seq::infinite()
+            ->collect(function ($i) {
+                return [$i, $i];
+            })
+            ->take(3)
+            ->toArray();
+
+        $this->assertSame([1, 1, 2], $result);
+    }
 }

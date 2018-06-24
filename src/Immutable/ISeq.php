@@ -172,4 +172,24 @@ interface ISeq extends ICollection
 
     /** @param callable $callback (value:mixed,index:mixed):void */
     public function each(callable $callback): void;
+
+    /**
+     * Applies the given function to each element of the sequence and concatenates all the results
+     *
+     * Note: if mapping is not necessary, you can use just concat instead
+     * @see ISeq::concat()
+     *
+     * @param string|callable $callback (value:mixed,index:mixed):iterable
+     */
+    public function collect($callback): self;
+
+    /**
+     * Combines the given iterable-of-iterables as a single concatenated iterable
+     *
+     * Note: map->concat could be replaced by collect
+     * @see ISeq::collect()
+     *
+     * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
+     */
+    public function concat(): self;
 }
