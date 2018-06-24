@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.3.0 - 2018-06-24
 - Add `collect` method to `Seq`
 - Add `concat` method to `Seq`
 
