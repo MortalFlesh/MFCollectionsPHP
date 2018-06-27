@@ -18,6 +18,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
     - [IList](#list-interface)
     - [IMap](#map-interface)
     - [ISeq](#seq-interface)
+    - [ITuple](#tuple-interface)
 - [Mutable](#mutable-collections)
 - [Immutable](#immutable-collections)
 - [Generic](#generic-collections)
@@ -43,25 +44,36 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 ### <a name="collection-interface"></a>ICollection
 - basic Interface for Collections
 - extends `IteratorAggregate, Countable`
+- [see Mutable collections](#mutable-collections)
+- [see Immutable collections](#immutable-collections)
 
 ### <a name="list-interface"></a>IList
 - extends `ICollection`
+- [see Mutable list](#mutable-list)
+- [see Immutable list](#immutable-list)
 
 ### <a name="map-interface"></a>IMap
 - extends `ICollection, ArrayAccess`
+- [see Mutable map](#mutable-map)
+- [see Immutable map](#immutable-map)
 
 ### <a name="seq-interface"></a>ISeq
 - extends `ICollection`
+- [see Immutable seq](#immutable-seq)
+
+### <a name="tuple-interface"></a>ITuple
+- extends `ArrayAccess`, `Countable`
+- [see Immutable tuple](#immutable-tuple)
 
 
-## Mutable Collections
+## <a name="mutable-collections"></a>Mutable Collections
 
 ### Interfaces
 - `Mutable\ICollection`, `Mutable\IList`, `Mutable\IMap`
 - extends base version of Interface
 - adds methods for mutable Collections only
 
-### Mutable\ListCollection
+### <a name="mutable-list"></a>Mutable\ListCollection
 - implements `Mutable\IList`
 - basic List Collection
 
@@ -79,7 +91,7 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 $list = new Mutable\Generic\ListCollection('string');
 ```
 
-### Mutable\Map
+### <a name="mutable-map"></a>Mutable\Map
 - implements `Mutable\IMap`
 - basic Map Collection
 
@@ -98,7 +110,7 @@ $map = new Mutable\Generic\Map('string', 'int');
 ```
 
 
-## Immutable Collections
+## <a name="immutable-collections"></a>Immutable Collections
 - `internal state` of Immutable\Collection instance will `never change` from the outside
 ```php
 $list = new Immutable\ListCollection();
@@ -116,7 +128,7 @@ echo $listWith1->count();   // 1
 - extends base version of Interface
 - adds methods for immutable Collections only or alters method return value
 
-### Immutable\ListCollection
+### <a name="immutable-list"></a>Immutable\ListCollection
 - implements `Immutable\IList`
 - basic Immutable List Collection
 
@@ -134,7 +146,7 @@ echo $listWith1->count();   // 1
 $list = new Immutable\Generic\ListCollection('string');
 ```
 
-### Immutable\Map
+### <a name="immutable-map"></a>Immutable\Map
 - implements `Immutable\IMap`
 - basic Immutable Map Collection
 
@@ -152,7 +164,7 @@ $list = new Immutable\Generic\ListCollection('string');
 $map = new Immutable\Generic\Map('int', 'string');
 ```
 
-### Immutable\Seq
+### <a name="immutable-seq"></a>Immutable\Seq
 - implements `Immutable\ISeq`
 - basic Immutable Sequence
 - is `lazy` as possible (_even could be `Infinite`_)
@@ -164,6 +176,28 @@ Seq::infinite()
     ->takeWhile('($i) => $i < 25')
     ->toArray();
 // [4, 16]
+```
+
+### <a name="immutable-tuple"></a>Immutable\Tuple
+- implements `Immutable\ITuple`
+- basic Immutable Tuple
+- must have at least 2 values (_otherwise it is just a single value_)
+- is `eager` as possible
+- allows `destructuring`, `matching` and `parsing`/`formatting`
+```php
+Tuple::parse('(foo, bar)')->toArray();            // ['foo', 'bar']
+Tuple::parse('("foo, bar")')->toArray();          // ['foo, bar']
+Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
+
+Tuple::from([1, 1])->match('int', 'int');           // true
+Tuple::from([1, 'foo', null])->toString();          // '(1, "foo", null)'
+Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3)); // true
+
+Tuple::of(10, 'Foo', null)->match('int', 'string', '?string'); // true
+$first = Tuple::of('first', 2, 3)->first();                    // 'first'
+$second = Tuple::of('first', 2, 3)->second();                  // 2
+[$first, $second] = Tuple::of('first', 2, 3);                  // $first = 'first'; $second = 2
+[,, $third] = Tuple::of('first', 2, 3);                        // 3
 ```
 
 

@@ -6,6 +6,7 @@
 ## 3.3.0 - 2018-06-24
 - Add `collect` method to `Seq`
 - Add `concat` method to `Seq`
+- Add `Tuple`
 
 ## 3.2.2 - 2018-06-11
 - Fix `Range` defined by string in `Seq`, which has a first value as `string` not as `numeric`
