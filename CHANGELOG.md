@@ -3,10 +3,12 @@
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
 
+## 3.4.0 - 2018-06-27
+- Add `Tuple`
+
 ## 3.3.0 - 2018-06-24
 - Add `collect` method to `Seq`
 - Add `concat` method to `Seq`
-- Add `Tuple`
 
 ## 3.2.2 - 2018-06-11
 - Fix `Range` defined by string in `Seq`, which has a first value as `string` not as `numeric`
