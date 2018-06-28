@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.4.2 - 2018-06-28
 - Fix `static creators` which are `deprecated` in some situation to allow `override` them
 
 ## 3.4.1 - 2018-06-28
