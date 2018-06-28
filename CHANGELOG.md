@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Fix `static creators` which are `deprecated` in some situation to allow `override` them
 
 ## 3.4.1 - 2018-06-28
 - [_dev only_] Drop `scrutinizer`
