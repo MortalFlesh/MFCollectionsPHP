@@ -3,7 +3,7 @@
     "description": "Collections for PHP - It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.",
     "type": "library",
     "license": "MIT",
-    "version": "3.4.0",
+    "version": "3.4.1",
     "authors": [
         {
             "name": "Petr Chromec",

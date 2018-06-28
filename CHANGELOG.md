@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.4.1 - 2018-06-28
 - [_dev only_] Drop `scrutinizer`
 - [_dev only_] Update `coveralls` to new package
 - [_dev only_] Remove `bin-dir` option from `composer.json`
