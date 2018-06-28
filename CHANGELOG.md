@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [_dev only_] Drop `scrutinizer`
 
 ## 3.4.0 - 2018-06-27
 - Add `Tuple`
