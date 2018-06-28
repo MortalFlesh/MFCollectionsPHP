@@ -624,6 +624,10 @@ class SeqTest extends AbstractTestCase
                 Seq::create(range(1, 1000), '($i) => yield "item_" . $i'),
                 1000,
             ],
+            'seq of seq' => [
+                Seq::init(Seq::range('1..10')),
+                10,
+            ],
         ];
     }
 
