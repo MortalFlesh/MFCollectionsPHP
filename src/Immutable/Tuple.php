@@ -170,6 +170,11 @@ class Tuple implements ITuple
         return count($this->values);
     }
 
+    public function getIterator(): iterable
+    {
+        yield from $this->toArray();
+    }
+
     public function toArray(): array
     {
         return array_values($this->values);

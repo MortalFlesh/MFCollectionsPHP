@@ -458,4 +458,26 @@ class TupleTest extends AbstractTestCase
             'one string' => [['string']],
         ];
     }
+
+    public function testShouldUnpackTuple(): void
+    {
+        $result = sprintf('Title: %s | Value: %s', ...Tuple::of('foo', 'bar'));
+
+        $this->assertSame('Title: foo | Value: bar', $result);
+    }
+
+    public function testShouldUnpackTuples(): void
+    {
+        $format = function (string $title, string $value): string {
+            return sprintf('%s: %s', $title, $value);
+        };
+
+        $values = [Tuple::of('title', 'value'), Tuple::of('type', 'great')];
+
+        $result = array_map(function (Tuple $tuple) use ($format) {
+            return $format(...$tuple);
+        }, $values);
+
+        $this->assertSame(['title: value', 'type: great'], $result);
+    }
 }
