@@ -71,8 +71,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @deprecated
      * @see IList::ofT()
+     * @return IList
      */
-    public static function of(...$values): void
+    public static function of(...$values)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use ofT instead.'
@@ -82,8 +83,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @deprecated
      * @see IList::fromT()
+     * @return IList
      */
-    public static function from(array $array, bool $recursive = false): void
+    public static function from(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use fromT instead.'
@@ -94,8 +96,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @deprecated
      * @see IList::createT()
      * @param mixed $creator
+     * @return IList
      */
-    public static function create(iterable $source, $creator): void
+    public static function create(iterable $source, $creator)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'

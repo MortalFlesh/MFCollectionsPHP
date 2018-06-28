@@ -70,8 +70,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     /**
      * @deprecated
      * @see IMap::fromKT()
+     * @return IMap
      */
-    public static function from(array $array, bool $recursive = false): void
+    public static function from(array $array, bool $recursive = false)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use fromKT instead.'
@@ -82,8 +83,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @deprecated
      * @see IMap::createKT()
      * @param mixed $creator
+     * @return IMap
      */
-    public static function create(iterable $source, $creator): void
+    public static function create(iterable $source, $creator)
     {
         throw new \BadMethodCallException(
             'This method should not be used with Generic Map. Use createKT instead.'
