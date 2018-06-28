@@ -35,8 +35,7 @@
         "symfony/var-dumper": "^4.1"
     },
     "config": {
-        "sort-packages": true,
-        "bin-dir": "bin"
+        "sort-packages": true
     },
     "scripts": {
         "all": [
@@ -47,12 +46,12 @@
             "@cs",
             "@phpstan"
         ],
-        "cs": "bin/ecs check -vvv --ansi -- src/ tests/",
-        "phpstan": "bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
-        "tests": "bin/phpunit",
-        "tests-ci": "mkdir -p reports && php -dxdebug.coverage_enable=1 bin/phpunit -c phpunit.xml.dist --exclude-group local",
+        "cs": "vendor/bin/ecs check -vvv --ansi -- src/ tests/",
+        "phpstan": "vendor/bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
+        "tests": "vendor/bin/phpunit",
+        "tests-ci": "mkdir -p reports && php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local",
         "fix": [
-            "bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
+            "vendor/bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
         ]
     }
 }

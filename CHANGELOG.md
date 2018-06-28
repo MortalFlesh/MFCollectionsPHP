@@ -4,6 +4,7 @@
 ## Unreleased
 - [_dev only_] Drop `scrutinizer`
 - [_dev only_] Update `coveralls` to new package
+- [_dev only_] Remove `bin-dir` option from `composer.json`
 
 ## 3.4.0 - 2018-06-27
 - Add `Tuple`
