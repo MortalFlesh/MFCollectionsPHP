@@ -498,7 +498,7 @@ class Seq implements ISeq
     public function count(): int
     {
         $this->assertFinite('count');
-        if (is_callable($this->iterable) || !empty($this->modifiers)) {
+        if (is_callable($this->iterable) || !empty($this->modifiers) || is_iterable($this->iterable)) {
             $this->iterable = $this->toArray();
         }
 

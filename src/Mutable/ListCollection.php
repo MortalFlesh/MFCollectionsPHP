@@ -190,7 +190,12 @@ class ListCollection implements IList
     {
         $this->applyModifiers();
 
-        return array_search($value, $this->listArray, true);
+        $index = array_search($value, $this->listArray, true);
+        if (is_string($index)) {
+            throw new \LogicException(sprintf('List must have only integer indexes, but has "%s".', $index));
+        }
+
+        return $index;
     }
 
     /**
