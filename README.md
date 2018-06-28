@@ -184,19 +184,28 @@ Seq::infinite()
 - is `eager` as possible
 - allows `destructuring`, `matching` and `parsing`/`formatting`
 ```php
+// parsing
 Tuple::parse('(foo, bar)')->toArray();            // ['foo', 'bar']
 Tuple::parse('("foo, bar")')->toArray();          // ['foo, bar']
 Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
 
-Tuple::from([1, 1])->match('int', 'int');           // true
-Tuple::from([1, 'foo', null])->toString();          // '(1, "foo", null)'
-Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3)); // true
-
+// matching and comparing
+Tuple::from([1, 1])->match('int', 'int');                      // true
+Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3));            // true
 Tuple::of(10, 'Foo', null)->match('int', 'string', '?string'); // true
-$first = Tuple::of('first', 2, 3)->first();                    // 'first'
-$second = Tuple::of('first', 2, 3)->second();                  // 2
-[$first, $second] = Tuple::of('first', 2, 3);                  // $first = 'first'; $second = 2
-[,, $third] = Tuple::of('first', 2, 3);                        // 3
+
+// formatting
+Tuple::from([1, 'foo', null])->toString();        // '(1, "foo", null)'
+
+// destructuring
+$tuple  = Tuple::of('first', 2, 3);
+$first  = $tuple->first();      // 'first'
+$second = $tuple->second();     // 2
+[$first, $second] = $tuple;     // $first = 'first'; $second = 2
+[,, $third]       = $tuple;     // 3
+
+// unpacking
+sprintf('Title: %s | Value: %s', ...Tuple::of('foo', 'bar'))   // "Title: foo | Value: bar"
 ```
 
 

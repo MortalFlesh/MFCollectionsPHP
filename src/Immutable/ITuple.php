@@ -2,7 +2,7 @@
 
 namespace MF\Collection\Immutable;
 
-interface ITuple extends \ArrayAccess, \Countable
+interface ITuple extends \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
