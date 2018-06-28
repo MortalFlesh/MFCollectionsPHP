@@ -5,6 +5,7 @@
 - [_dev only_] Drop `scrutinizer`
 - [_dev only_] Update `coveralls` to new package
 - [_dev only_] Remove `bin-dir` option from `composer.json`
+- [_dev only_] Add `matrix` to the `travis.yml` to optimize build time 
 
 ## 3.4.0 - 2018-06-27
 - Add `Tuple`
