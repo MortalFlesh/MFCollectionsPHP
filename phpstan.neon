@@ -3,6 +3,7 @@ parameters:
     ignoreErrors:
         - '#.*MF\\Collection\\AbstractTestCase::forAll\(\).*#'
         - '#.*Eris\\Generator\\.*#'
+        - '#.*Call to an undefined method Eris\\Quantifier\\ForAll::then\(\).*#'
         - '#.*expects callable, callable|string given.*#'
         - '#.*PHPDoc tag @param has invalid value.*#'
         - '#.*PHPDoc tag @return contains unresolvable type.*#'

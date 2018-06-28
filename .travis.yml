@@ -1,16 +1,25 @@
 language: php
 php:
-    - '7.1'
-    - '7.2'
+    - 7.1
+    - 7.2
+
+matrix:
+  include:
+    - php: 7.1
+      env: DEPENDENCIES="--prefer-lowest"
+    - php: 7.2
+      env: CHECK_CODESTYLE=1
+      before_install: phpenv config-rm xdebug.ini
+      script:
+        - composer analyze
+      after_success: ~
 
 install:
-    - composer install
-
-before-script:
-    - mkdir -p code-coverage
+  - travis_retry composer self-update && composer --version
+  - travis_retry composer update --no-interaction $DEPENDENCIES
 
 script:
-    - composer all
+    - composer tests-ci
 
 after_success:
-    - travis_retry php vendor/bin/coveralls -v
+    - travis_retry php vendor/bin/php-coveralls -v

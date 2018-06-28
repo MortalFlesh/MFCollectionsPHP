@@ -525,7 +525,7 @@ class MapTest extends AbstractTestCase
         $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
 
         $this->assertLessThan(1, $mappingTime);
-        $this->assertLessThan($loopTime * 1.5, $loopWithMappingTime);   // 50% is still fair enough
+        $this->assertLessThan($loopTime * 1.6, $loopWithMappingTime);   // 40% is still fair enough
         $this->assertCount(10001, $bigMap);
 
         // this test before lazy mapping lasts around 5-6 seconds, and now it is less than 2 seconds
