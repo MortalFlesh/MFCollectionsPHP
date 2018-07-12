@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Fix `implode` on `ListCollection`
 
 ## 3.5.0 - 2018-06-28
 - Allow `unpack` of `Tuples` by implementing `IteratorAggregate`

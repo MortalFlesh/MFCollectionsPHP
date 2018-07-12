@@ -329,6 +329,8 @@ class ListCollection implements IList
 
     public function implode(string $glue): string
     {
+        $this->applyModifiers();
+
         return implode($glue, $this->listArray);
     }
 }
