@@ -426,8 +426,12 @@ class ListTest extends AbstractTestCase
      *
      * @dataProvider reduceInitialProvider
      */
-    public function testShouldReduceListWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
-    {
+    public function testShouldReduceListWithInitialValue(
+        callable $reducer,
+        array $values,
+        $initialValue,
+        $expected
+    ): void {
         foreach ($values as $value) {
             $this->list->add($value);
         }
@@ -597,8 +601,12 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::of(1, 2, 3);
 
-        $result = $list->implode(', ');
+        $result = $list
+            ->map(function ($i) {
+                return $i . '_';
+            })
+            ->implode(', ');
 
-        $this->assertSame('1, 2, 3', $result);
+        $this->assertSame('1_, 2_, 3_', $result);
     }
 }

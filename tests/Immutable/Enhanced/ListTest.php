@@ -164,9 +164,11 @@ class ListTest extends \MF\Collection\Immutable\ListTest
 
     public function testShouldImplodeItems(): void
     {
-        $list = ListCollection::of(1, 2, 3);
+        $list = ListCollection::of(1, 2, 3, 4, 5);
 
-        $result = $list->implode(',');
+        $result = $list
+            ->filter('($i) => $i < 4')
+            ->implode(',');
 
         $this->assertSame('1,2,3', $result);
     }
