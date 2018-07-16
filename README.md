@@ -186,7 +186,7 @@ Seq::infinite()
 ```php
 // parsing
 Tuple::parse('(foo, bar)')->toArray();            // ['foo', 'bar']
-Tuple::parse('("foo, bar")')->toArray();          // ['foo, bar']
+Tuple::parse('("foo, bar", boo)')->toArray();     // ['foo, bar', 'boo']
 Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
 
 // matching and comparing
