@@ -101,6 +101,79 @@ class Tuple implements ITuple
     }
 
     /**
+     * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
+     * @see ITuple::match()
+     * @see ITuple::parseMatchTypes()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::parseMatch('(foo, bar)', 'string', 'string')->toArray()        -> ['foo', 'bar']
+     * Tuple::parseMatch('("foo bar", boo)', 'string', 'string')->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parseMatch('(1, 2, 3)', 'int', 'int', 'int')->toArray()        -> [1, 2, 3]
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
+     * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): ITuple
+    {
+        return self::parseMatchTypes($tuple, array_merge([$typeFirst, $typeSecond], $type));
+    }
+
+    /**
+     * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
+     * @see ITuple::matchTypes()
+     * @see ITuple::parseMatch()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::parseMatchTypes('(foo, bar)', ['string', 'string'])->toArray()        -> ['foo', 'bar']
+     * Tuple::parseMatchTypes('("foo bar", boo)', ['string', 'string'])->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int', 'int'])->toArray()        -> [1, 2, 3]
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
+     * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function parseMatchTypes(string $tuple, array $types): ITuple
+    {
+        /** @var self $parsedTuple */
+        $parsedTuple = self::parse($tuple, count($types));
+
+        if (!$parsedTuple->matchTypes($types)) {
+            [$expectedTypes, $actualTypes] = $parsedTuple->getTypes($types);
+
+            throw new \InvalidArgumentException(sprintf(
+                'Given tuple does NOT match expected types (%s) - got (%s).',
+                implode(', ', $expectedTypes),
+                implode(', ', $actualTypes)
+            ));
+        }
+
+        return $parsedTuple;
+    }
+
+    /**
      * @example
      * Tuple::of(1, 2, 3)->toArray() -> [1, 2, 3]
      * Tuple::of(...$array)->toArray() -> $array    // same as Tuple::from()
@@ -261,7 +334,7 @@ class Tuple implements ITuple
      * - ?type (nullable type is any of the above with ? prefix)
      *
      * @example
-     * Tuple::from([1, 2])->match('int', 'int') // true
+     * Tuple::from([1, 2])->match('int', 'int')        // true
      * Tuple::from([1, 'foo'])->match('int', 'string') // true
      * Tuple::from(['foo', 1])->match('int', 'string') // false
      */
@@ -282,7 +355,7 @@ class Tuple implements ITuple
      * - ?type (nullable type is any of the above with ? prefix)
      *
      * @example
-     * Tuple::from([1, 2])->matchTypes(['int', 'int']) // true
+     * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
      * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
      * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
      */
@@ -291,21 +364,18 @@ class Tuple implements ITuple
         Assertion::greaterOrEqualThan(
             count($types),
             self::MINIMAL_TUPLE_ITEMS_COUNT,
-            'Tuples has always at least two values. It would always be false by giving less then 2 types.'
+            sprintf(
+                'Tuples has always at least %d values. It would always be false by giving less then %d types.',
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+                self::MINIMAL_TUPLE_ITEMS_COUNT
+            )
         );
 
         if (count($types) !== $this->count()) {
             return false;
         }
 
-        $normalizeType = function (string $type): string {
-            return $this->normalizeType($type);
-        };
-
-        $expectedTypes = Seq::create($types, $normalizeType);
-        $actualTypes = Seq::create($this->toArray(), 'gettype')
-            ->map($normalizeType)
-            ->toArray();
+        [$expectedTypes, $actualTypes] = $this->getTypes($types);
 
         foreach ($expectedTypes as $i => $expectedType) {
             if ($expectedType === '*') {
@@ -328,32 +398,47 @@ class Tuple implements ITuple
         return true;
     }
 
-    private function normalizeType(string $type): string
+    private function getTypes(array $types): array
     {
-        $types = Seq::create(explode('|', $type), function (string $type): iterable {
-            if (mb_substr($type, 0, 1) === '?') {
-                yield 'NULL';
-            }
+        $normalizeType = $this->normalizeType();
 
-            yield ltrim($type, '?');
-        })
-            ->map(function ($type) {
-                switch ($type) {
-                    case 'integer':
-                        return 'int';
-                    case 'boolean':
-                        return 'bool';
-                    case 'double':
-                        return 'float';
-                    case 'any':
-                    case 'mixed':
-                        return '*';
-                    default:
-                        return $type;
+        $expectedTypes = Seq::create($types, $normalizeType)
+            ->toArray();
+        $actualTypes = Seq::create($this->toArray(), 'gettype')
+            ->map($normalizeType)
+            ->toArray();
+
+        return [$expectedTypes, $actualTypes];
+    }
+
+    private function normalizeType(): \Closure
+    {
+        return function (string $type) {
+            $types = Seq::create(explode('|', $type), function (string $type): iterable {
+                if (mb_substr($type, 0, 1) === '?') {
+                    yield 'NULL';
                 }
-            });
 
-        return implode('|', array_unique($types->toArray()));
+                yield ltrim($type, '?');
+            })
+                ->map(function ($type) {
+                    switch ($type) {
+                        case 'integer':
+                            return 'int';
+                        case 'boolean':
+                            return 'bool';
+                        case 'double':
+                            return 'float';
+                        case 'any':
+                        case 'mixed':
+                            return '*';
+                        default:
+                            return $type;
+                    }
+                });
+
+            return implode('|', array_unique($types->toArray()));
+        };
     }
 
     /** @deprecated Altering existing tuple is not permitted */
