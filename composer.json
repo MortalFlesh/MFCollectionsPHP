@@ -50,7 +50,7 @@
         "cs": "vendor/bin/ecs check -vvv --ansi -- src/ tests/",
         "phpstan": "vendor/bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
         "tests": "vendor/bin/phpunit",
-        "tests-ci": "mkdir -p reports && php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local",
+        "tests-ci": "php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local",
         "fix": [
             "vendor/bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
         ]
