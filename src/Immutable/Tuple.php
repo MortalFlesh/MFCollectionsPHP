@@ -246,21 +246,19 @@ class Tuple implements ITuple
      */
     public function toString(): string
     {
-        return empty($this->values)
-            ? '()'
-            : sprintf('(%s)', implode(', ', array_map(function ($value) {
-                if ($value === null) {
-                    return 'null';
-                } elseif ($value === true) {
-                    return 'true';
-                } elseif ($value === false) {
-                    return 'false';
-                }
+        return sprintf('(%s)', implode(', ', array_map(function ($value) {
+            if ($value === null) {
+                return 'null';
+            } elseif ($value === true) {
+                return 'true';
+            } elseif ($value === false) {
+                return 'false';
+            }
 
-                return is_string($value)
-                    ? sprintf('"%s"', $value)
-                    : $value;
-            }, $this->values)));
+            return is_string($value)
+                ? sprintf('"%s"', $value)
+                : $value;
+        }, $this->values)));
     }
 
     public function count(): int
