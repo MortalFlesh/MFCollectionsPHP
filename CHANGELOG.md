@@ -4,6 +4,7 @@
 ## Unreleased
 - Fix missing an explicit requirement on `beberlei/assert` library
 - Add `expectedItemsCount` _optional_ argument to `parse` method of `ITuple` to allow explicit validation of parsed result
+- Require higher version (`^2.9.3`) of `beberlei/assert` library because of simplified error messages
 
 ## 3.5.1 - 2018-07-13
 - Fix `implode` on `ListCollection`
