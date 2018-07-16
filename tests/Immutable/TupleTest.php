@@ -156,9 +156,7 @@ class TupleTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @dataProvider provideTuplesInString
-     */
+    /** @dataProvider provideTuplesInString */
     public function testShouldParseTupleFromString(string $tuple, array $expectedArray, string $expectedString): void
     {
         $result = Tuple::parse($tuple);
@@ -199,6 +197,97 @@ class TupleTest extends AbstractTestCase
 
             // potentially buggy behaviour with more commas without values
             'empty strings' => ['("",,1)', ['', 1], '("", 1)'],
+        ];
+    }
+
+    /** @dataProvider provideTuplesInString */
+    public function testShouldParseTupleFromStringAndExpectCorrectNumberOfItems(
+        string $tuple,
+        array $expectedArray,
+        string $expectedString
+    ): void {
+        $result = Tuple::parse($tuple, count($expectedArray));
+
+        $this->assertSame($expectedArray, $result->toArray());
+        $this->assertSame($expectedString, $result->toString());
+    }
+
+    public function testShouldThrowInvalidArgumentExceptionOnTryToParseTupleWithInvalidExpectation(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected items count is 1 but must not be lower than 2 because in that case it would not be a valid Tuple.');
+
+        Tuple::parse('(1,2,3)', 1);
+    }
+
+    /** @dataProvider provideInvalidParseItems */
+    public function testShouldNotParseTupleFromStringWithIncorrectNumberOfItems(
+        string $tuple,
+        int $expectedCount,
+        string $expectedMessage
+    ): void {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        Tuple::parse($tuple, $expectedCount);
+    }
+
+    public function provideInvalidParseItems(): array
+    {
+        return [
+            // tuple, expectedItemsCount, expectedMessage
+            'nulls' => [
+                '(null, null)',
+                3,
+                'Invalid tuple given - expected 3 items but parsed 2 items from "(null, null)".',
+            ],
+            'bools' => [
+                '(true, false)',
+                3,
+                'Invalid tuple given - expected 3 items but parsed 2 items from "(true, false)".',
+            ],
+            'integers' => [
+                '(1, 2, 3)',
+                4,
+                'Invalid tuple given - expected 4 items but parsed 3 items from "(1, 2, 3)".',
+            ],
+            'floats' => [
+                '(1.1, 2.3, 5.2)',
+                5,
+                'Invalid tuple given - expected 5 items but parsed 3 items from "(1.1, 2.3, 5.2)".',
+            ],
+            'strings' => [
+                '(one, two, three, four)',
+                3,
+                'Invalid tuple given - expected 3 items but parsed 4 items from "(one, two, three, four)".',
+            ],
+            'without parentheses integers' => [
+                '1, 2, 3',
+                4,
+                'Invalid tuple given - expected 4 items but parsed 3 items from "1, 2, 3".',
+            ],
+            'without parentheses strings' => [
+                'one, two, three, four',
+                5,
+                'Invalid tuple given - expected 5 items but parsed 4 items from "one, two, three, four".',
+            ],
+            'complex strings' => [
+                '("some complex string", two, three)',
+                2,
+                'Invalid tuple given - expected 2 items but parsed 3 items from "("some complex string", two, three)".',
+            ],
+            'mixed' => [
+                '(one, 2, 4.2)',
+                4,
+                'Invalid tuple given - expected 4 items but parsed 3 items from "(one, 2, 4.2)".',
+            ],
+
+            // potentially buggy behaviour with more commas without values
+            'empty strings' => [
+                '("",,1)',
+                3,
+                'Invalid tuple given - expected 3 items but parsed 2 items from "("",,1)".',
+            ],
         ];
     }
 

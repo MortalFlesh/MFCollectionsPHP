@@ -6,6 +6,8 @@ use Assert\Assertion;
 
 class Tuple implements ITuple
 {
+    private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
+
     /** @var array */
     private $values;
 
@@ -13,14 +15,29 @@ class Tuple implements ITuple
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
      *
      * @example
-     * Tuple::parse('(foo, bar)')->toArray() -> ['foo', 'bar']
-     * Tuple::parse('("foo bar")')->toArray() -> ['foo bar']
-     * Tuple::parse('(1, 2, 3)')->toArray() -> [1, 2, 3]
+     * Tuple::parse('(foo, bar)')->toArray()        -> ['foo', 'bar']
+     * Tuple::parse('("foo bar", boo)')->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parse('(1, 2, 3)')->toArray()         -> [1, 2, 3]
+     * Tuple::parse('(1, 2, 3)', 3)->toArray()      -> [1, 2, 3]     // with expectation
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parse('(1, 2, 3)', 2)  // 2 values expected, but got 3
+     * Tuple::parse('(1, 2)', 3)     // 3 values expected, but got 2
+     *
+     * @throws \InvalidArgumentException
      */
-    public static function parse(string $tuple): ITuple
+    public static function parse(string $tuple, int $expectedItemsCount = null): ITuple
     {
         if (empty($tuple)) {
             return new self([]);
+        }
+
+        if ($expectedItemsCount !== null) {
+            Assertion::greaterOrEqualThan(
+                $expectedItemsCount,
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+                'Expected items count is %d but must not be lower than %d because in that case it would not be a valid Tuple.'
+            );
         }
 
         $cache = [];
@@ -72,6 +89,14 @@ class Tuple implements ITuple
             })
             ->toArray();
 
+        if ($expectedItemsCount !== null) {
+            Assertion::count(
+                $values,
+                $expectedItemsCount,
+                'Invalid tuple given - expected %d items but parsed %d items from "' . $tuple . '".'
+            );
+        }
+
         return new self($values);
     }
 
@@ -101,7 +126,7 @@ class Tuple implements ITuple
     {
         Assertion::greaterOrEqualThan(
             count($values),
-            2,
+            self::MINIMAL_TUPLE_ITEMS_COUNT,
             sprintf('Tuple must have at least two values. Given "%s".', var_export($values, true))
         );
         $this->values = $values;
@@ -265,7 +290,7 @@ class Tuple implements ITuple
     {
         Assertion::greaterOrEqualThan(
             count($types),
-            2,
+            self::MINIMAL_TUPLE_ITEMS_COUNT,
             'Tuples has always at least two values. It would always be false by giving less then 2 types.'
         );
 
