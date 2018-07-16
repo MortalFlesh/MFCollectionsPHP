@@ -8,11 +8,18 @@ interface ITuple extends \ArrayAccess, \Countable, \IteratorAggregate
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
      *
      * @example
-     * Tuple::parse('(foo, bar)')->toArray() -> ['foo', 'bar']
-     * Tuple::parse('("foo bar")')->toArray() -> ['foo bar']
-     * Tuple::parse('(1, 2, 3)')->toArray() -> [1, 2, 3]
+     * Tuple::parse('(foo, bar)')->toArray()        -> ['foo', 'bar']
+     * Tuple::parse('("foo bar", boo)')->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parse('(1, 2, 3)')->toArray()         -> [1, 2, 3]
+     * Tuple::parse('(1, 2, 3)', 3)->toArray()      -> [1, 2, 3]     // with expectation
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parse('(1, 2, 3)', 2)  // 2 values expected, but got 3
+     * Tuple::parse('(1, 2)', 3)     // 3 values expected, but got 2
+     *
+     * @throws \InvalidArgumentException
      */
-    public static function parse(string $tuple): self;
+    public static function parse(string $tuple, int $expectedItemsCount = null): self;
 
     /**
      * @example
