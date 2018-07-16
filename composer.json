@@ -22,7 +22,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "beberlei/assert": "^2.9.3",
+        "beberlei/assert": "^2.9.3 || ^3.0",
         "mf/callback-parser": "^2.0",
         "mf/type-validator": "^2.1"
     },
