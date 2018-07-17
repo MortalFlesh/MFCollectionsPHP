@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.6.0 - 2018-07-17
 - Fix missing an explicit requirement on `beberlei/assert` library
 - Add `expectedItemsCount` _optional_ argument to `parse` method of `ITuple` to allow explicit validation of parsed result
 - Require higher version (`^2.9.3`) of `beberlei/assert` library because of simplified error messages
