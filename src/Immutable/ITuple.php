@@ -22,6 +22,60 @@ interface ITuple extends \ArrayAccess, \Countable, \IteratorAggregate
     public static function parse(string $tuple, int $expectedItemsCount = null): self;
 
     /**
+     * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
+     * @see ITuple::match()
+     * @see ITuple::parseMatchTypes()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::parseMatch('(foo, bar)', 'string', 'string')->toArray()        -> ['foo', 'bar']
+     * Tuple::parseMatch('("foo bar", boo)', 'string', 'string')->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parseMatch('(1, 2, 3)', 'int', 'int', 'int')->toArray()        -> [1, 2, 3]
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
+     * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): self;
+
+    /**
+     * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
+     * @see ITuple::matchTypes()
+     * @see ITuple::parseMatch()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::parseMatchTypes('(foo, bar)', ['string', 'string'])->toArray()        -> ['foo', 'bar']
+     * Tuple::parseMatchTypes('("foo bar", boo)', ['string', 'string'])->toArray()  -> ['foo bar', 'boo']
+     * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int', 'int'])->toArray()        -> [1, 2, 3]
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
+     * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function parseMatchTypes(string $tuple, array $types): self;
+
+    /**
      * @example
      * Tuple::of(1, 2, 3)->toArray() -> [1, 2, 3]
      * Tuple::of(...$array)->toArray() -> $array    // same as Tuple::from()
@@ -97,7 +151,7 @@ interface ITuple extends \ArrayAccess, \Countable, \IteratorAggregate
      * - ?type (nullable type is any of the above with ? prefix)
      *
      * @example
-     * Tuple::from([1, 2])->match('int', 'int') // true
+     * Tuple::from([1, 2])->match('int', 'int')        // true
      * Tuple::from([1, 'foo'])->match('int', 'string') // true
      * Tuple::from(['foo', 1])->match('int', 'string') // false
      */
@@ -115,7 +169,7 @@ interface ITuple extends \ArrayAccess, \Countable, \IteratorAggregate
      * - ?type (nullable type is any of the above with ? prefix)
      *
      * @example
-     * Tuple::from([1, 2])->matchTypes(['int', 'int']) // true
+     * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
      * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
      * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
      */

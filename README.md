@@ -194,6 +194,13 @@ Tuple::from([1, 1])->match('int', 'int');                      // true
 Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3));            // true
 Tuple::of(10, 'Foo', null)->match('int', 'string', '?string'); // true
 
+// parsing and matching
+Tuple::parseMatch('(foo, bar)', 'string', 'string')->toArray();            // ['foo', 'bar']
+Tuple::parseMatchTypes('(foo, bar)', ['string', 'string'])->toArray();     // ['foo', 'bar']
+
+// invalid types
+Tuple::parseMatch('(foo, bar, 1)', 'string', 'string');        // throws \InvalidArgumentException "Given tuple does NOT match expected types (string, string) - got (string, string, int)"
+
 // formatting
 Tuple::from([1, 'foo', null])->toString();        // '(1, "foo", null)'
 

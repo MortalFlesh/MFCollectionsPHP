@@ -291,6 +291,160 @@ class TupleTest extends AbstractTestCase
         ];
     }
 
+    /** @dataProvider provideParseTypes */
+    public function testShouldParseTupleFromStringWithCorrectTypes(
+        string $tuple,
+        array $expectedTypes,
+        array $expected
+    ): void {
+        $tuple = Tuple::parseMatchTypes($tuple, $expectedTypes);
+
+        $this->assertSame($expected, $tuple->toArray());
+    }
+
+    public function provideParseTypes(): array
+    {
+        return [
+            // tuple, expectedTypes, expected
+            'nulls' => [
+                '(null, null)',
+                ['?string', '?string'],
+                [null, null],
+            ],
+            'bools' => [
+                '(true, false, null)',
+                ['bool', 'boolean', '?boolean'],
+                [true, false, null],
+            ],
+            'integers' => [
+                '(1, 2, 3)',
+                ['int', 'int', 'int'],
+                [1, 2, 3],
+            ],
+            'floats' => [
+                '(1.1, 2.3, 5.2)',
+                ['float', 'float', 'float'],
+                [1.1, 2.3, 5.2],
+            ],
+            'strings' => [
+                '(one, two, three, four)',
+                ['string', 'string', 'string', 'string'],
+                ['one', 'two', 'three', 'four'],
+            ],
+            'without parentheses integers' => [
+                '1, 2, 3',
+                ['int', 'int', 'int'],
+                [1, 2, 3],
+            ],
+            'without parentheses strings' => [
+                'one, two, three, four',
+                ['string', 'string', 'string', 'string'],
+                ['one', 'two', 'three', 'four'],
+            ],
+            'complex strings' => [
+                '("some complex string", two, three)',
+                ['string', 'string', 'string'],
+                ['some complex string', 'two', 'three'],
+            ],
+            'mixed' => [
+                '(one, 2, 4.2)',
+                ['?string', 'int', 'float'],
+                ['one', 2, 4.2],
+            ],
+            'any' => [
+                '(one, 2)',
+                ['string', 'any'],
+                ['one', 2],
+            ],
+
+            // potentially buggy behaviour with more commas without values
+            'empty strings' => [
+                '("",,1)',
+                ['string', 'int'],
+                ['', 1],
+            ],
+        ];
+    }
+
+    public function testShouldNotParseTupleFromStringWithIncorrectType(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Given tuple does NOT match expected types (string, int) - got (string, string).');
+
+        Tuple::parseMatch('(foo, bar)', 'string', 'int');
+    }
+
+    /** @dataProvider provideInvalidParseTypes */
+    public function testShouldNotParseTupleFromStringWithIncorrectTypes(
+        string $tuple,
+        array $expectedTypes,
+        string $expectedMessage
+    ): void {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        Tuple::parseMatchTypes($tuple, $expectedTypes);
+    }
+
+    public function provideInvalidParseTypes(): array
+    {
+        return [
+            // tuple, expectedTypes, expectedMessage
+            'nulls' => [
+                '(null, null)',
+                ['string', 'string'],
+                'Given tuple does NOT match expected types (string, string) - got (NULL, NULL).',
+            ],
+            'bools' => [
+                '(true, false)',
+                ['string', 'string'],
+                'Given tuple does NOT match expected types (string, string) - got (bool, bool).',
+            ],
+            'integers' => [
+                '(1, 2, 3)',
+                ['int', 'int'],
+                'Invalid tuple given - expected 2 items but parsed 3 items from "(1, 2, 3)".',
+            ],
+            'floats' => [
+                '(1.1, 2.3, 5.2)',
+                ['int', 'int', 'int'],
+                'Given tuple does NOT match expected types (int, int, int) - got (float, float, float).',
+            ],
+            'strings' => [
+                '(one, two, three, four)',
+                ['string', 'string', 'int'],
+                'Invalid tuple given - expected 3 items but parsed 4 items from "(one, two, three, four)".',
+            ],
+            'without parentheses integers' => [
+                '1, 2, 3',
+                ['int', 'int', 'float'],
+                'Given tuple does NOT match expected types (int, int, float) - got (int, int, int).',
+            ],
+            'without parentheses strings' => [
+                'one, two, three, four',
+                ['string', 'string', 'int', 'string'],
+                'Given tuple does NOT match expected types (string, string, int, string) - got (string, string, string, string).',
+            ],
+            'complex strings' => [
+                '("some complex string", two, three)',
+                ['string', 'string', 'int'],
+                'Given tuple does NOT match expected types (string, string, int) - got (string, string, string).',
+            ],
+            'mixed' => [
+                '(one, 2, 4.2)',
+                ['string', 'int', 'int'],
+                'Given tuple does NOT match expected types (string, int, int) - got (string, int, float).',
+            ],
+
+            // potentially buggy behaviour with more commas without values
+            'empty strings' => [
+                '("",,1)',
+                ['string', 'string', 'int'],
+                'Invalid tuple given - expected 3 items but parsed 2 items from "("",,1)".',
+            ],
+        ];
+    }
+
     /** @dataProvider provideInvalidParse */
     public function testShouldNotParseTuples(string $invalidTupleString): void
     {
@@ -528,12 +682,12 @@ class TupleTest extends AbstractTestCase
     }
 
     /** @dataProvider provideInvalidTypes */
-    public function testShouldNotMatchWhenAskToMatchNotEnoughtTypes(array $types): void
+    public function testShouldNotMatchWhenAskToMatchNotEnoughTypes(array $types): void
     {
         $tuple = Tuple::of('foo', 'bar');
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Tuples has always at least two values. It would always be false by giving less then 2 types.');
+        $this->expectExceptionMessage('Tuples has always at least 2 values. It would always be false by giving less then 2 types.');
 
         $tuple->matchTypes($types);
     }
