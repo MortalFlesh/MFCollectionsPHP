@@ -47,6 +47,15 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
+    public function testShouldCreateMapFromMixedArray(): void
+    {
+        $array = ['key' => 1, 2 => 'two'];
+        $map = Map::fromKT('mixed', 'any', $array);
+
+        $this->assertInstanceOf(Map::class, $map);
+        $this->assertEquals($array, $map->toArray());
+    }
+
     public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -93,18 +102,6 @@ class MapTest extends AbstractTestCase
             [
                 'keyType' => 'float',
                 'valueType' => '',
-            ],
-            [
-                'keyType' => 'mixed',
-                'valueType' => 'array',
-            ],
-            [
-                'keyType' => 'int',
-                'valueType' => 'mixed',
-            ],
-            [
-                'keyType' => Map::class,
-                'valueType' => 'mixed',
             ],
             [
                 'keyType' => 'string',
