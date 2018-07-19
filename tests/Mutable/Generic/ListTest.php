@@ -44,6 +44,17 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
     }
 
+    public function testShouldCreateListOfMixedValues(): void
+    {
+        $list = ListCollection::ofT('mixed', 1, 'string', 2.1);
+        $this->assertEquals([1, 'string', 2.1], $list->toArray());
+
+        $values = [1, 2];
+        $values2 = ['three', 'four'];
+        $list = ListCollection::ofT('any', ...$values, ...$values2);
+        $this->assertEquals([1, 2, 'three', 'four'], $list->toArray());
+    }
+
     public function testShouldNotCreateListOfDifferentValueTypes(): void
     {
         $this->expectException(\InvalidArgumentException::class);

@@ -9,6 +9,8 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 {
     /** @var array */
     private $allowedValueTypes = [
+        TypeValidator::TYPE_ANY,
+        TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
         TypeValidator::TYPE_INT,
         TypeValidator::TYPE_FLOAT,

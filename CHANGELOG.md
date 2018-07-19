@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Allow `mixed`/`any` type for `Generic Collections`
 
 ## 3.6.0 - 2018-07-17
 - Fix missing an explicit requirement on `beberlei/assert` library

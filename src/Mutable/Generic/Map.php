@@ -9,6 +9,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
 {
     /** @var array */
     private $allowedKeyTypes = [
+        TypeValidator::TYPE_ANY,
+        TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
         TypeValidator::TYPE_INT,
         TypeValidator::TYPE_FLOAT,
@@ -16,6 +18,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
 
     /** @var array */
     private $allowedValueTypes = [
+        TypeValidator::TYPE_ANY,
+        TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
         TypeValidator::TYPE_INT,
         TypeValidator::TYPE_FLOAT,
