@@ -45,7 +45,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /**
      * @param string $TValue
      * @param iterable $source <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
+     * @param callable|string $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
      */
     public static function createT(string $TValue, iterable $source, $creator)
@@ -228,7 +228,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:<TKey>):<TValue>
+     * @param callable|string $callback (value:<TValue>,index:<TKey>):<TValue>
      * @param string|null $TValue
      * @return static
      */
@@ -243,7 +243,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:<TKey>):bool
+     * @param callable|string $callback (value:<TValue>,index:<TKey>):bool
      * @return static
      */
     public function filter($callback)
@@ -257,7 +257,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @param callable|string $reducer (total:<RValue>|<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */

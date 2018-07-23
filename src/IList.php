@@ -18,7 +18,7 @@ interface IList extends ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable $creator (value:mixed,index:int):mixed
+     * @param callable|string $creator (value:mixed,index:int):mixed
      * @return IList
      */
     public static function create(iterable $source, $creator);
@@ -45,13 +45,13 @@ interface IList extends ICollection
     public function removeAll($value);
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @param callable|string $callback (value:mixed,index:mixed):mixed
      * @return IList
      */
     public function map($callback);
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):bool
+     * @param callable|string $callback (value:mixed,index:mixed):bool
      * @return IList
      */
     public function filter($callback);

@@ -35,7 +35,7 @@ class Seq implements ISeq
     private $callbackParser;
 
     /**
-     * @param iterable|string|callable $iterable string is for arrow function; Callable must be () => iterable
+     * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
      */
     public function __construct($iterable)
     {
@@ -83,7 +83,7 @@ class Seq implements ISeq
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
      * @param string|array $range string is for range '1..10'
-     * @param string|callable $callable (int) => mixed
+     * @param callable|string $callable (int) => mixed
      * @return ISeq
      */
     public static function forDo($range, $callable): ISeq
@@ -125,7 +125,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @param string|callable $callable (State) => [State, State|null]
+     * @param callable|string $callable (State) => [State, State|null]
      * @param <State> $initialValue
      * @return ISeq<State>
      */
@@ -184,7 +184,7 @@ class Seq implements ISeq
      * Seq::create(range(1, 10), ($i) => $i * 2)
      * Seq::create($list, ($i) => $i * 2)
      *
-     * @param string|callable|null $callable
+     * @param callable|string|null $callable
      * @return ISeq
      */
     public static function create(iterable $iterable, $callable = null): ISeq
@@ -256,7 +256,7 @@ class Seq implements ISeq
      *     }
      * })
      *
-     * @param iterable|string|callable $iterable string is for arrow function; Callable must be () => iterable
+     * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
      * @return ISeq
      */
     public static function init($iterable): ISeq
@@ -392,7 +392,7 @@ class Seq implements ISeq
      * Seq::range('1..Inf')->takeWhile('($i) => $i < 100') creates [1, 2, 3, ..., 99]
      * Seq::infinite()->filter('($i) => $i % 2 === 0')->map('($i) => $i * $i')->takeWhile('($i) => $i < 25')->toArray(); creates [4, 16]
      *
-     * @param string|callable $callable (Item, Key) => bool
+     * @param callable|string $callable (Item, Key) => bool
      * @return ISeq
      */
     public function takeWhile($callable): ISeq
@@ -413,7 +413,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @param string|callable $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
+     * @param callable|string $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
@@ -438,7 +438,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @param string|callable $callback (value:mixed,index:mixed):bool
+     * @param callable|string $callback (value:mixed,index:mixed):bool
      * @return ISeq
      */
     public function filter($callback): ISeq
@@ -506,7 +506,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @param string|callable $callback (value:mixed,index:mixed):mixed
+     * @param callable|string $callback (value:mixed,index:mixed):mixed
      * @return ISeq
      */
     public function map($callback): ISeq
@@ -523,7 +523,7 @@ class Seq implements ISeq
         }
     }
 
-    /** @param string|callable $callback (value:mixed,index:mixed):iterable */
+    /** @param callable|string $callback (value:mixed,index:mixed):iterable */
     public function collect($callback): ISeq
     {
         return $this
@@ -538,5 +538,10 @@ class Seq implements ISeq
                 yield from $i;
             }
         });
+    }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->toArray());
     }
 }

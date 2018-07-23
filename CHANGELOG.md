@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `implode` method to `ISeq`
+- Fix `callable` annotation for `arrow functions` to `callable|string`
 
 ## 3.7.0 - 2018-07-19
 - Allow `mixed`/`any` type for `Generic Collections`
