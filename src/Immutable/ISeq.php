@@ -192,4 +192,6 @@ interface ISeq extends ICollection
      * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
      */
     public function concat(): self;
+
+    public function implode(string $glue): string;
 }

@@ -821,4 +821,17 @@ class SeqTest extends AbstractTestCase
 
         $this->assertSame([1, 1, 2], $result);
     }
+
+    public function testShouldImplodeSeq(): void
+    {
+        $expected = '1, 2, 3';
+
+        $result = Seq::init(function () {
+            yield 1;
+            yield from [2, 3];
+        })
+            ->implode(', ');
+
+        $this->assertSame($expected, $result);
+    }
 }

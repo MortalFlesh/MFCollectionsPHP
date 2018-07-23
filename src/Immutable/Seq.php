@@ -539,4 +539,9 @@ class Seq implements ISeq
             }
         });
     }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->toArray());
+    }
 }
