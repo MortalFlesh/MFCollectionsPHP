@@ -233,12 +233,12 @@ class Map implements IMap
     }
 
     /**
-     * @param callable $callback (key:mixed,value:mixed):mixed
+     * @param callable|string $callback (key:mixed,value:mixed):mixed
      * @return static
      */
     public function map($callback)
     {
-        $this->assertCallback($callback);
+        $callback = $this->assertCallback($callback);
 
         $map = clone $this;
         $map->modifiers[] = [self::MAP, $callback];
@@ -247,12 +247,12 @@ class Map implements IMap
     }
 
     /**
-     * @param callable $callback (key:mixed,value:mixed):bool
+     * @param callable|string $callback (key:mixed,value:mixed):bool
      * @return static
      */
     public function filter($callback)
     {
-        $this->assertCallback($callback);
+        $callback = $this->assertCallback($callback);
 
         $map = clone $this;
         $map->modifiers[] = [self::FILTER, $callback];
@@ -281,13 +281,13 @@ class Map implements IMap
     }
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,key:mixed,map:Map):mixed
+     * @param callable|string $reducer (total:mixed,value:mixed,key:mixed,map:Map):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null)
     {
-        $this->assertCallback($reducer);
+        $reducer = $this->assertCallback($reducer);
 
         $total = $initialValue;
 
@@ -299,13 +299,15 @@ class Map implements IMap
     }
 
     /**
-     * @param callable $callback
+     * @param callable|string $callback
      */
-    private function assertCallback($callback): void
+    private function assertCallback($callback): callable
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');
         }
+
+        return $callback;
     }
 
     /**

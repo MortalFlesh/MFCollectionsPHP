@@ -15,7 +15,7 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     /**
      * @param string $TKey
      * @param string $TValue
-     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @param callable|string $creator (value:mixed,key:TKey):TValue
      * @return IMap<TKey, TValue>
      */
     public static function createKT(string $TKey, string $TValue, iterable $source, $creator);
@@ -56,14 +56,14 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     public function values();
 
     /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
      * @return IMap<TKey, TValue>
      */
     public function map($callback, $TValue = null);
 
     /**
-     * @param callable $callback (value:TValue,key:TKey):bool
+     * @param callable|string $callback (value:TValue,key:TKey):bool
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);

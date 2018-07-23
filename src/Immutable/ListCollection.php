@@ -236,22 +236,24 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable $callback
+     * @param callable|string $callback
      */
-    private function assertCallback($callback): void
+    private function assertCallback($callback): callable
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('Callback must be callable');
         }
+
+        return $callback;
     }
 
     /**
-     * @param callable $callback (value:mixed,index:int):mixed
+     * @param callable|string $callback (value:mixed,index:int):mixed
      * @return static
      */
     public function map($callback)
     {
-        $this->assertCallback($callback);
+        $callback = $this->assertCallback($callback);
 
         $list = clone $this;
         $list->modifiers[] = [self::MAP, $callback];
@@ -260,12 +262,12 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable $callback (value:mixed,index:int):bool
+     * @param callable|string $callback (value:mixed,index:int):bool
      * @return static
      */
     public function filter($callback)
     {
-        $this->assertCallback($callback);
+        $callback = $this->assertCallback($callback);
 
         $list = clone $this;
         $list->modifiers[] = [self::FILTER, $callback];
@@ -274,13 +276,13 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
+     * @param callable|string $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null)
     {
-        $this->assertCallback($reducer);
+        $reducer = $this->assertCallback($reducer);
 
         $total = $initialValue;
 

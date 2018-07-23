@@ -56,7 +56,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      * @param string $TKey
      * @param string $TValue
      * @param iterable $source <TKey,mixed>
-     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @param callable|string $creator (value:mixed,key:TKey):TValue
      * @return static|IMap<TKey,TValue>
      */
     public static function createKT(string $TKey, string $TValue, iterable $source, $creator)
@@ -213,7 +213,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     }
 
     /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
      * @return static
      */
@@ -228,7 +228,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     }
 
     /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):bool
+     * @param callable|string $callback (key:<TKey>,value:<TValue>):bool
      * @return static
      */
     public function filter($callback)
@@ -268,7 +268,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     }
 
     /**
-     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
+     * @param callable|string $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */

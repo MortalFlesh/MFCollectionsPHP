@@ -12,7 +12,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable $creator (value:mixed,key:mixed):mixed
+     * @param callable|string $creator (value:mixed,key:mixed):mixed
      * @return IMap
      */
     public static function create(iterable $source, $creator);
@@ -40,7 +40,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public function values();
 
     /**
-     * @param callable $callback (value:mixed,key:mixed):mixed
+     * @param callable|string $callback (value:mixed,key:mixed):mixed
      * @return IMap
      */
     public function map($callback);

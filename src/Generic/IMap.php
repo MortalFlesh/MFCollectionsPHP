@@ -15,7 +15,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
     /**
      * @param string $TKey
      * @param string $TValue
-     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @param callable|string $creator (value:mixed,key:TKey):TValue
      * @return IMap<TKey, TValue>
      */
     public static function createKT(string $TKey, string $TValue, iterable $source, $creator);
@@ -40,20 +40,20 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public function values();
 
     /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
      * @return IMap<TKey, TValue>
      */
     public function map($callback, $TValue = null);
 
     /**
-     * @param callable $callback (value:TValue,key:TKey):bool
+     * @param callable|string $callback (value:TValue,key:TKey):bool
      * @return IMap<TKey, TValue>
      */
     public function filter($callback);
 
     /**
-     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,key:<TKey>,map:Map):<RValue>|<TValue>
+     * @param callable|string $reducer (total:<RValue>|<TValue>,value:<TValue>,key:<TKey>,map:Map):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */

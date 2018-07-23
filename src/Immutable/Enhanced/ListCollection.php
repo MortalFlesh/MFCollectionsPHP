@@ -24,7 +24,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable $callback (value:mixed,index:int):mixed
+     * @param callable|string $callback (value:mixed,index:int):mixed
      * @return static
      */
     public function map($callback): IList
@@ -35,7 +35,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable $callback (value:mixed,index:int):bool
+     * @param callable|string $callback (value:mixed,index:int):bool
      * @return static
      */
     public function filter($callback): IList
@@ -46,7 +46,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
+     * @param callable|string $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */

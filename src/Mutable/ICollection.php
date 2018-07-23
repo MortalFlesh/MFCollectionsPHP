@@ -12,19 +12,19 @@ interface ICollection extends \MF\Collection\ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable $creator (value:mixed,index:mixed):mixed
+     * @param callable|string $creator (value:mixed,index:mixed):mixed
      * @return ICollection
      */
     public static function create(iterable $source, $creator);
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):mixed
+     * @param callable|string $callback (value:mixed,index:mixed):mixed
      * @return ICollection
      */
     public function map($callback);
 
     /**
-     * @param callable $callback (value:mixed,index:mixed):bool
+     * @param callable|string $callback (value:mixed,index:mixed):bool
      * @return ICollection
      */
     public function filter($callback);

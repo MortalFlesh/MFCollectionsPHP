@@ -21,7 +21,7 @@ interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\ILi
     /**
      * @param string $TValue
      * @param iterable $source <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
+     * @param callable|string $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
      */
     public static function createT(string $TValue, iterable $source, $creator);
@@ -46,14 +46,14 @@ interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\ILi
     public static function create(iterable $source, $creator);
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
+     * @param callable|string $callback (value:<TValue>,index:int):<TValue>
      * @param string|null $TValue
      * @return IList<TValue>
      */
     public function map($callback, string $TValue = null);
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable|string $callback (value:<TValue>,index:int):bool
      * @return IList<TValue>
      */
     public function filter($callback);

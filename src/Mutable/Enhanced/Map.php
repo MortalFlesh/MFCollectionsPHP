@@ -23,7 +23,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable $callback (key:mixed,value:mixed):mixed
+     * @param callable|string $callback (key:mixed,value:mixed):mixed
      * @return static
      */
     public function map($callback)
@@ -34,7 +34,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable $callback (key:mixed,value:mixed):bool
+     * @param callable|string $callback (key:mixed,value:mixed):bool
      * @return static
      */
     public function filter($callback)
@@ -45,7 +45,7 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
-     * @param callable $reducer (total:mixed,value:mixed,index:mixed,map:Map):mixed
+     * @param callable|string $reducer (total:mixed,value:mixed,index:mixed,map:Map):mixed
      * @param null|mixed $initialValue
      * @return mixed
      */
