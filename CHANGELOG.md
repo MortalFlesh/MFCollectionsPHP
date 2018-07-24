@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.9.0 - 2018-07-24
 - Add `containsBy` method to `ICollection`
 
 ## 3.8.0 - 2018-07-23
