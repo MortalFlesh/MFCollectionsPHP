@@ -90,9 +90,7 @@ class Map implements IMap
     {
         $this->applyModifiers();
 
-        foreach ($this->mapArray as $key => $value) {
-            yield $key => $value;
-        }
+        yield from $this->mapArray;
     }
 
     /**
@@ -119,11 +117,26 @@ class Map implements IMap
 
     /**
      * @param mixed $value
-     * @return bool
      */
     public function contains($value): bool
     {
         return $this->find($value) !== false;
+    }
+
+    /**
+     * @param callable|string $callback (key:mixed,value:mixed):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->assertCallback($callback);
+
+        foreach ($this as $k => $v) {
+            if ($callback($k, $v) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -24,6 +24,16 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection
     }
 
     /**
+     * @param callable|string $callback (value:mixed,index:mixed):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::containsBy($callback);
+    }
+
+    /**
      * @param callable|string $callback (value:mixed,index:int):mixed
      * @return static
      */

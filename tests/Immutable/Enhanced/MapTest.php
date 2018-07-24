@@ -163,6 +163,18 @@ class MapTest extends \MF\Collection\Immutable\MapTest
         $this->assertEquals($this->mapEnhanced->toArray(), $mutable->toArray());
     }
 
+    public function testShouldContainsValueByArrowFunction(): void
+    {
+        $key = 'key';
+        $value = 1;
+        $valueNotPresented = 4;
+
+        $this->map = $this->map->set($key, $value);
+
+        $this->assertTrue($this->map->containsBy('($k, $v) => $v === ' . $value));
+        $this->assertFalse($this->map->containsBy('($k, $v) => $v === ' . $valueNotPresented));
+    }
+
     public function testShouldClearCollection(): void
     {
         $this->map = $this->map->set('key', 'value');

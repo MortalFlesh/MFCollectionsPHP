@@ -188,6 +188,20 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains($valueDoesNotExist));
     }
 
+    public function testShouldHasValueBy(): void
+    {
+        $valueExists = 'has-value';
+        $valueDoesNotExist = 'has-no-value';
+
+        $this->list = $this->list->add($valueExists);
+
+        $this->assertContains($valueExists, $this->list);
+        $this->assertNotContains($valueDoesNotExist, $this->list);
+
+        $this->assertTrue($this->list->containsBy($this->findByValue($valueExists)));
+        $this->assertFalse($this->list->containsBy($this->findByValue($valueDoesNotExist)));
+    }
+
     public function testShouldRemoveFirst(): void
     {
         $value = 'value';

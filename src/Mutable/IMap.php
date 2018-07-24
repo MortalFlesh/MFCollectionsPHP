@@ -18,6 +18,11 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public static function create(iterable $source, $creator);
 
     /**
+     * @param callable|string $callback (key:mixed,value:mixed):bool
+     */
+    public function containsBy($callback): bool;
+
+    /**
      * @param callable|string $callback (key:mixed,value:mixed):mixed
      * @return IMap
      */

@@ -167,7 +167,6 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     /**
      * @param <TValue> $value
-     * @return bool
      */
     public function contains($value): bool
     {
@@ -175,6 +174,16 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $this->typeValidator->assertValueType($value);
 
         return parent::contains($value);
+    }
+
+    /**
+     * @param callable|string $callback (value:<TValue>,index:<TKey>):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::containsBy($callback);
     }
 
     /**

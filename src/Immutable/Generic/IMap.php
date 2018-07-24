@@ -41,6 +41,11 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     public function set($key, $value);
 
     /**
+     * @param callable|string $callback (value:TValue,key:TKey):bool
+     */
+    public function containsBy($callback): bool;
+
+    /**
      * @param <TKey> $key
      * @return IMap
      */

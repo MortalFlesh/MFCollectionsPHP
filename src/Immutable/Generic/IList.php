@@ -58,6 +58,11 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public function unshift($value);
 
     /**
+     * @param callable|string $callback (value:<TValue>,index:int):bool
+     */
+    public function containsBy($callback): bool;
+
+    /**
      * @param mixed $value
      * @return IList
      */

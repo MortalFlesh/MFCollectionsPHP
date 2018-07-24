@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `containsBy` method to `ICollection`
 
 ## 3.8.0 - 2018-07-23
 - Add `implode` method to `ISeq`

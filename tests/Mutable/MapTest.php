@@ -273,6 +273,19 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains($valueNotPresented));
     }
 
+    public function testShouldContainsValueBy(): void
+    {
+        $key = 'key';
+        $value = 1;
+        $valueNotPresented = 4;
+
+        $this->map->set($key, $value);
+
+        $this->assertTrue($this->map->containsBy($this->findByKeyOrValue($key)));
+        $this->assertTrue($this->map->containsBy($this->findByKeyOrValue($value)));
+        $this->assertFalse($this->map->containsBy($this->findByKeyOrValue($valueNotPresented)));
+    }
+
     public function testShouldForeachItemInMap(): void
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);

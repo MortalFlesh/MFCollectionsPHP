@@ -475,6 +475,22 @@ class Seq implements ISeq
         return false;
     }
 
+    /**
+     * @param callable|string $callback (value:mixed,index:mixed):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        foreach ($this as $i => $value) {
+            if ($callback($value, $i) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isEmpty(): bool
     {
         foreach ($this as $i) {

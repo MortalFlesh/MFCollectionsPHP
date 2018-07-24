@@ -40,6 +40,11 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public function values();
 
     /**
+     * @param callable|string $callback (value:TValue,key:TKey):bool
+     */
+    public function containsBy($callback): bool;
+
+    /**
      * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
      * @return IMap<TKey, TValue>

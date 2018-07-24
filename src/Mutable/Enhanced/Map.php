@@ -23,6 +23,16 @@ class Map extends \MF\Collection\Mutable\Map
     }
 
     /**
+     * @param callable|string $callback (key:mixed,value:mixed):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::containsBy($callback);
+    }
+
+    /**
      * @param callable|string $callback (key:mixed,value:mixed):mixed
      * @return static
      */
