@@ -154,6 +154,11 @@ interface ISeq extends ICollection
      */
     public function contains($value): bool;
 
+    /**
+     * @param callable|string $callback (value:mixed,index:mixed):bool
+     */
+    public function containsBy($callback): bool;
+
     public function isEmpty(): bool;
 
     /** @return ISeq */

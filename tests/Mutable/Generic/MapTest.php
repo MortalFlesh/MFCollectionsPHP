@@ -307,6 +307,17 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains($valueDoesNotExist));
     }
 
+    public function testShouldContainsValueBy(): void
+    {
+        $valueExists = 1;
+        $valueDoesNotExist = 2;
+
+        $this->map->set('key', $valueExists);
+
+        $this->assertTrue($this->map->containsBy('($k, $v) => $v === ' . $valueExists));
+        $this->assertFalse($this->map->containsBy('($k, $v) => $v === ' . $valueDoesNotExist));
+    }
+
     /**
      * @param int $value
      *

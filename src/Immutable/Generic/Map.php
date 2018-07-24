@@ -154,7 +154,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @param <TValue> $value
-     * @return bool
      */
     public function contains($value): bool
     {
@@ -162,6 +161,16 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
         $this->typeValidator->assertValueType($value);
 
         return parent::contains($value);
+    }
+
+    /**
+     * @param callable|string $callback (key:<TKey>,value:<TValue>):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::containsBy($callback);
     }
 
     /**

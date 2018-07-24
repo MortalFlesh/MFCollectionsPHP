@@ -182,12 +182,20 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($firstValue, $this->list->first());
     }
 
-    public function testShouldCountainsValue(): void
+    public function testShouldContainsValue(): void
     {
         $this->assertFalse($this->list->contains('value'));
 
         $this->list = $this->list->add('value');
         $this->assertTrue($this->list->contains('value'));
+    }
+
+    public function testShouldContainsValueBy(): void
+    {
+        $this->assertFalse($this->list->contains('value'));
+
+        $this->list = $this->list->add('value');
+        $this->assertTrue($this->list->containsBy('($v) => $v === "value"'));
     }
 
     public function testShouldRemoveFirstValue(): void

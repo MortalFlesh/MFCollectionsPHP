@@ -41,6 +41,11 @@ interface IMap extends ICollection, \ArrayAccess
      */
     public function set($key, $value);
 
+    /**
+     * @param callable|string $callback (value:mixed,key:mixed):bool
+     */
+    public function containsBy($callback): bool;
+
     /** @param mixed $key */
     public function remove($key);
 

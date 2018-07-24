@@ -93,9 +93,7 @@ class ListCollection implements IList
         // todo try to optimize - there are 2 loops for iterating and applying modifiers
         $this->applyModifiers();
 
-        foreach ($this->listArray as $i => $value) {
-            yield $i => $value;
-        }
+        yield from $this->listArray;
     }
 
     /**
@@ -165,13 +163,28 @@ class ListCollection implements IList
 
     /**
      * @param mixed $value
-     * @return bool
      */
     public function contains($value): bool
     {
         $this->applyModifiers();
 
         return $this->find($value) !== false;
+    }
+
+    /**
+     * @param callable|string $callback (value:mixed,index:mixed):bool
+     */
+    public function containsBy($callback): bool
+    {
+        $callback = $this->assertCallback($callback);
+
+        foreach ($this as $i => $v) {
+            if ($callback($v, $i) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

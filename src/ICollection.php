@@ -22,9 +22,13 @@ interface ICollection extends \IteratorAggregate, \Countable
 
     /**
      * @param mixed $value
-     * @return bool
      */
     public function contains($value): bool;
+
+    /**
+     * @param callable|string $callback (value:mixed,index:mixed):bool
+     */
+    public function containsBy($callback): bool;
 
     public function clear();
 

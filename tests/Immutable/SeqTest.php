@@ -671,6 +671,24 @@ class SeqTest extends AbstractTestCase
         ];
     }
 
+    /** @dataProvider containsProvider */
+    public function testShouldContainsValueBy(ISeq $seq, $value, $expected): void
+    {
+        $result = $seq->containsBy($this->findByValue($value));
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function testShouldContainsValueByArrowFunction(): void
+    {
+        $seq = Seq::from(['1', '2']);
+        $contains2NonStrict = $seq->containsBy('($v) => $v == 2');
+        $contains3NonStrict = $seq->containsBy('($v) => $v == 3');
+
+        $this->assertTrue($contains2NonStrict);
+        $this->assertFalse($contains3NonStrict);
+    }
+
     public function testShouldCheckIfNumberFromRangeIsOdd(): void
     {
         $result = Seq::range('3..2..Inf')

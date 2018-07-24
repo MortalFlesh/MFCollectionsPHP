@@ -153,6 +153,20 @@ class ListTest extends \MF\Collection\Mutable\ListTest
         $this->assertFalse($this->list->contains('value'));
     }
 
+    public function testShouldHasValueByArrowFunction(): void
+    {
+        $valueExists = 'has-value';
+        $valueDoesNotExist = 'has-no-value';
+
+        $this->list->add($valueExists);
+
+        $this->assertContains($valueExists, $this->list);
+        $this->assertNotContains($valueDoesNotExist, $this->list);
+
+        $this->assertTrue($this->list->containsBy('($v) => $v === "' . $valueExists . '"'));
+        $this->assertFalse($this->list->containsBy('($v) => $v === "' . $valueDoesNotExist . '"'));
+    }
+
     public function testShouldCheckIfCollectionIsEmpty(): void
     {
         $this->list->add('value');

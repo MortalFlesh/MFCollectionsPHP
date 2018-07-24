@@ -83,4 +83,18 @@ abstract class AbstractTestCase extends TestCase
 
         return $versionDifferences[$version];
     }
+
+    protected function findByKeyOrValue($needle): \Closure
+    {
+        return function ($key, $value) use ($needle) {
+            return $key === $needle || $value === $needle;
+        };
+    }
+
+    protected function findByValue($needle): \Closure
+    {
+        return function ($value) use ($needle) {
+            return $value === $needle;
+        };
+    }
 }

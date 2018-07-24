@@ -46,6 +46,11 @@ interface IList extends \MF\Collection\IList, ICollection
     public static function create(iterable $source, $creator);
 
     /**
+     * @param callable|string $callback (value:<TValue>,index:int):bool
+     */
+    public function containsBy($callback): bool;
+
+    /**
      * @param callable|string $callback (value:<TValue>,index:int):<TValue>
      * @param string|null $TValue
      * @return IList<TValue>
