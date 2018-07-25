@@ -60,5 +60,5 @@ interface ICollection extends \IteratorAggregate, \Countable
 
     public function count(): int;
 
-    public function getIterator(): \Generator;
+    public function getIterator(): iterable;
 }

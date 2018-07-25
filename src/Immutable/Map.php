@@ -86,7 +86,7 @@ class Map implements IMap
         $this->modifiers = [];
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         $this->applyModifiers();
 

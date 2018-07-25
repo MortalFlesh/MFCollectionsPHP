@@ -264,7 +264,7 @@ class Seq implements ISeq
         return new static($iterable);
     }
 
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         $counter = 0;
         $strictLimit = null;
