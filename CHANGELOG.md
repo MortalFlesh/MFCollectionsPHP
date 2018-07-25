@@ -3,6 +3,7 @@
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
 - Change return type of `getIterator` method to generic `iterable`
+- Add `IEnumerable` interface to implement `IteratorAggregate` and `Countable`
 
 ## 3.9.0 - 2018-07-24
 - Add `containsBy` method to `ICollection`
