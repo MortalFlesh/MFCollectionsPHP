@@ -44,6 +44,8 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 ### <a name="enumerable-interface"></a>IEnumerable
 - basic Interface for enumerable
 - extends `IteratorAggregate`, `Countable`
+- [see Immutable tuple](#immutable-tuple)
+- [see Mutable PrioritizedCollection](#mutable-prioritized-collection)
 
 ### <a name="collection-interface"></a>ICollection
 - basic Interface for Collections
@@ -111,6 +113,30 @@ $list = new Mutable\Generic\ListCollection('string');
 ```php
 // map will accept only string keys and int values
 $map = new Mutable\Generic\Map('string', 'int');
+```
+
+### <a name="mutable-prioritized-collection"></a>Mutable\Generic\PrioritizedCollection
+- implements `IEnumerable`
+- holds items with `generic` type by `priority`
+
+#### Example of strategies by priority
+For case when you want to apply `only the first strategy` which can do what you want.
+You can add strategies `dynamically` and still apply them `by priority` later. 
+```php
+// initialization of strategies
+$strategies = new PrioritizedCollection(StrategyInterface::class);
+$strategies->add(new DefaultStrategy(), 1);
+
+// added later
+$strategies->add(new SpecialStrategy(), 100);
+
+// find and apply first suitable strategy
+/** @var StrategyInterface $strategy */
+foreach ($strategies as $strategy) {
+    if ($strategy->supports($somethingStrategic)) {
+        return $strategy->apply($somethingStrategic);
+    }
+}
 ```
 
 
@@ -304,7 +330,7 @@ echo $sumOfIdsGreaterThan1;     // 5
 
 ## Lazy mapping
 - if your `Collection` get mapped and filtered many times (_for readability_), it is not a problem
-    - `map -> map -> filter -> map -> filter -> map` will iterate the collection only once (_for applying all modifiers at once_)
+    - `map -> map -> filter -> map -> filter -> map` will iterate the collection **only once** (_for applying all modifiers at once_)
     - this modification is done when another method is triggered, so adding new modifier is an **atomic** operation
 
 
@@ -318,7 +344,6 @@ echo $sumOfIdsGreaterThan1;     // 5
     - ICollection::forAll(callback):bool
     - IMap::firstKey()
     - IMap::firstValue() 
-    - Tuple(key, value)
-    - IList::first(callback|null): TValue|null
     - IMap::first(callback|null): Tuple|null
+    - IList::first(callback|null): TValue|null
     - ICollection::create(iterable<TKey, mixed> $source, (mixed value, TKey index) => TValue): string
