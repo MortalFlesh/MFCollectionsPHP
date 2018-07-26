@@ -4,6 +4,7 @@
 ## Unreleased
 - Change return type of `getIterator` method to generic `iterable`
 - Add `IEnumerable` interface to implement `IteratorAggregate` and `Countable`
+- Add `PrioritizedCollection` to store values by priority
 
 ## 3.9.0 - 2018-07-24
 - Add `containsBy` method to `ICollection`
