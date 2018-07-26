@@ -13,6 +13,7 @@ It's basically a syntax sugar over classic array structure, which allows you to 
 - [Installation](#installation)
 - [Requirements](#requirements)
 - [Base Interfaces](#base-interfaces)
+    - [IEnumerable](#enumerable-interface)
     - [ICollection](#collection-interface)
     - [IList](#list-interface)
     - [IMap](#map-interface)
@@ -40,9 +41,13 @@ composer require mf/collections-php
 
 Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) for more details.
 
+### <a name="enumerable-interface"></a>IEnumerable
+- basic Interface for enumerable
+- extends `IteratorAggregate`, `Countable`
+
 ### <a name="collection-interface"></a>ICollection
 - basic Interface for Collections
-- extends `IteratorAggregate, Countable`
+- extends `IEnumerable`
 - [see Mutable collections](#mutable-collections)
 - [see Immutable collections](#immutable-collections)
 
@@ -61,7 +66,7 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 - [see Immutable seq](#immutable-seq)
 
 ### <a name="tuple-interface"></a>ITuple
-- extends `ArrayAccess`, `Countable`
+- extends `IEnumerable`, `ArrayAccess`
 - [see Immutable tuple](#immutable-tuple)
 
 

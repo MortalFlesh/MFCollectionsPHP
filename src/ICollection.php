@@ -2,7 +2,7 @@
 
 namespace MF\Collection;
 
-interface ICollection extends \IteratorAggregate, \Countable
+interface ICollection extends IEnumerable
 {
     const MAP = 'map';
     const FILTER = 'filter';
@@ -57,8 +57,4 @@ interface ICollection extends \IteratorAggregate, \Countable
      * @return mixed
      */
     public function reduce($reducer, $initialValue = null);
-
-    public function count(): int;
-
-    public function getIterator(): iterable;
 }
