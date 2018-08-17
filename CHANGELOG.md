@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.11.0 - 2018-08-17
 - Add `merge` and `mergeMatch` methods to `ITuple`
 
 ## 3.10.0 - 2018-07-26
