@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `merge` and `mergeMatch` methods to `ITuple`
 
 ## 3.10.0 - 2018-07-26
 - Change return type of `getIterator` method to generic `iterable`

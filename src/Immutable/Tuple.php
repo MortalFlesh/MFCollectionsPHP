@@ -439,6 +439,80 @@ class Tuple implements ITuple
         };
     }
 
+    /**
+     * Merge base tuple with additional items
+     * @see ITuple::mergeMatch()
+     *
+     * You can merge base tuple with other values or with other tuples
+     * Note: result of merging tuples will be flatten
+     *
+     * @example
+     * Tuple::merge(Tuple::of(1, 2), 3)                                -> (1, 2, 3)
+     * Tuple::merge(Tuple::of(1, 2), 3, 4)                             -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
+     */
+    public static function merge(ITuple $base, ...$additional): ITuple
+    {
+        return self::from(
+            array_merge(
+                $base->toArray(),
+                Seq::init(function () use ($additional) {
+                    foreach ($additional as $item) {
+                        if ($item instanceof ITuple) {
+                            yield from $item;
+                        } else {
+                            yield $item;
+                        }
+                    }
+                })->toArray()
+            )
+        );
+    }
+
+    /**
+     * Merge base tuple with additional items
+     * @see ITuple::merge()
+     * @see ITuple::matchTypes()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::mergeMatch(['string', 'string', 'string'], Tuple::parse('(foo, bar)'), 'boo')->toArray()  -> ['foo', 'bar', 'boo']
+     * Tuple::mergeMatch(['int', 'int', 'int', 'string'], Tuple::parse('(1, 2, 3)'), 'four')->toArray() -> [1, 2, 3, 'four']
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
+     * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple
+    {
+        /** @var self $mergedTuple */
+        $mergedTuple = self::merge($base, ...$additional);
+
+        if (!$mergedTuple->matchTypes($types)) {
+            [$expectedTypes, $actualTypes] = $mergedTuple->getTypes($types);
+
+            throw new \InvalidArgumentException(sprintf(
+                'Merged tuple does NOT match expected types (%s) - got (%s).',
+                implode(', ', $expectedTypes),
+                implode(', ', $actualTypes)
+            ));
+        }
+
+        return $mergedTuple;
+    }
+
     /** @deprecated Altering existing tuple is not permitted */
     public function offsetSet($offset, $value): void
     {

@@ -723,4 +723,116 @@ class TupleTest extends AbstractTestCase
 
         $this->assertSame(['title: value', 'type: great'], $result);
     }
+
+    /**
+     * @dataProvider provideTupleMerge
+     */
+    public function testShouldMergeTuple(ITuple $base, array $additional, ITuple $expected): void
+    {
+        $result = Tuple::merge($base, ...$additional);
+
+        $this->assertSame($expected->toArray(), $result->toArray());
+    }
+
+    public function provideTupleMerge(): array
+    {
+        return [
+            // base tuple, additional, expected
+            '(1, 2) + 3 - ints' => [Tuple::of(1, 2), [3], Tuple::of(1, 2, 3)],
+            '(1, 2) + [3, 4] - array' => [Tuple::of(1, 2), [[3, 4]], Tuple::of(1, 2, [3, 4])],
+            '(1, 2) + (3, 4) - strings' => [
+                Tuple::of('1', '2'),
+                [Tuple::of('3', '4')],
+                Tuple::of('1', '2', '3', '4'),
+            ],
+            '(1, 2) + (3, 4) + 5 + [6, 7, 8] - mixed' => [
+                Tuple::of('1', '2'),
+                [Tuple::of('3', '4'), 5, [6, 7, 8]],
+                Tuple::of('1', '2', '3', '4', 5, [6, 7, 8]),
+            ],
+            '(foo, bar) + boo - string' => [
+                Tuple::parse('(foo, bar)'),
+                ['boo'],
+                Tuple::of('foo', 'bar', 'boo'),
+            ],
+            '(1, 2, 3) + four - mixed' => [
+                Tuple::parse('(1, 2, 3)'),
+                ['four'],
+                Tuple::of(1, 2, 3, 'four'),
+            ],
+            '(1, 2) + (3, 4) + (5, 6) - ints' => [
+                Tuple::parse('(1, 2)'),
+                [Tuple::of(3, 4), Tuple::from([5, 6])],
+                Tuple::of(1, 2, 3, 4, 5, 6),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTupleMergeMatch
+     */
+    public function testShouldMatchTupleAfterMerging(
+        ITuple $base,
+        array $additional,
+        array $expectedTypes,
+        ITuple $expected
+    ): void {
+        $result = Tuple::mergeMatch($expectedTypes, $base, ...$additional);
+
+        $this->assertSame($expected->toArray(), $result->toArray());
+    }
+
+    public function provideTupleMergeMatch(): array
+    {
+        return [
+            // base tuple, additional, expected types, expected message
+            '(1, 2, 3) + "4" = (int, int, int, string)' => [
+                Tuple::parse('(1, 2, 3)'),
+                ['4'],
+                ['int', 'int', 'int', 'string'],
+                Tuple::of(1, 2, 3, '4'),
+            ],
+            '(1, 2) + 3 = (int, int, int)' => [
+                Tuple::parse('(1, 2)'),
+                [3],
+                ['int', 'int', 'int'],
+                Tuple::of(1, 2, 3),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTupleMergeDoNotMatch
+     */
+    public function testShouldNotMatchTupleAfterMerging(
+        ITuple $base,
+        array $additional,
+        array $expectedTypes,
+        string $expectedMessage
+    ): void {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        Tuple::mergeMatch($expectedTypes, $base, ...$additional);
+    }
+
+    public function provideTupleMergeDoNotMatch(): array
+    {
+        return [
+            // base tuple, additional, expected types, expected message
+            '(1, 2, 3) + "4" <> (int, int)' => [
+                Tuple::parse('(1, 2, 3)'),
+                ['4'],
+                ['int', 'int'],
+                'Merged tuple does NOT match expected types (int, int) - got (int, int, int, string).',
+            ],
+            '(1, 2) + 3 <> (int, string)' => [
+                Tuple::parse('(1, 2)'),
+                [3],
+                ['int', 'string'],
+                'Merged tuple does NOT match expected types (int, string) - got (int, int, int).',
+                '(int, string) expected but got (int, int, int)',
+            ],
+        ];
+    }
 }
