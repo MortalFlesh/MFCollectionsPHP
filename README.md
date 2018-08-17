@@ -214,36 +214,66 @@ Seq::infinite()
 - must have at least 2 values (_otherwise it is just a single value_)
 - is `eager` as possible
 - allows `destructuring`, `matching` and `parsing`/`formatting`
+
+#### Parsing
 ```php
-// parsing
 Tuple::parse('(foo, bar)')->toArray();            // ['foo', 'bar']
 Tuple::parse('("foo, bar", boo)')->toArray();     // ['foo, bar', 'boo']
 Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
+```
 
-// matching and comparing
+#### Matching and comparing
+```php
 Tuple::from([1, 1])->match('int', 'int');                      // true
 Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3));            // true
 Tuple::of(10, 'Foo', null)->match('int', 'string', '?string'); // true
+```
 
-// parsing and matching
-Tuple::parseMatch('(foo, bar)', 'string', 'string')->toArray();            // ['foo', 'bar']
-Tuple::parseMatchTypes('(foo, bar)', ['string', 'string'])->toArray();     // ['foo', 'bar']
+#### Parsing and matching
+```php
+Tuple::parseMatch('(foo, bar)', 'string', 'string')->toArray();        // ['foo', 'bar']
+Tuple::parseMatchTypes('(foo, bar)', ['string', 'string'])->toArray(); // ['foo', 'bar']
 
 // invalid types
-Tuple::parseMatch('(foo, bar, 1)', 'string', 'string');        // throws \InvalidArgumentException "Given tuple does NOT match expected types (string, string) - got (string, string, int)"
+Tuple::parseMatch('(foo, bar, 1)', 'string', 'string'); // throws \InvalidArgumentException "Given tuple does NOT match expected types (string, string) - got (string, string, int)"
+```
 
-// formatting
-Tuple::from([1, 'foo', null])->toString();        // '(1, "foo", null)'
+#### Formatting
+```php
+Tuple::from([1, 'foo', null])->toString(); // '(1, "foo", null)'
+```
 
-// destructuring
-$tuple  = Tuple::of('first', 2, 3);
-$first  = $tuple->first();      // 'first'
-$second = $tuple->second();     // 2
-[$first, $second] = $tuple;     // $first = 'first'; $second = 2
-[,, $third]       = $tuple;     // 3
+#### Destructuring
+```php
+$tuple  = Tuple::of('first', 2, 3); // ('first', 2, 3)
+$first  = $tuple->first();          // 'first'
+$second = $tuple->second();         // 2
+[$first, $second] = $tuple;         // $first = 'first'; $second = 2
+[,, $third]       = $tuple;         // 3
+```
 
-// unpacking
-sprintf('Title: %s | Value: %s', ...Tuple::of('foo', 'bar'))   // "Title: foo | Value: bar"
+#### Unpacking
+```php
+sprintf('Title: %s | Value: %s', ...Tuple::of('foo', 'bar')); // "Title: foo | Value: bar"
+```
+
+#### Merging
+- merging `Tuples` will automatically flat them (_see last example below_)
+```php
+$base = Tuple::of('one', 'two');                        // ('one', 'two')
+$upTo3 = Tuple::merge($base, 'three');                  // ('one', 'two', 'three')
+$upTo4 = Tuple::merge($base, '3', 'four');              // ('one', 'two', '3', 'four')
+$upTo5 = Tuple::merge($base, ['3', '4'], '5');          // ('one', 'two', ['3', '4'], '5')
+$upTo5 = Tuple::merge($base, Tuple::of('3', '4'), '5'); // ('one', 'two', '3', '4', '5')
+```
+
+#### Merging and matching
+```php
+$base = Tuple::of('one', 'two');                                    // ('one', 'two')
+$upTo3 = Tuple::mergeMatch(['string', 'string', 'int'], $base, 3);  // ('one', 'two', 3)
+
+// invalid types
+Tuple::mergeMatch(['string', 'string'], $base, 3); // throws \InvalidArgumentException "Merged tuple does NOT match expected types (string, string) - got (string, string, int)."
 ```
 
 
