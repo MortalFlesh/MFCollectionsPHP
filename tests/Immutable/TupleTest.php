@@ -34,6 +34,7 @@ class TupleTest extends AbstractTestCase
             'empty strings' => [['', ''], ['', ''], '("", "")'],
             '"", 0' => [['', 0], ['', 0], '("", 0)'],
             '"", """' => [['', '"'], ['', '"'], '("", """)'],
+            'array' => [[[1, 2], 'three', ['four']], [[1, 2], 'three', ['four']], '([1; 2], "three", ["four"])'],
         ];
     }
 
@@ -168,7 +169,7 @@ class TupleTest extends AbstractTestCase
     public function provideTuplesInString(): array
     {
         return [
-            // tuple, expected
+            // tuple, expectedArray, expectedString
             'nulls' => ['(null, null)', [null, null], '(null, null)'],
             'bools' => ['(true, false)', [true, false], '(true, false)'],
             'integers' => ['(1, 2, 3)', [1, 2, 3], '(1, 2, 3)'],
@@ -194,6 +195,12 @@ class TupleTest extends AbstractTestCase
             'complex strings 3' => ["('one, two', three)", ['one, two', 'three'], '("one, two", "three")'],
             'complex strings 4' => ['("one, two", three)', ['one, two', 'three'], '("one, two", "three")'],
             'mixed' => ['(one, 2, 4.2)', ['one', 2, 4.2], '("one", 2, 4.2)'],
+            'array' => ['(18,30,[DD;D])', [18, 30, ['DD', 'D']], '(18, 30, ["DD"; "D"])'],
+            'two arrays' => [
+                '(["Hello"; "world"],[from; array])',
+                [['Hello', 'world'], ['from', 'array']],
+                '(["Hello"; "world"], ["from"; "array"])',
+            ],
 
             // potentially buggy behaviour with more commas without values
             'empty strings' => ['("",,1)', ['', 1], '("", 1)'],
@@ -281,6 +288,11 @@ class TupleTest extends AbstractTestCase
                 4,
                 'Invalid tuple given - expected 4 items but parsed 3 items from "(one, 2, 4.2)".',
             ],
+            'array' => [
+                '(one, [2;3;4])',
+                4,
+                'Invalid tuple given - expected 4 items but parsed 2 items from "(one, [2;3;4])".',
+            ],
 
             // potentially buggy behaviour with more commas without values
             'empty strings' => [
@@ -355,6 +367,11 @@ class TupleTest extends AbstractTestCase
                 '(one, 2)',
                 ['string', 'any'],
                 ['one', 2],
+            ],
+            'array' => [
+                '(one, [2; 3])',
+                ['string', 'array'],
+                ['one', [2, 3]],
             ],
 
             // potentially buggy behaviour with more commas without values
@@ -435,6 +452,11 @@ class TupleTest extends AbstractTestCase
                 ['string', 'int', 'int'],
                 'Given tuple does NOT match expected types (string, int, int) - got (string, int, float).',
             ],
+            'array' => [
+                '(one, [2; 3], 4.2)',
+                ['string', 'array', 'int'],
+                'Given tuple does NOT match expected types (string, array, int) - got (string, array, float).',
+            ],
 
             // potentially buggy behaviour with more commas without values
             'empty strings' => [
@@ -446,27 +468,34 @@ class TupleTest extends AbstractTestCase
     }
 
     /** @dataProvider provideInvalidParse */
-    public function testShouldNotParseTuples(string $invalidTupleString): void
+    public function testShouldNotParseTuples(string $invalidTupleString, string $expectedMessage): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Tuple must have at least two values.');
+        $this->expectExceptionMessage($expectedMessage);
 
         Tuple::parse($invalidTupleString);
     }
 
     public function provideInvalidParse(): array
     {
+        $singleItemException = 'Tuple must have at least two values.';
+
         return [
-            // invalid parse
-            'empty string' => [''],
-            'empty' => ['()'],
-            'one int' => ['(1)'],
-            'one string' => ['(foo)'],
-            'one complex string' => ['("foo, bar")'],
-            'one bool' => ['("false")'],
+            // invalid parse, expectedMessage
+            'empty string' => ['', $singleItemException],
+            'empty' => ['()', $singleItemException],
+            'one int' => ['(1)', $singleItemException],
+            'one string' => ['(foo)', $singleItemException],
+            'one complex string' => ['("foo, bar")', $singleItemException],
+            'one bool' => ['("false")', $singleItemException],
+
+            'more dimensional arrays' => [
+                '(foo, [bar; [boo; [baf; baf]]])',
+                'Tuple must NOT contain multi-dimensional arrays. Invalid item: "[bar; [boo; [baf; baf]]]"',
+            ],
 
             // potentially buggy behaviour with more commas without values
-            'empty values' => ['(,)'],
+            'empty values' => ['(,)', $singleItemException],
         ];
     }
 
@@ -557,6 +586,7 @@ class TupleTest extends AbstractTestCase
             // tupleInput, expectedCount
             'ints' => [[1, 2], 2],
             'mixed' => [['value', 1, 1.2, true], 4],
+            'array' => [['value', [1, 1.2], true], 3],
         ];
     }
 
@@ -605,6 +635,8 @@ class TupleTest extends AbstractTestCase
             'different order - ints' => [Tuple::from([1, 2]), Tuple::parse('(2, 1)'), false],
             'different order - strings' => [Tuple::from(['bar', 'foo']), Tuple::of('foo', 'bar'), false],
             'different' => [Tuple::from([1, 'foo', true]), Tuple::parse('(4, 5)'), false],
+            'different arrays' => [Tuple::from([[1, 2], 'foo', true]), Tuple::parse('(1, 2, foo, true)'), false],
+            'same arrays' => [Tuple::from([[1, 2], 'foo', true]), Tuple::parse('([1; 2], foo, true)'), true],
         ];
     }
 
@@ -649,6 +681,7 @@ class TupleTest extends AbstractTestCase
                 ['string', 'string', 'int', 'float', 'bool'],
                 true,
             ],
+            'nullable array' => [Tuple::from([1, null]), ['int|array', '?array'], true],
             'not match - ints' => [Tuple::from([1, 2]), ['int', 'int', 'string'], false],
             'not match - order' => [Tuple::from([1, 'string']), ['string', 'int'], false],
             'not match - mixed' => [Tuple::from([1, 'foo', true]), ['float', 'string', 'bool'], false],
@@ -658,6 +691,8 @@ class TupleTest extends AbstractTestCase
             'matched - mixed' => [Tuple::from([1, 'foo', true]), ['int', 'mixed', 'bool'], true],
             'matched - any' => [Tuple::from([1, 'foo', true]), ['int', 'any', 'bool'], true],
             'matched - any with null' => [Tuple::from([1, null, true]), ['int', 'any', 'bool'], true],
+            'matched - any with null - array' => [Tuple::from([[1], null]), ['array', 'any'], true],
+            'matched - any with array' => [Tuple::from([[1], null]), ['any', '*'], true],
             // by parse
             'parse - nulls - int' => [Tuple::parse('(null, null)'), ['int', 'int'], false],
             'parse - nulls - ?int' => [Tuple::parse('(null, null)'), ['?int', '?int'], true],
@@ -678,6 +713,7 @@ class TupleTest extends AbstractTestCase
             'ints|string 3' => [Tuple::from(['string', null]), ['string|int', 'string|?int'], true],
             'ints|string 4' => [Tuple::from([null, 2]), ['string|int', 'string|?int'], false],
             'ints|string 5' => [Tuple::from([null, 'foo']), ['string|int', 'string|?int'], false],
+            'int|array' => [Tuple::from([1, ['foo']]), ['int|array', 'int|array'], true],
         ];
     }
 
@@ -797,6 +833,12 @@ class TupleTest extends AbstractTestCase
                 [3],
                 ['int', 'int', 'int'],
                 Tuple::of(1, 2, 3),
+            ],
+            '([1, 2], 3) + 4 = (array, int, int)' => [
+                Tuple::parse('([1; 2], 3)'),
+                [4],
+                ['array', 'int', 'int'],
+                Tuple::of([1, 2], 3, 4),
             ],
         ];
     }

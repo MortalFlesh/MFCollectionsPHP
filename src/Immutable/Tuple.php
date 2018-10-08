@@ -73,22 +73,7 @@ class Tuple implements ITuple
                 return trim($match);
             })
             ->filter('($match) => $match !== ""')
-            ->map(function (string $item) {
-                $item = trim($item);
-                if (is_numeric($item) && mb_strpos($item, '.') === false) {
-                    return (int) $item;
-                } elseif (is_numeric($item)) {
-                    return (float) $item;
-                } elseif ($item === 'true') {
-                    return true;
-                } elseif ($item === 'false') {
-                    return false;
-                } elseif ($item === 'null') {
-                    return null;
-                }
-
-                return preg_replace('/^[\'\"]?/', '', preg_replace('/[\'\"]?$/', '', $item));
-            })
+            ->map(self::mapParsedItem())
             ->toArray();
 
         if ($expectedItemsCount !== null) {
@@ -102,6 +87,33 @@ class Tuple implements ITuple
         return new self($values);
     }
 
+    private static function mapParsedItem(): callable
+    {
+        return function (string $item) {
+            $item = trim($item);
+            if (is_numeric($item) && mb_strpos($item, '.') === false) {
+                return (int) $item;
+            } elseif (is_numeric($item)) {
+                return (float) $item;
+            } elseif ($item === 'true') {
+                return true;
+            } elseif ($item === 'false') {
+                return false;
+            } elseif ($item === 'null') {
+                return null;
+            } elseif (Strings::startsWith($item, '[') && Strings::endsWith($item, ']')) {
+                $arrayContent = trim($item, '[]');
+                Assertion::false(
+                    Strings::contains($arrayContent, '[') || Strings::contains($arrayContent, ']'),
+                    sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item)
+                );
+
+                return array_map(self::mapParsedItem(), explode(';', $arrayContent));
+            }
+
+            return preg_replace('/^[\'\"]?/', '', preg_replace('/[\'\"]?$/', '', $item));
+        };
+    }
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
@@ -249,19 +261,26 @@ class Tuple implements ITuple
      */
     public function toString(): string
     {
-        return sprintf('(%s)', implode(', ', array_map(function ($value) {
+        return sprintf('(%s)', implode(', ', array_map($this->mapValueToString(), $this->values)));
+    }
+
+    private function mapValueToString(): callable
+    {
+        return function ($value) {
             if ($value === null) {
                 return 'null';
             } elseif ($value === true) {
                 return 'true';
             } elseif ($value === false) {
                 return 'false';
+            } elseif (is_array($value)) {
+                return sprintf('[%s]', implode('; ', array_map($this->mapValueToString(), $value)));
             }
 
             return is_string($value)
                 ? sprintf('"%s"', $value)
                 : $value;
-        }, $this->values)));
+        };
     }
 
     public function count(): int
