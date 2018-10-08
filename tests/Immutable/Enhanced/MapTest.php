@@ -51,7 +51,6 @@ class MapTest extends \MF\Collection\Immutable\MapTest
 
     /**
      * @param callable|string $reducer
-     * @param array $values
      * @param mixed $expected
      *
      * @dataProvider reduceByArrowFunctionProvider
@@ -95,7 +94,6 @@ class MapTest extends \MF\Collection\Immutable\MapTest
 
     /**
      * @param callable|string $reducer
-     * @param array $values
      * @param mixed $initialValue
      * @param mixed $expected
      *

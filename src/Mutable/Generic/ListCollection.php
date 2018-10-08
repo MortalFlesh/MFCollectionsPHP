@@ -27,7 +27,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     private $typeValidator;
 
     /**
-     * @param string $TValue
      * @param <TValue> $values
      * @return static
      */
@@ -37,8 +36,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param string $TValue
-     * @param array $array
      * @return static
      */
     public static function fromT(string $TValue, array $array)
@@ -53,7 +50,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param string $TValue
      * @param iterable $source <TValue>
      * @param callable|string $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
@@ -230,7 +226,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
 
     /**
      * @param callable|string $callback (value:<TValue>,index:int):<TValue>
-     * @param string|null $TValue
      * @return IList
      */
     public function map($callback, string $TValue = null)

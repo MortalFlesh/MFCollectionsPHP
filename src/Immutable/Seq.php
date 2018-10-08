@@ -53,8 +53,6 @@ class Seq implements ISeq
     /**
      * Seq::of(1, 2, 3)
      * Seq::of(...$array, ...$array2)
-     *
-     * @return ISeq
      */
     public static function of(...$args): ISeq
     {
@@ -84,7 +82,6 @@ class Seq implements ISeq
      *
      * @param string|array $range string is for range '1..10'
      * @param callable|string $callable (int) => mixed
-     * @return ISeq
      */
     public static function forDo($range, $callable): ISeq
     {
@@ -151,8 +148,6 @@ class Seq implements ISeq
     /**
      * Alias for empty sequence
      * Seq::create([])
-     *
-     * @return ISeq
      */
     public static function createEmpty(): ISeq
     {
@@ -162,8 +157,6 @@ class Seq implements ISeq
     /**
      * Alias for infinite range 1..Inf
      * Seq::range('1..Inf')
-     *
-     * @return ISeq
      */
     public static function infinite(): ISeq
     {
@@ -185,7 +178,6 @@ class Seq implements ISeq
      * Seq::create($list, ($i) => $i * 2)
      *
      * @param callable|string|null $callable
-     * @return ISeq
      */
     public static function create(iterable $iterable, $callable = null): ISeq
     {
@@ -215,7 +207,6 @@ class Seq implements ISeq
      * Seq::range('1..10..100')
      *
      * @param string|array $range
-     * @return ISeq
      */
     public static function range($range): ISeq
     {
@@ -257,7 +248,6 @@ class Seq implements ISeq
      * })
      *
      * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
-     * @return ISeq
      */
     public static function init($iterable): ISeq
     {
@@ -357,7 +347,6 @@ class Seq implements ISeq
      * Note: If there is not enough items, it will throw an exception.
      *
      * @throws \OutOfRangeException
-     * @return ISeq
      */
     public function take(int $limit): ISeq
     {
@@ -374,8 +363,6 @@ class Seq implements ISeq
     /**
      * Seq takes up to n items from sequence.
      * Note: If there is not enough items, it will return all items.
-     *
-     * @return ISeq
      */
     public function takeUpTo(int $limit): ISeq
     {
@@ -393,7 +380,6 @@ class Seq implements ISeq
      * Seq::infinite()->filter('($i) => $i % 2 === 0')->map('($i) => $i * $i')->takeWhile('($i) => $i < 25')->toArray(); creates [4, 16]
      *
      * @param callable|string $callable (Item, Key) => bool
-     * @return ISeq
      */
     public function takeWhile($callable): ISeq
     {
@@ -439,7 +425,6 @@ class Seq implements ISeq
 
     /**
      * @param callable|string $callback (value:mixed,index:mixed):bool
-     * @return ISeq
      */
     public function filter($callback): ISeq
     {
@@ -523,7 +508,6 @@ class Seq implements ISeq
 
     /**
      * @param callable|string $callback (value:mixed,index:mixed):mixed
-     * @return ISeq
      */
     public function map($callback): ISeq
     {

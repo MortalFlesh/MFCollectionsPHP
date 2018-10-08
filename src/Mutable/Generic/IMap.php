@@ -5,16 +5,12 @@ namespace MF\Collection\Mutable\Generic;
 interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Mutable\IMap
 {
     /**
-     * @param string $TKey
-     * @param string $TValue
      * @param array $array <TKey, TValue>
      * @return IMap<TKey, TValue>
      */
     public static function fromKT(string $TKey, string $TValue, array $array);
 
     /**
-     * @param string $TKey
-     * @param string $TValue
      * @param callable|string $creator (value:mixed,key:TKey):TValue
      * @return IMap<TKey, TValue>
      */

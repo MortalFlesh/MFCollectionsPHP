@@ -8,3 +8,7 @@ parameters:
 
     exclude_checkers:
         - 'Symplify\CodingStandard\Sniffs\Naming\InterfaceNameSniff'
+
+services:
+    PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer:
+        allow_mixed_superfluous_phpdoc: true

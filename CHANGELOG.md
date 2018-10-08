@@ -6,6 +6,7 @@
 
 ## 3.11.0 - 2018-08-17
 - Add `merge` and `mergeMatch` methods to `ITuple`
+- Remove superfluous type annotations
 
 ## 3.10.0 - 2018-07-26
 - Change return type of `getIterator` method to generic `iterable`

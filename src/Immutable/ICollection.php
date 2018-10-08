@@ -5,8 +5,6 @@ namespace MF\Collection\Immutable;
 interface ICollection extends \MF\Collection\ICollection
 {
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return ICollection
      */
     public static function from(array $array, bool $recursive = false);
