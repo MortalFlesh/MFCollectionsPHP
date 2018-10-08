@@ -3,6 +3,7 @@
 namespace MF\Collection\Immutable;
 
 use Assert\Assertion;
+use MF\Collection\Helper\Strings;
 
 class Tuple implements ITuple
 {
@@ -45,10 +46,11 @@ class Tuple implements ITuple
             return explode(',', trim($tuple, '()'));
         })
             ->reduce(function (array $matches, string $match) use (&$cache) {
-                $isStart = in_array(mb_substr(ltrim($match), 0, 1), ['"', "'"], true)
+                $trimmedMatch = ltrim($match);
+                $isStart = (Strings::startsWith($trimmedMatch, '"') || Strings::startsWith($trimmedMatch, "'"))
                     && empty($cache);
-                $isEnd = in_array(mb_substr($match, -1, 1), ['"', "'"], true)
-                    && (mb_strlen(ltrim($match)) > 1 || !empty($cache));
+                $isEnd = (Strings::endsWith($match, '"') || Strings::endsWith($match, "'"))
+                    && (mb_strlen($trimmedMatch) > 1 || !empty($cache));
 
                 if (!$isEnd && ($isStart || !empty($cache))) {
                     $cache[] = $match;
@@ -99,6 +101,7 @@ class Tuple implements ITuple
 
         return new self($values);
     }
+
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
@@ -413,7 +416,7 @@ class Tuple implements ITuple
     {
         return function (string $type) {
             $types = Seq::create(explode('|', $type), function (string $type): iterable {
-                if (mb_substr($type, 0, 1) === '?') {
+                if (Strings::startsWith($type, '?')) {
                     yield 'NULL';
                 }
 
