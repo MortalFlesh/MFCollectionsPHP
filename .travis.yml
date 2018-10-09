@@ -16,7 +16,7 @@ matrix:
 
 install:
   - travis_retry composer self-update && composer --version
-  - composer config -g github-oauth.github.com edaaa9296d2ad2001049c6d91070084e04d390e8
+  - composer config -g github-oauth.github.com $GITHUB_OAUTH
   - travis_retry composer update --no-interaction $DEPENDENCIES
 
 script:
