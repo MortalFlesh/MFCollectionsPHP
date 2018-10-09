@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.12.0 - 2018-10-09
 - Supports `array` in `Tuple`
 
 ## 3.11.0 - 2018-08-17
