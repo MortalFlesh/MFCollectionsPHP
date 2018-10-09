@@ -53,7 +53,6 @@ class ListTest extends \MF\Collection\Immutable\ListTest
 
     /**
      * @param callable|string $reducer
-     * @param array $values
      * @param mixed $expected
      *
      * @dataProvider reduceByArrowFunctionProvider
@@ -87,7 +86,6 @@ class ListTest extends \MF\Collection\Immutable\ListTest
 
     /**
      * @param callable|string $reducer
-     * @param array $values
      * @param mixed $initialValue
      * @param mixed $expected
      *

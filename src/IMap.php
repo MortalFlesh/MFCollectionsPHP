@@ -5,8 +5,6 @@ namespace MF\Collection;
 interface IMap extends ICollection, \ArrayAccess
 {
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return IMap
      */
     public static function from(array $array, bool $recursive = false);
@@ -19,7 +17,6 @@ interface IMap extends ICollection, \ArrayAccess
 
     /**
      * @param mixed $key
-     * @return bool
      */
     public function containsKey($key): bool;
 

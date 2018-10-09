@@ -73,7 +73,6 @@ class ListTest extends AbstractTestCase
 
     /**
      * @param string $valueType
-     * @param array $values
      *
      * @dataProvider validValuesProvider
      */

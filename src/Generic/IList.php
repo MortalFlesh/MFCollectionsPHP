@@ -5,21 +5,18 @@ namespace MF\Collection\Generic;
 interface IList extends \MF\Collection\IList, ICollection
 {
     /**
-     * @param string $TValue
      * @param <TValue> $values
      * @return IList
      */
     public static function ofT(string $TValue, ...$values);
 
     /**
-     * @param string $TValue
      * @param array $array <TValue>
      * @return IList<TValue>
      */
     public static function fromT(string $TValue, array $array);
 
     /**
-     * @param string $TValue
      * @param iterable $source <TValue>
      * @param callable|string $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
@@ -52,7 +49,6 @@ interface IList extends \MF\Collection\IList, ICollection
 
     /**
      * @param callable|string $callback (value:<TValue>,index:int):<TValue>
-     * @param string|null $TValue
      * @return IList<TValue>
      */
     public function map($callback, string $TValue = null);

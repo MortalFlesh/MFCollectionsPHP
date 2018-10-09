@@ -5,8 +5,6 @@ namespace MF\Collection\Immutable;
 interface IMap extends \MF\Collection\IMap, ICollection
 {
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return IMap
      */
     public static function from(array $array, bool $recursive = false);

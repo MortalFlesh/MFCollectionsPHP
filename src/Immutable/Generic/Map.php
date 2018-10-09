@@ -36,9 +36,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     private $typeValidator;
 
     /**
-     * @param string $TKey
-     * @param string $TValue
-     * @param array $array
      * @return static
      */
     public static function fromKT(string $TKey, string $TValue, array $array)
@@ -53,8 +50,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param string $TKey
-     * @param string $TValue
      * @param iterable $source <TKey,mixed>
      * @param callable|string $creator (value:mixed,key:TKey):TValue
      * @return static|IMap<TKey,TValue>
@@ -142,7 +137,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @param <TKey> $key
-     * @return bool
      */
     public function containsKey($key): bool
     {

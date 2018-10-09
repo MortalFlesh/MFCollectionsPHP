@@ -208,8 +208,6 @@ class MapTest extends AbstractTestCase
     }
 
     /**
-     * @param array $array
-     *
      * @dataProvider arrayProvider
      */
     public function testShouldGetCount(array $array): void
@@ -385,8 +383,6 @@ class MapTest extends AbstractTestCase
     }
 
     /**
-     * @param callable $reducer
-     * @param array $values
      * @param mixed $expected
      *
      * @dataProvider reduceProvider
@@ -423,8 +419,6 @@ class MapTest extends AbstractTestCase
     }
 
     /**
-     * @param callable $reducer
-     * @param array $values
      * @param mixed $initialValue
      * @param mixed $expected
      *

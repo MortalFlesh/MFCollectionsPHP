@@ -43,7 +43,6 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @param string $TValue
      * @param iterable $source <TValue>
      * @param callable|string $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
@@ -238,7 +237,6 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
 
     /**
      * @param callable|string $callback (value:<TValue>,index:<TKey>):<TValue>
-     * @param string|null $TValue
      * @return static
      */
     public function map($callback, string $TValue = null)

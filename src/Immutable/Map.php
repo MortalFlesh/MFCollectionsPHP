@@ -11,8 +11,6 @@ class Map implements IMap
     protected $modifiers;
 
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return static
      */
     public static function from(array $array, bool $recursive = false)
@@ -95,7 +93,6 @@ class Map implements IMap
 
     /**
      * @param mixed $offset
-     * @return bool
      */
     public function offsetExists($offset): bool
     {
@@ -106,7 +103,6 @@ class Map implements IMap
 
     /**
      * @param mixed $key
-     * @return bool
      */
     public function containsKey($key): bool
     {

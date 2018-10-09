@@ -35,7 +35,6 @@ class ListTest extends AbstractTestCase
     }
 
     /**
-     * @param array $array
      * @param bool $recursive
      *
      * @dataProvider arrayProvider
@@ -158,8 +157,6 @@ class ListTest extends AbstractTestCase
     }
 
     /**
-     * @param array $array
-     *
      * @dataProvider arrayProvider
      */
     public function testShouldGetCount(array $array): void
@@ -379,8 +376,6 @@ class ListTest extends AbstractTestCase
     }
 
     /**
-     * @param callable $reducer
-     * @param array $values
      * @param mixed $expected
      *
      * @dataProvider reduceProvider
@@ -418,8 +413,6 @@ class ListTest extends AbstractTestCase
     }
 
     /**
-     * @param callable $reducer
-     * @param array $values
      * @param mixed $initialValue
      * @param mixed $expected
      *

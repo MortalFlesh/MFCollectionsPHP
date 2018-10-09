@@ -33,8 +33,15 @@
         "php-coveralls/php-coveralls": "^2.1",
         "phpstan/phpstan-shim": "^0.10",
         "phpunit/phpunit": "^7.0",
-        "symfony/var-dumper": "^4.1"
+        "symfony/var-dumper": "^4.1",
+        "friendsofphp/php-cs-fixer": "dev-feature/allow-mixed-in-NoSuperfluousPhpdocTagsFixer as 2.13.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/MortalFlesh/PHP-CS-Fixer.git"
+        }
+    ],
     "config": {
         "sort-packages": true
     },

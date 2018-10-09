@@ -214,12 +214,15 @@ Seq::infinite()
 - must have at least 2 values (_otherwise it is just a single value_)
 - is `eager` as possible
 - allows `destructuring`, `matching` and `parsing`/`formatting`
+- can contain any scalar values and/or arrays
+    - in string representation of a `Tuple`, array values must be separated by `;` (_not by `,`_)
 
 #### Parsing
 ```php
-Tuple::parse('(foo, bar)')->toArray();            // ['foo', 'bar']
-Tuple::parse('("foo, bar", boo)')->toArray();     // ['foo, bar', 'boo']
-Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
+Tuple::parse('(foo, bar)')->toArray();                  // ['foo', 'bar']
+Tuple::parse('("foo, bar", boo)')->toArray();           // ['foo, bar', 'boo']
+Tuple::parse('(1, "foo, bar", true)')->toArray();       // [1, 'foo, bar', true]
+Tuple::parse('(1, [2; 3], [four; "Five"])')->toArray(); // [1, [2, 3], ['four', 'five']]
 ```
 
 #### Matching and comparing
@@ -227,6 +230,7 @@ Tuple::parse('(1, "foo, bar", true)')->toArray(); // [1, 'foo, bar', true]
 Tuple::from([1, 1])->match('int', 'int');                      // true
 Tuple::from([1, 2, 3])->isSame(Tuple::of(1, 2, 3));            // true
 Tuple::of(10, 'Foo', null)->match('int', 'string', '?string'); // true
+Tuple::of(10, [9, 8])->match('int', 'array');                  // true
 ```
 
 #### Parsing and matching
@@ -260,7 +264,7 @@ sprintf('Title: %s | Value: %s', ...Tuple::of('foo', 'bar')); // "Title: foo | V
 #### Merging
 - merging `Tuples` will automatically flat them (_see last example below_)
 ```php
-$base = Tuple::of('one', 'two');                        // ('one', 'two')
+$base  = Tuple::of('one', 'two');                       // ('one', 'two')
 $upTo3 = Tuple::merge($base, 'three');                  // ('one', 'two', 'three')
 $upTo4 = Tuple::merge($base, '3', 'four');              // ('one', 'two', '3', 'four')
 $upTo5 = Tuple::merge($base, ['3', '4'], '5');          // ('one', 'two', ['3', '4'], '5')

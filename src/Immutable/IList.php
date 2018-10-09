@@ -11,8 +11,6 @@ interface IList extends \MF\Collection\IList, ICollection
     public static function of(...$values);
 
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return IList
      */
     public static function from(array $array, bool $recursive = false);

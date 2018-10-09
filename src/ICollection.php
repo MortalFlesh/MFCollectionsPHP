@@ -8,8 +8,6 @@ interface ICollection extends IEnumerable
     const FILTER = 'filter';
 
     /**
-     * @param array $array
-     * @param bool $recursive
      * @return ICollection
      */
     public static function from(array $array, bool $recursive = false);
