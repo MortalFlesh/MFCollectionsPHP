@@ -209,6 +209,8 @@ Seq::infinite()
 ```
 
 ### <a name="immutable-tuple"></a>Immutable\Tuple
+
+A _tuple_ is a grouping of unnamed but ordered values, possibly of different types.
 - implements `Immutable\ITuple`
 - basic Immutable Tuple
 - must have at least 2 values (_otherwise it is just a single value_)
