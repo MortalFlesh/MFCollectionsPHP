@@ -248,11 +248,12 @@ Tuple::parseMatch('(foo, bar, 1)', 'string', 'string'); // throws \InvalidArgume
 
 #### Formatting
 ```php
-Tuple::from([1, 'foo', null])->toString();         // '(1, "foo", null)'
+Tuple::from([1, 'foo', null])->toString();          // '(1, "foo", null)'
 
 // for URL
-Tuple::from(['foo', 'bar'])->toStringForUrl();     // '(foo,bar)'
-Tuple::from(['foo-bar', 'boo'])->toStringForUrl(); // '("foo-bar",bar)'
+Tuple::from(['foo', 'bar'])->toStringForUrl();      // '(foo,bar)'
+Tuple::from(['foo-bar', 'boo'])->toStringForUrl();  // '(foo-bar,bar)'
+Tuple::from(['mail', 'a@b.com'])->toStringForUrl(); // '(mail,"a@b.com")'
 ```
 
 #### Destructuring
