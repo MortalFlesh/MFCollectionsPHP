@@ -900,13 +900,17 @@ class TupleTest extends AbstractTestCase
             'floats' => [Tuple::from([1.2, 3.4]), '(1.2,3.4)'],
             '?bools' => [Tuple::from([true, false, null]), '(true,false,null)'],
             'arrays' => [Tuple::from(['one', [2, 3], 4]), '(one,[2;3],4)'],
+            'string with numbers, underscores, dashesh, dots, space, ...' => [
+                Tuple::from(['a_b-c.d', 'a1-b2', 'x y']),
+                '(a_b-c.d,a1-b2,x y)',
+            ],
             'complex strings' => [
-                Tuple::from(['foo bar & boo', 'Another complex-string', 'simple']),
-                '("foo bar & boo","Another complex-string",simple)',
+                Tuple::from(['foo, bar & boo', 'Another "complexString"', 'simple']),
+                '("foo, bar & boo","Another "complexString"",simple)',
             ],
             'complex strings in array' => [
-                Tuple::from([['foo bar & boo', 'Another complex-string'], 'simple']),
-                '(["foo bar & boo";"Another complex-string"],simple)',
+                Tuple::from([['foo bar & boo', 'Another \'complexString\''], 'simple']),
+                '(["foo bar & boo";"Another \'complexString\'"],simple)',
             ],
         ];
     }

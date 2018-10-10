@@ -303,7 +303,7 @@ class Tuple implements ITuple
     public function toStringForUrl(): string
     {
         return $this->formatToString(',', ';', function (string $value): string {
-            return $this->isMatching('/^[a-zA-Z]+$/', $value)
+            return $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
                 ? $value
                 : sprintf('"%s"', $value);
         });
