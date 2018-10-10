@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `toStringForUrl` method to `ITuple` to allow formatting for URL
 
 ## 3.12.0 - 2018-10-09
 - Supports `array` in `Tuple`

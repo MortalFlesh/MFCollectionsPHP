@@ -261,12 +261,24 @@ class Tuple implements ITuple
      */
     public function toString(): string
     {
-        return sprintf('(%s)', implode(', ', array_map($this->mapValueToString(), $this->values)));
+        return $this->formatToString(', ', '; ', function (string $value): string {
+            return sprintf('"%s"', $value);
+        });
     }
 
-    private function mapValueToString(): callable
+    private function formatToString(string $separator, string $arraySeparator, callable $formatStringValue): string
     {
-        return function ($value) {
+        return sprintf(
+            '(%s)',
+            Seq::from($this->values)
+                ->map($this->mapValueToString($arraySeparator, $formatStringValue))
+                ->implode($separator)
+        );
+    }
+
+    private function mapValueToString(string $arraySeparator, callable $formatStringValue): callable
+    {
+        return function ($value) use ($arraySeparator, $formatStringValue) {
             if ($value === null) {
                 return 'null';
             } elseif ($value === true) {
@@ -274,13 +286,32 @@ class Tuple implements ITuple
             } elseif ($value === false) {
                 return 'false';
             } elseif (is_array($value)) {
-                return sprintf('[%s]', implode('; ', array_map($this->mapValueToString(), $value)));
+                return sprintf(
+                    '[%s]',
+                    Seq::from($value)
+                        ->map($this->mapValueToString($arraySeparator, $formatStringValue))
+                        ->implode($arraySeparator)
+                );
             }
 
             return is_string($value)
-                ? sprintf('"%s"', $value)
+                ? $formatStringValue($value)
                 : $value;
         };
+    }
+
+    public function toStringForUrl(): string
+    {
+        return $this->formatToString(',', ';', function (string $value): string {
+            return $this->isMatching('/^[a-zA-Z]+$/', $value)
+                ? $value
+                : sprintf('"%s"', $value);
+        });
+    }
+
+    private function isMatching(string $pattern, string $value): bool
+    {
+        return preg_match($pattern, $value) === 1;
     }
 
     public function count(): int

@@ -54,20 +54,24 @@ Check out [Documentation](https://github.com/MortalFlesh/MFCollectionsPHP/wiki) 
 - [see Immutable collections](#immutable-collections)
 
 ### <a name="list-interface"></a>IList
+A _list_ is an ordered (_possibly immutable_) series of elements of the same type.
 - extends `ICollection`
 - [see Mutable list](#mutable-list)
 - [see Immutable list](#immutable-list)
 
 ### <a name="map-interface"></a>IMap
+A _map_ is an ordered (_possibly immutable_) series of key values pairs.
 - extends `ICollection, ArrayAccess`
 - [see Mutable map](#mutable-map)
 - [see Immutable map](#immutable-map)
 
 ### <a name="seq-interface"></a>ISeq
+A _sequence_ is a logical series of elements all of one type.
 - extends `ICollection`
 - [see Immutable seq](#immutable-seq)
 
 ### <a name="tuple-interface"></a>ITuple
+A _tuple_ is a grouping of unnamed but ordered values, possibly of different types.
 - extends `IEnumerable`, `ArrayAccess`
 - [see Immutable tuple](#immutable-tuple)
 
@@ -209,8 +213,6 @@ Seq::infinite()
 ```
 
 ### <a name="immutable-tuple"></a>Immutable\Tuple
-
-A _tuple_ is a grouping of unnamed but ordered values, possibly of different types.
 - implements `Immutable\ITuple`
 - basic Immutable Tuple
 - must have at least 2 values (_otherwise it is just a single value_)
@@ -246,7 +248,11 @@ Tuple::parseMatch('(foo, bar, 1)', 'string', 'string'); // throws \InvalidArgume
 
 #### Formatting
 ```php
-Tuple::from([1, 'foo', null])->toString(); // '(1, "foo", null)'
+Tuple::from([1, 'foo', null])->toString();         // '(1, "foo", null)'
+
+// for URL
+Tuple::from(['foo', 'bar'])->toStringForUrl();     // '(foo,bar)'
+Tuple::from(['foo-bar', 'boo'])->toStringForUrl(); // '("foo-bar",bar)'
 ```
 
 #### Destructuring

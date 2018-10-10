@@ -104,6 +104,15 @@ interface ITuple extends IEnumerable, \ArrayAccess
      */
     public function toString(): string;
 
+    /**
+     * Transform tuple values into string which is supposed to be nice in URL and still compatible with Tuple::parse() method
+     * - no spaces
+     * - no superfluous quotes
+     *
+     * @see Tuple::parse()
+     */
+    public function toStringForUrl(): string;
+
     public function toArray(): array;
 
     /**
