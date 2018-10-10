@@ -877,4 +877,37 @@ class TupleTest extends AbstractTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider provideTupleForUrl
+     */
+    public function testShouldFormatTupleForUrl(ITuple $tuple, string $expected): void
+    {
+        $result = $tuple->toStringForUrl();
+
+        $this->assertSame($expected, $result);
+
+        $parsed = Tuple::parse($result);
+        $this->assertSame($tuple->toArray(), $parsed->toArray());
+    }
+
+    public function provideTupleForUrl(): array
+    {
+        return [
+            // tuple, expected
+            'simple strings' => [Tuple::from(['foo', 'bar', 'boo']), '(foo,bar,boo)'],
+            'ints' => [Tuple::from([1, 2, 3]), '(1,2,3)'],
+            'floats' => [Tuple::from([1.2, 3.4]), '(1.2,3.4)'],
+            '?bools' => [Tuple::from([true, false, null]), '(true,false,null)'],
+            'arrays' => [Tuple::from(['one', [2, 3], 4]), '(one,[2;3],4)'],
+            'complex strings' => [
+                Tuple::from(['foo bar & boo', 'Another complex-string', 'simple']),
+                '("foo bar & boo","Another complex-string",simple)',
+            ],
+            'complex strings in array' => [
+                Tuple::from([['foo bar & boo', 'Another complex-string'], 'simple']),
+                '(["foo bar & boo";"Another complex-string"],simple)',
+            ],
+        ];
+    }
 }
