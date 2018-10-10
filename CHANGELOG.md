@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.13.0 - 2018-10-10
 - Add `toStringForUrl` method to `ITuple` to allow formatting for URL
 
 ## 3.12.0 - 2018-10-09
