@@ -513,4 +513,27 @@ class MapTest extends AbstractTestCase
         $this->map = $this->map->clear();
         $this->assertTrue($this->map->isEmpty());
     }
+
+    public function testShouldReduceAllGivenCallbacks(): void
+    {
+        $add = function ($a) {
+            return function ($b) use ($a) {
+                return $a + $b;
+            };
+        };
+
+        $callbacks = Map::fromKT('string', 'callable', [
+            'trim' => 'trim',
+            'toInt' => function ($input) {
+                return (int) $input;
+            },
+            'increment' => $add(1),
+        ]);
+
+        $result = $callbacks->reduce(function ($result, callable $callback) {
+            return $callback($result);
+        }, '  10');
+
+        $this->assertSame(11, $result);
+    }
 }
