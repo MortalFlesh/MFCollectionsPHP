@@ -444,4 +444,23 @@ class ListTest extends AbstractTestCase
 
         $this->assertSame('1,2,3', $result);
     }
+
+    public function testShouldReduceAllGivenCallbacks(): void
+    {
+        $add = function ($a) {
+            return function ($b) use ($a) {
+                return $a + $b;
+            };
+        };
+
+        $callbacks = ListCollection::ofT('callable', 'trim', function ($input) {
+            return (int) $input;
+        }, $add(1));
+
+        $result = $callbacks->reduce(function ($result, callable $callback) {
+            return $callback($result);
+        }, '  10');
+
+        $this->assertSame(11, $result);
+    }
 }

@@ -11,4 +11,4 @@ parameters:
 
 services:
     PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer:
-        allow_mixed_superfluous_phpdoc: true
+        allow_mixed: true
