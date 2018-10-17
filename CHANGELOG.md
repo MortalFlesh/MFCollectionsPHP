@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.15.0 - 2018-10-17
 - Allow `callable` type in `Generic` `Lists` and `Maps`
 
 ## 3.14.0 - 2018-10-10
