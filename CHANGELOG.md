@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.16.0 - 2018-10-19
 Fix `first` method of `IList` to return `null` if list is empty
 Add `firstBy` method to `IList`
 
