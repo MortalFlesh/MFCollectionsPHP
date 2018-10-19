@@ -171,6 +171,17 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
+     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @return <TValue>
+     */
+    public function firstBy($callback)
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::firstBy($callback);
+    }
+
+    /**
      * @param <TValue> $value
      */
     public function contains($value): bool

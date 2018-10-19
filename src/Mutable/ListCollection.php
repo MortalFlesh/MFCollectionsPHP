@@ -139,7 +139,27 @@ class ListCollection implements IList
     {
         $this->applyModifiers();
 
-        return reset($this->listArray);
+        return empty($this->listArray)
+            ? null
+            : reset($this->listArray);
+    }
+
+    /**
+     * @param callable|string $callback (value:mixed,index:int):bool
+     * @return mixed
+     */
+    public function firstBy($callback)
+    {
+        $callback = $this->assertCallback($callback);
+        $this->applyModifiers();
+
+        foreach ($this->listArray as $i => $v) {
+            if ($callback($v, $i)) {
+                return $v;
+            }
+        }
+
+        return null;
     }
 
     /**

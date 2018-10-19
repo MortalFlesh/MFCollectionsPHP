@@ -30,6 +30,12 @@ interface IList extends ICollection
     /** @return mixed */
     public function first();
 
+    /**
+     * @param callable|string $callback (value:mixed,index:int):bool
+     * @return mixed
+     */
+    public function firstBy($callback);
+
     /** @return mixed */
     public function last();
 
@@ -43,13 +49,13 @@ interface IList extends ICollection
     public function removeAll($value);
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):mixed
+     * @param callable|string $callback (value:mixed,index:int):mixed
      * @return IList
      */
     public function map($callback);
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable|string $callback (value:mixed,index:int):bool
      * @return IList
      */
     public function filter($callback);

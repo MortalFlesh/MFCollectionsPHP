@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+Fix `first` method of `IList` to return `null` if list is empty
+Add `firstBy` method to `IList`
 
 ## 3.15.0 - 2018-10-17
 - Allow `callable` type in `Generic` `Lists` and `Maps`
