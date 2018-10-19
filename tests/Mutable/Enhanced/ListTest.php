@@ -196,4 +196,16 @@ class ListTest extends \MF\Collection\Mutable\ListTest
 
         $this->assertSame('1,2,3', $result);
     }
+
+    public function testShouldGetFirstValueByArrowFunction(): void
+    {
+        $findSecond = '($value) => $value === "second"';
+
+        $this->assertNull($this->list->firstBy($findSecond));
+
+        $this->list->add('first');
+        $this->list->add('second');
+
+        $this->assertSame('second', $this->list->firstBy($findSecond));
+    }
 }

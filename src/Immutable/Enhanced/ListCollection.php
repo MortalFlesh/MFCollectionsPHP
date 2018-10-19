@@ -24,6 +24,17 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection
     }
 
     /**
+     * @param callable|string $callback (value:mixed,index:int):bool
+     * @return mixed
+     */
+    public function firstBy($callback)
+    {
+        $callback = $this->callbackParser->parseArrowFunction($callback);
+
+        return parent::firstBy($callback);
+    }
+
+    /**
      * @param callable|string $callback (value:mixed,index:mixed):bool
      */
     public function containsBy($callback): bool

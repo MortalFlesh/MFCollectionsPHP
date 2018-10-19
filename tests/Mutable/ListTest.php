@@ -200,14 +200,30 @@ class ListTest extends AbstractTestCase
 
     public function testShouldGetFirstValue(): void
     {
+        $this->assertNull($this->list->first());
+
         $this->list->add('first');
         $this->list->add('second');
 
-        $this->assertEquals('first', $this->list->first());
+        $this->assertSame('first', $this->list->first());
 
         foreach ($this->list as $value) {
-            $this->assertEquals('first', $this->list->first());
+            $this->assertSame('first', $this->list->first());
         }
+    }
+
+    public function testShouldGetFirstValueBy(): void
+    {
+        $findSecond = function ($value) {
+            return $value === 'second';
+        };
+
+        $this->assertNull($this->list->firstBy($findSecond));
+
+        $this->list->add('first');
+        $this->list->add('second');
+
+        $this->assertSame('second', $this->list->firstBy($findSecond));
     }
 
     public function testShouldRemoveFirst(): void

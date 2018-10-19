@@ -55,6 +55,17 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public function unshift($value);
 
     /**
+     * @return <TValue>
+     */
+    public function first();
+
+    /**
+     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @return <TValue>
+     */
+    public function firstBy($callback);
+
+    /**
      * @param callable|string $callback (value:<TValue>,index:int):bool
      */
     public function containsBy($callback): bool;
