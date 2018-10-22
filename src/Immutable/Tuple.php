@@ -215,7 +215,7 @@ class Tuple implements ITuple
         Assertion::greaterOrEqualThan(
             count($values),
             self::MINIMAL_TUPLE_ITEMS_COUNT,
-            sprintf('Tuple must have at least two values. Given "%s".', var_export($values, true))
+            'Tuple must have at least two values.'
         );
         $this->values = $values;
     }
