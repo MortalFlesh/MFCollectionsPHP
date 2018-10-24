@@ -111,7 +111,7 @@ class Tuple implements ITuple
                 return array_map(self::mapParsedItem(), explode(';', $arrayContent));
             }
 
-            return preg_replace('/^[\'\"]?/', '', preg_replace('/[\'\"]?$/', '', $item));
+            return preg_replace('/^[\'\"]?/', '', (string) preg_replace('/[\'\"]?$/', '', $item));
         };
     }
 

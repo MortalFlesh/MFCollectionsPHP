@@ -2,13 +2,13 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\Immutable\Tuple;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
 class Map extends \MF\Collection\Mutable\Map implements IMap
 {
-    /** @var array */
-    private $allowedKeyTypes = [
+    private const ALLOWED_KEY_TYPES = [
         TypeValidator::TYPE_ANY,
         TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
@@ -16,8 +16,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         TypeValidator::TYPE_FLOAT,
     ];
 
-    /** @var array */
-    private $allowedValueTypes = [
+    private const ALLOWED_VALUE_TYPES = [
         TypeValidator::TYPE_ANY,
         TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
@@ -32,7 +31,6 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
 
     /** @var CallbackParser */
     private $callbackParser;
-
     /** @var TypeValidator */
     private $typeValidator;
 
@@ -97,8 +95,8 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         $this->typeValidator = new TypeValidator(
             $TKey,
             $TValue,
-            $this->allowedKeyTypes,
-            $this->allowedValueTypes
+            self::ALLOWED_KEY_TYPES,
+            self::ALLOWED_VALUE_TYPES
         );
 
         parent::__construct();
@@ -226,7 +224,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
         $map = clone $this;
-        $map->modifiers[] = [self::MAP, $callback, $TValue];
+        $map->modifiers[] = Tuple::of(self::MAP, $callback, $TValue);
 
         return $map;
     }
@@ -240,7 +238,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
         $list = clone $this;
-        $list->modifiers[] = [self::FILTER, $callback];
+        $list->modifiers[] = Tuple::of(self::FILTER, $callback);
 
         return $list;
     }

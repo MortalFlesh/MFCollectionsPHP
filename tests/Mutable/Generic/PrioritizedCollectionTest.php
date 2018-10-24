@@ -117,4 +117,37 @@ class PrioritizedCollectionTest extends AbstractTestCase
             ],
         ];
     }
+
+    public function testShouldIterateFunctionsByPriority(): void
+    {
+        $add = function ($a) {
+            return function ($b) use ($a) {
+                return $a + $b;
+            };
+        };
+
+        $times = function ($a) {
+            return function ($b) use ($a) {
+                return $a * $b;
+            };
+        };
+
+        $functionsByPriority = new PrioritizedCollection('callable');
+        $functionsByPriority->add($add(1), 2);
+        $functionsByPriority->add($times(2), 1);
+        $functionsByPriority->add($times(3), 5);
+        $functionsByPriority->add($add(10), 10);
+        $functionsByPriority->add($times(0.5), 3);
+
+        $this->assertCount(5, $functionsByPriority);
+
+        $n = 42;
+        $expected = ((((42 + 10) * 3) * 0.5) + 1) * 2;
+
+        foreach ($functionsByPriority as $function) {
+            $n = $function($n);
+        }
+
+        $this->assertSame($expected, $n);
+    }
 }

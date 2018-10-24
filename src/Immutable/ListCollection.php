@@ -8,8 +8,7 @@ class ListCollection implements IList
 {
     /** @var array */
     protected $listArray;
-
-    /** @var array< Tuple<string, callable> > */
+    /** @var ITuple[] of type <string, callable> */
     protected $modifiers;
 
     public static function of(...$values)
@@ -51,14 +50,14 @@ class ListCollection implements IList
 
     public function toArray(): array
     {
-        $this->modifiers[] = [
+        $this->modifiers[] = Tuple::from([
             self::MAP,
             function ($value) {
                 return $value instanceof ICollection
                     ? $value->toArray()
                     : $value;
             },
-        ];
+        ]);
 
         $this->applyModifiers();
 
@@ -289,7 +288,7 @@ class ListCollection implements IList
         $callback = $this->assertCallback($callback);
 
         $list = clone $this;
-        $list->modifiers[] = [self::MAP, $callback];
+        $list->modifiers[] = Tuple::of(self::MAP, $callback);
 
         return $list;
     }
@@ -303,7 +302,7 @@ class ListCollection implements IList
         $callback = $this->assertCallback($callback);
 
         $list = clone $this;
-        $list->modifiers[] = [self::FILTER, $callback];
+        $list->modifiers[] = Tuple::of(self::FILTER, $callback);
 
         return $list;
     }
