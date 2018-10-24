@@ -17,6 +17,7 @@ class PrioritizedCollection implements IEnumerable
         TypeValidator::TYPE_FLOAT,
         TypeValidator::TYPE_BOOL,
         TypeValidator::TYPE_ARRAY,
+        TypeValidator::TYPE_CALLABLE,
         TypeValidator::TYPE_OBJECT,
         TypeValidator::TYPE_INSTANCE_OF,
     ];

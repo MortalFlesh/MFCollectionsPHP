@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Allow `callable` type in `PrioritizedCollection`
 
 ## 3.16.1 - 2018-10-22
 Fix `Tuple` constructor assertion for minimal items count. _It no more uses `var_export` because of `var_export` limitations._
