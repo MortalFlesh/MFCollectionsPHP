@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Explicitly require `ext-mbstring` 
 
 ## 3.17.0 - 2018-10-24
 - Allow `callable` type in `PrioritizedCollection`
