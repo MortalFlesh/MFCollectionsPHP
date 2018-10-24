@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 3.17.0 - 2018-10-24
 - Allow `callable` type in `PrioritizedCollection`
 - Use `Tuple` in _internal_ modifiers of `Map` and `ListCollection`
 
