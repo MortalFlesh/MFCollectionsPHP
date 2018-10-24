@@ -7,8 +7,7 @@ use MF\Validator\TypeValidator;
 
 class ListCollection extends \MF\Collection\Mutable\ListCollection implements IList
 {
-    /** @var array */
-    private $allowedValueTypes = [
+    private const ALLOWED_VALUE_TYPES = [
         TypeValidator::TYPE_ANY,
         TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
@@ -110,7 +109,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
             TypeValidator::TYPE_INT,
             $TValue,
             [TypeValidator::TYPE_INT],
-            $this->allowedValueTypes
+            self::ALLOWED_VALUE_TYPES
         );
 
         parent::__construct();

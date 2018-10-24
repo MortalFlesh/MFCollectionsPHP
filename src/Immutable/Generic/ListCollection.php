@@ -2,13 +2,13 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use MF\Collection\Immutable\Tuple;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
 class ListCollection extends \MF\Collection\Immutable\ListCollection implements IList
 {
-    /** @var array */
-    private $allowedValueTypes = [
+    private const ALLOWED_VALUE_TYPES = [
         TypeValidator::TYPE_ANY,
         TypeValidator::TYPE_MIXED,
         TypeValidator::TYPE_STRING,
@@ -103,7 +103,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
             TypeValidator::TYPE_INT,
             $TValue,
             [TypeValidator::TYPE_INT],
-            $this->allowedValueTypes
+            self::ALLOWED_VALUE_TYPES
         );
 
         parent::__construct();
@@ -256,7 +256,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
         $list = clone $this;
-        $list->modifiers[] = [self::MAP, $callback, $TValue];
+        $list->modifiers[] = Tuple::of(self::MAP, $callback, $TValue);
 
         return $list;
     }
@@ -270,7 +270,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
         $callback = $this->callbackParser->parseArrowFunction($callback);
 
         $list = clone $this;
-        $list->modifiers[] = [self::FILTER, $callback];
+        $list->modifiers[] = Tuple::of(self::FILTER, $callback);
 
         return $list;
     }
