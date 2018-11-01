@@ -6,6 +6,9 @@ parameters:
         PhpCsFixer\Fixer\ClassNotation\SelfAccessorFixer:
             - 'src/Immutable/ITuple.php'  # ITuple is needed as parameter of `isSame` method and it is fixed to `self` but it cant be override from `self` to `ITuple` in `Tuple`
 
+        SlevomatCodingStandard\Sniffs\Exceptions\ReferenceThrowableOnlySniff.ReferencedGeneralException:
+            - 'tests/Exception/*.php'
+
     exclude_checkers:
         - 'Symplify\CodingStandard\Sniffs\Naming\InterfaceNameSniff'
 

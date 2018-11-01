@@ -3,6 +3,7 @@
 namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Fixtures\SimpleEntity;
 
 class PrioritizedCollectionTest extends AbstractTestCase
@@ -90,7 +91,7 @@ class PrioritizedCollectionTest extends AbstractTestCase
     {
         $prioritizedCollection = new PrioritizedCollection($type);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
 
         $prioritizedCollection->add($item, 10);

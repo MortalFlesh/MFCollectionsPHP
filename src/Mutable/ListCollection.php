@@ -2,6 +2,9 @@
 
 namespace MF\Collection\Mutable;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\LogicException;
+
 class ListCollection implements IList
 {
     /** @var array */
@@ -225,7 +228,7 @@ class ListCollection implements IList
 
         $index = array_search($value, $this->listArray, true);
         if (is_string($index)) {
-            throw new \LogicException(sprintf('List must have only integer indexes, but has "%s".', $index));
+            throw new LogicException(sprintf('List must have only integer indexes, but has "%s".', $index));
         }
 
         return $index;
@@ -290,9 +293,7 @@ class ListCollection implements IList
      */
     protected function assertCallback($callback): callable
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
-        }
+        Assertion::isCallable($callback);
 
         return $callback;
     }

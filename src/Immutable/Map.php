@@ -2,6 +2,9 @@
 
 namespace MF\Collection\Immutable;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\BadMethodCallException;
+
 class Map implements IMap
 {
     /** @var array */
@@ -175,7 +178,7 @@ class Map implements IMap
      */
     public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'Immutable map cannot be used as array to set value. Use set() method instead.'
         );
     }
@@ -187,12 +190,8 @@ class Map implements IMap
      */
     public function set($key, $value)
     {
-        if (is_object($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Object');
-        }
-        if (is_array($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Array');
-        }
+        Assertion::isValidKey($key);
+
         $this->applyModifiers();
         $map = clone $this;
         $map->mapArray[$key] = $value;
@@ -205,7 +204,7 @@ class Map implements IMap
      */
     public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'Immutable map cannot be used as array to unset value. Use remove() method instead.'
         );
     }
@@ -311,9 +310,7 @@ class Map implements IMap
      */
     private function assertCallback($callback): callable
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
-        }
+        Assertion::isCallable($callback);
 
         return $callback;
     }

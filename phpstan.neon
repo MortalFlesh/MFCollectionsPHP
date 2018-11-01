@@ -1,9 +1,15 @@
+includes:
+	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
+
 parameters:
     ignoreErrors:
-        - '#.*Eris\\Generator\\.*#'
-        - '#.*Call to an undefined method Eris\\Quantifier\\ForAll::then\(\).*#'
+        # types
         - '#.*PHPDoc tag @param has invalid value.*#'
         - '#.*PHPDoc tag @return has invalid value.*#'
         - '#.*PHPDoc tag @param for parameter \$values with type mixed is not subtype.*#'
-        - '#.*Strict comparison using === between callable\|iterable\|string and null will always evaluate to false.*#'
         - '#.*has invalid type .*?[TKey|TValue].*#'
+
+        # unit tests
+        - '#.*Eris\\Generator\\.*#'
+        - '#.*Call to an undefined method Eris\\Quantifier\\ForAll::then\(\).*#'
+        - '#.*Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects callable\|iterable\|string, null given.*#'

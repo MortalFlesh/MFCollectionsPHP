@@ -4,6 +4,11 @@ namespace MF\Collection\Immutable;
 
 use Eris\Generator;
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\InvalidArgumentException;
+use MF\Collection\Exception\TupleBadMethodCallException;
+use MF\Collection\Exception\TupleExceptionInterface;
+use MF\Collection\Exception\TupleMatchException;
+use MF\Collection\Exception\TupleParseException;
 
 class TupleTest extends AbstractTestCase
 {
@@ -221,7 +226,7 @@ class TupleTest extends AbstractTestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnTryToParseTupleWithInvalidExpectation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleParseException::class);
         $this->expectExceptionMessage('Expected items count is 1 but must not be lower than 2 because in that case it would not be a valid Tuple.');
 
         Tuple::parse('(1,2,3)', 1);
@@ -233,7 +238,7 @@ class TupleTest extends AbstractTestCase
         int $expectedCount,
         string $expectedMessage
     ): void {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleParseException::class);
         $this->expectExceptionMessage($expectedMessage);
 
         Tuple::parse($tuple, $expectedCount);
@@ -385,7 +390,7 @@ class TupleTest extends AbstractTestCase
 
     public function testShouldNotParseTupleFromStringWithIncorrectType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleMatchException::class);
         $this->expectExceptionMessage('Given tuple does NOT match expected types (string, int) - got (string, string).');
 
         Tuple::parseMatch('(foo, bar)', 'string', 'int');
@@ -395,9 +400,10 @@ class TupleTest extends AbstractTestCase
     public function testShouldNotParseTupleFromStringWithIncorrectTypes(
         string $tuple,
         array $expectedTypes,
+        string $expectedException,
         string $expectedMessage
     ): void {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedMessage);
 
         Tuple::parseMatchTypes($tuple, $expectedTypes);
@@ -410,51 +416,61 @@ class TupleTest extends AbstractTestCase
             'nulls' => [
                 '(null, null)',
                 ['string', 'string'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, string) - got (NULL, NULL).',
             ],
             'bools' => [
                 '(true, false)',
                 ['string', 'string'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, string) - got (bool, bool).',
             ],
             'integers' => [
                 '(1, 2, 3)',
                 ['int', 'int'],
+                TupleParseException::class,
                 'Invalid tuple given - expected 2 items but parsed 3 items from "(1, 2, 3)".',
             ],
             'floats' => [
                 '(1.1, 2.3, 5.2)',
                 ['int', 'int', 'int'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (int, int, int) - got (float, float, float).',
             ],
             'strings' => [
                 '(one, two, three, four)',
                 ['string', 'string', 'int'],
+                TupleParseException::class,
                 'Invalid tuple given - expected 3 items but parsed 4 items from "(one, two, three, four)".',
             ],
             'without parentheses integers' => [
                 '1, 2, 3',
                 ['int', 'int', 'float'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (int, int, float) - got (int, int, int).',
             ],
             'without parentheses strings' => [
                 'one, two, three, four',
                 ['string', 'string', 'int', 'string'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, string, int, string) - got (string, string, string, string).',
             ],
             'complex strings' => [
                 '("some complex string", two, three)',
                 ['string', 'string', 'int'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, string, int) - got (string, string, string).',
             ],
             'mixed' => [
                 '(one, 2, 4.2)',
                 ['string', 'int', 'int'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, int, int) - got (string, int, float).',
             ],
             'array' => [
                 '(one, [2; 3], 4.2)',
                 ['string', 'array', 'int'],
+                TupleMatchException::class,
                 'Given tuple does NOT match expected types (string, array, int) - got (string, array, float).',
             ],
 
@@ -462,6 +478,7 @@ class TupleTest extends AbstractTestCase
             'empty strings' => [
                 '("",,1)',
                 ['string', 'string', 'int'],
+                TupleParseException::class,
                 'Invalid tuple given - expected 3 items but parsed 2 items from "("",,1)".',
             ],
         ];
@@ -470,7 +487,7 @@ class TupleTest extends AbstractTestCase
     /** @dataProvider provideInvalidParse */
     public function testShouldNotParseTuples(string $invalidTupleString, string $expectedMessage): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleParseException::class);
         $this->expectExceptionMessage($expectedMessage);
 
         Tuple::parse($invalidTupleString);
@@ -502,7 +519,7 @@ class TupleTest extends AbstractTestCase
     /** @dataProvider provideInvalidTuple */
     public function testShouldNotCreateTuples(array $invalidTuple): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleExceptionInterface::class);
         $this->expectExceptionMessage('Tuple must have at least two values.');
 
         Tuple::from($invalidTuple);
@@ -531,8 +548,9 @@ class TupleTest extends AbstractTestCase
     {
         $foo = Tuple::of('foo', 'bar');
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(TupleBadMethodCallException::class);
         $this->expectExceptionMessage('Altering existing tuple is not permitted.');
+
         $foo->offsetSet(0, 'bar');
     }
 
@@ -540,7 +558,7 @@ class TupleTest extends AbstractTestCase
     {
         $foo = Tuple::of('foo', 'bar');
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(TupleBadMethodCallException::class);
         $this->expectExceptionMessage('Altering existing tuple is not permitted.');
         $foo[] = 'bar';
     }
@@ -549,7 +567,7 @@ class TupleTest extends AbstractTestCase
     {
         $foo = Tuple::of('foo', 'bar');
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(TupleBadMethodCallException::class);
         $this->expectExceptionMessage('Altering existing tuple is not permitted.');
         $foo->offsetUnset(0);
     }
@@ -558,7 +576,7 @@ class TupleTest extends AbstractTestCase
     {
         $foo = Tuple::of('foo', 'bar');
 
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(TupleBadMethodCallException::class);
         $this->expectExceptionMessage('Altering existing tuple is not permitted.');
         unset($foo[0]);
     }
@@ -722,7 +740,7 @@ class TupleTest extends AbstractTestCase
     {
         $tuple = Tuple::of('foo', 'bar');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Tuples has always at least 2 values. It would always be false by giving less then 2 types.');
 
         $tuple->matchTypes($types);
@@ -852,7 +870,7 @@ class TupleTest extends AbstractTestCase
         array $expectedTypes,
         string $expectedMessage
     ): void {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(TupleMatchException::class);
         $this->expectExceptionMessage($expectedMessage);
 
         Tuple::mergeMatch($expectedTypes, $base, ...$additional);
@@ -866,13 +884,13 @@ class TupleTest extends AbstractTestCase
                 Tuple::parse('(1, 2, 3)'),
                 ['4'],
                 ['int', 'int'],
-                'Merged tuple does NOT match expected types (int, int) - got (int, int, int, string).',
+                'Given tuple does NOT match expected types (int, int) - got (int, int, int, string).',
             ],
             '(1, 2) + 3 <> (int, string)' => [
                 Tuple::parse('(1, 2)'),
                 [3],
                 ['int', 'string'],
-                'Merged tuple does NOT match expected types (int, string) - got (int, int, int).',
+                'Given tuple does NOT match expected types (int, string) - got (int, int, int).',
                 '(int, string) expected but got (int, int, int)',
             ],
         ];

@@ -6,23 +6,31 @@ class Range
 {
     public const INFINITE = 'Inf';
 
+    /** @param string|array $range */
     public static function parse($range): array
     {
+        Assertion::true(
+            is_string($range) || is_array($range),
+            'Range can only be set by array or by string.'
+        );
+
         if (is_string($range)) {
             $range = explode('..', str_replace(' ', '', $range));
         }
 
-        if (is_array($range)) {
-            if (count($range) === 2) {
-                [$start, $end] = $range;
-                $step = 1;
-            } elseif (count($range) === 3) {
-                [$start, $step, $end] = $range;
-            } else {
-                throw new \InvalidArgumentException('Range must have [start, end] or [start, step, end] items.');
-            }
+        $count = count($range);
+        Assertion::between(
+            $count,
+            2,
+            3,
+            'Range must have [start, end] or [start, step, end] items. %s values given.'
+        );
+
+        if ($count === 2) {
+            [$start, $end] = $range;
+            $step = 1;
         } else {
-            throw new \InvalidArgumentException('Range can only be set by array or by string, see annotation.');
+            [$start, $step, $end] = $range;
         }
 
         return [

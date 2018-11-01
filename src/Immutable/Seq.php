@@ -2,6 +2,11 @@
 
 namespace MF\Collection\Immutable;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
+use MF\Collection\Exception\OutOfBoundsException;
+use MF\Collection\Exception\OutOfRangeException;
 use MF\Collection\Range;
 use MF\Parser\CallbackParser;
 
@@ -39,11 +44,10 @@ class Seq implements ISeq
      */
     public function __construct($iterable)
     {
-        if ($iterable === null) {
-            throw new \InvalidArgumentException('Iterable source for Seq must not be null.');
-        }
+        Assertion::notNull($iterable, 'Iterable source for Seq must not be null.');
+
         $this->modifiers = [];
-        $this->callbackParser = new CallbackParser();
+        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
 
         $this->iterable = is_string($iterable)
             ? $this->callbackParser->parseArrowFunction($iterable)
@@ -86,7 +90,7 @@ class Seq implements ISeq
     public static function forDo($range, $callable): ISeq
     {
         [$start, $end, $step] = Range::parse($range);
-        $callable = (new CallbackParser())->parseArrowFunction($callable);
+        $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
 
         if ($end === self::INFINITE) {
             $seq = new static(
@@ -128,7 +132,7 @@ class Seq implements ISeq
      */
     public static function unfold($callable, $initialValue): ISeq
     {
-        $callable = (new CallbackParser())->parseArrowFunction($callable);
+        $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
 
         return new static(
             function () use ($callable, $initialValue) {
@@ -166,7 +170,7 @@ class Seq implements ISeq
     public static function from(array $array, bool $recursive = false): ISeq
     {
         if ($recursive) {
-            throw new \Exception(sprintf('Method %s with recursive is not implemented yet.', __METHOD__));
+            throw new BadMethodCallException(sprintf('Method %s with recursive is not implemented.', __METHOD__));
         }
 
         return static::create($array);
@@ -182,7 +186,7 @@ class Seq implements ISeq
     public static function create(iterable $iterable, $callable = null): ISeq
     {
         if ($callable !== null) {
-            $callable = (new CallbackParser())->parseArrowFunction($callable);
+            $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
 
             return new static(function () use ($iterable, $callable) {
                 foreach ($iterable as $i) {
@@ -325,9 +329,9 @@ class Seq implements ISeq
         $this->modifiers = [];
     }
 
-    private function createOutOfRange(int $strictLimit, int $count): \OutOfRangeException
+    private function createOutOfRange(int $strictLimit, int $count): OutOfRangeException
     {
-        return new \OutOfRangeException(
+        return new OutOfRangeException(
             sprintf('Seq does not have %d items to take, it only has %d items.', $strictLimit, $count)
         );
     }
@@ -335,9 +339,7 @@ class Seq implements ISeq
     private function mapValue(callable $modifier, $value, $key)
     {
         $value = $modifier($value, $key);
-        if ($value instanceof \Generator) {
-            throw new \InvalidArgumentException('Mapping must not generate new values.');
-        }
+        Assertion::notIsInstanceOf($value, \Generator::class, 'Mapping must not generate new values.');
 
         return $value;
     }
@@ -419,7 +421,7 @@ class Seq implements ISeq
     private function assertFinite(string $intent): void
     {
         if ($this->isInfinite) {
-            throw new \OutOfBoundsException(sprintf('It is not possible to %s infinite seq.', $intent));
+            throw new OutOfBoundsException(sprintf('It is not possible to %s infinite seq.', $intent));
         }
     }
 
@@ -493,7 +495,7 @@ class Seq implements ISeq
     /** @deprecated Seq does not have a mutable variant */
     public function asMutable(): void
     {
-        throw new \BadMethodCallException('Seq does not have mutable variant.');
+        throw new BadMethodCallException('Seq does not have mutable variant.');
     }
 
     public function count(): int

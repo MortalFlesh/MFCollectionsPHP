@@ -2,7 +2,9 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
-- Explicitly require `ext-mbstring` 
+- Explicitly require `ext-mbstring`
+- Add `CollectionExceptionInterface` for all `AssertionFailedExceptions`
+- Allow `Generators` in `arrow functions` (`yield`)
 
 ## 3.17.0 - 2018-10-24
 - Allow `callable` type in `PrioritizedCollection`

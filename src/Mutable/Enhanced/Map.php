@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Mutable\Enhanced;
 
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Parser\CallbackParser;
 
 class Map extends \MF\Collection\Mutable\Map
@@ -11,7 +12,7 @@ class Map extends \MF\Collection\Mutable\Map
 
     public static function create(iterable $source, $creator)
     {
-        $creator = (new CallbackParser())->parseArrowFunction($creator);
+        $creator = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($creator);
 
         return parent::create($source, $creator);
     }
@@ -19,7 +20,7 @@ class Map extends \MF\Collection\Mutable\Map
     public function __construct()
     {
         parent::__construct();
-        $this->callbackParser = new CallbackParser();
+        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     /**

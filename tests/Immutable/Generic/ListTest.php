@@ -4,6 +4,8 @@ namespace MF\Collection\Immutable\Generic;
 
 use Eris\Generator;
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Fixtures\ComplexEntity;
 use MF\Collection\Fixtures\EntityInterface;
 use MF\Collection\Fixtures\SimpleEntity;
@@ -66,7 +68,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldNotCreateListOfDifferentValueTypes(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         ListCollection::ofT('int', 1, 'string', 3);
     }
@@ -103,14 +105,16 @@ class ListTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingListOfValues(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This method should not be used with Immutable Generic List. Use ofT instead.');
 
         ListCollection::of(1);
     }
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingList(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This method should not be used with Immutable Generic List. Use fromT instead.');
 
         ListCollection::from([]);
     }
@@ -123,7 +127,7 @@ class ListTest extends AbstractTestCase
      */
     public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         ListCollection::fromT($valueType, $values);
     }
@@ -163,7 +167,8 @@ class ListTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingListByCallback(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This method should not be used with Generic List. Use createT instead.');
 
         ListCollection::create([], function ($v) {
             return $v;
@@ -267,7 +272,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveFirstValue(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->list->removeFirst(2);
     }
@@ -290,7 +295,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldThrowInvalidArgumentExceptionOnRemoveAllValues(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->list->removeAll(2.54);
     }
@@ -309,7 +314,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
