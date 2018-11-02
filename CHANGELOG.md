@@ -5,6 +5,7 @@
 - Explicitly require `ext-mbstring`
 - Add `CollectionExceptionInterface` for all `AssertionFailedExceptions`
 - Allow `Generators` in `arrow functions` (`yield`)
+- **Not** use `Tuple` in _internal_ modifiers of `Map` and `ListCollection` anymore (_because of performance_)
 
 ## 3.17.0 - 2018-10-24
 - Allow `callable` type in `PrioritizedCollection`

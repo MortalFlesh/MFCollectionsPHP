@@ -8,8 +8,7 @@ class Map implements IMap
 {
     /** @var array */
     protected $mapArray;
-
-    /** @var array< Tuple<string, callable> > */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     /**

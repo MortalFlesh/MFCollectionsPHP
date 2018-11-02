@@ -586,7 +586,7 @@ class ListTest extends AbstractTestCase
 
         $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
 
-        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan(1.5, $mappingTime);
         $this->assertLessThan(
             $this->forPHP(['71' => $loopTime * 1.5, '72' => $loopTime * 1.6]),
             $loopWithMappingTime

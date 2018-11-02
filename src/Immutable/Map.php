@@ -9,7 +9,7 @@ class Map implements IMap
 {
     /** @var array */
     protected $mapArray;
-    /** @var ITuple[] of type <string, callable> */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     /**
@@ -49,14 +49,14 @@ class Map implements IMap
 
     public function toArray(): array
     {
-        $this->modifiers[] = Tuple::from([
+        $this->modifiers[] = [
             self::MAP,
             function ($key, $value) {
                 return $value instanceof ICollection
                     ? $value->toArray()
                     : $value;
             },
-        ]);
+        ];
 
         $this->applyModifiers();
 
@@ -248,7 +248,7 @@ class Map implements IMap
         $callback = $this->assertCallback($callback);
 
         $map = clone $this;
-        $map->modifiers[] = Tuple::of(self::MAP, $callback);
+        $map->modifiers[] = [self::MAP, $callback];
 
         return $map;
     }
@@ -262,7 +262,7 @@ class Map implements IMap
         $callback = $this->assertCallback($callback);
 
         $map = clone $this;
-        $map->modifiers[] = Tuple::of(self::FILTER, $callback);
+        $map->modifiers[] = [self::FILTER, $callback];
 
         return $map;
     }

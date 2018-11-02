@@ -9,8 +9,7 @@ class ListCollection implements IList
 {
     /** @var array */
     protected $listArray;
-
-    /** @var array< Tuple<string, callable> > */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     public static function of(...$values)
