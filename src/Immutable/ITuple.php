@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Immutable;
 
+use MF\Collection\Exception\TupleMatchException;
+use MF\Collection\Exception\TupleParseException;
 use MF\Collection\IEnumerable;
 
 interface ITuple extends IEnumerable, \ArrayAccess
@@ -19,7 +21,7 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::parse('(1, 2, 3)', 2)  // 2 values expected, but got 3
      * Tuple::parse('(1, 2)', 3)     // 3 values expected, but got 2
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
      */
     public static function parse(string $tuple, int $expectedItemsCount = null): self;
 
@@ -46,7 +48,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
+     * @throws TupleMatchException
      */
     public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): self;
 
@@ -73,7 +76,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
+     * @throws TupleMatchException
      */
     public static function parseMatchTypes(string $tuple, array $types): self;
 
@@ -224,7 +228,7 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleMatchException
      */
     public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple;
 

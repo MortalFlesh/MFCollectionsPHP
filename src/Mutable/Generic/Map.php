@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Immutable\Tuple;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
@@ -72,7 +74,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public static function from(array $array, bool $recursive = false)
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'This method should not be used with Generic Map. Use fromKT instead.'
         );
     }
@@ -85,7 +87,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      */
     public static function create(iterable $source, $creator)
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'This method should not be used with Generic Map. Use createKT instead.'
         );
     }
@@ -96,11 +98,12 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
             $TKey,
             $TValue,
             self::ALLOWED_KEY_TYPES,
-            self::ALLOWED_VALUE_TYPES
+            self::ALLOWED_VALUE_TYPES,
+            InvalidArgumentException::class
         );
 
         parent::__construct();
-        $this->callbackParser = new CallbackParser();
+        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     protected function applyModifiers(): void

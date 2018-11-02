@@ -3,6 +3,9 @@
 namespace MF\Collection\Immutable;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\CollectionExceptionInterface;
+use MF\Collection\Exception\OutOfBoundsException;
+use MF\Collection\Exception\OutOfRangeException;
 
 class SeqTest extends AbstractTestCase
 {
@@ -455,7 +458,7 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldThrowOutOfRangeExceptionOnTryingToTakeToManyItemsFromGenerating(): void
     {
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Seq does not have 5 items to take, it only has 3 items.');
 
         Seq::init(function () {
@@ -482,7 +485,7 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldThrowOutOfRangeExceptionOnTryingToTakeToManyItemsFromRange(): void
     {
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Seq does not have 5 items to take, it only has 2 items.');
 
         Seq::range([1, 2])
@@ -512,7 +515,7 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldThrowOutOfRangeOnTakingFromValues(): void
     {
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(OutOfRangeException::class);
         $this->expectExceptionMessage('Seq does not have 5 items to take, it only has 3 items.');
 
         Seq::from([1, 2, 3])->take(5)->toArray();
@@ -633,7 +636,7 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldThrowExceptionOnCountingInfiniteSeq(): void
     {
-        $this->expectException(\OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('It is not possible to count infinite seq.');
 
         Seq::infinite()->count();
@@ -851,5 +854,20 @@ class SeqTest extends AbstractTestCase
             ->implode(', ');
 
         $this->assertSame($expected, $result);
+    }
+
+    public function testShouldNotCreateSeqFromNull(): void
+    {
+        $this->expectException(CollectionExceptionInterface::class);
+        $this->expectExceptionMessage('Iterable source for Seq must not be null.');
+
+        new Seq(null);
+    }
+
+    public function testShouldCreateSequenceByArrowFunctionWithGenerator(): void
+    {
+        $result = Seq::init('() => yield from range(1, 5)')->toArray();
+
+        $this->assertSame([1, 2, 3, 4, 5], $result);
     }
 }

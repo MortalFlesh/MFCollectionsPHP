@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Immutable\Tuple;
 use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
@@ -67,7 +69,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public static function of(...$values)
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use ofT instead.'
         );
     }
@@ -79,7 +81,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public static function from(array $array, bool $recursive = false)
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use fromT instead.'
         );
     }
@@ -92,7 +94,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      */
     public static function create(iterable $source, $creator)
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'
         );
     }
@@ -103,11 +105,12 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
             TypeValidator::TYPE_INT,
             $TValue,
             [TypeValidator::TYPE_INT],
-            self::ALLOWED_VALUE_TYPES
+            self::ALLOWED_VALUE_TYPES,
+            InvalidArgumentException::class
         );
 
         parent::__construct();
-        $this->callbackParser = new CallbackParser();
+        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     protected function applyModifiers(): void

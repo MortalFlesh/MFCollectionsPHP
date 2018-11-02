@@ -3,6 +3,8 @@
 namespace MF\Collection\Immutable;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\ICollection;
 
 class MapTest extends AbstractTestCase
@@ -108,7 +110,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Immutable map cannot be used as array to set value. Use set() method instead.');
 
         $this->map['key'] = 'value';
     }
@@ -158,9 +161,10 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key): void
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key, string $expectedMessage): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CollectionExceptionInterface::class);
+        $this->expectExceptionMessage($expectedMessage);
 
         $this->map->set($key, 'value');
     }
@@ -172,7 +176,8 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldThrowBadMethodCallExceptionOnAddingObject($key): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(CollectionExceptionInterface::class);
+        $this->expectExceptionMessage('Immutable map cannot be used as array to set value. Use set() method instead.');
 
         $this->map[$key] = 'value';
     }
@@ -180,8 +185,9 @@ class MapTest extends AbstractTestCase
     public function invalidKeyProvider()
     {
         return [
-            ['key' => new \stdClass()],
-            ['key' => []],
+            // key, expectedMessage
+            [new \stdClass(), 'Key cannot be an Object'],
+            [[], 'Key cannot be an Array'],
         ];
     }
 
@@ -252,7 +258,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodCallExceptionOnUnsetValueArrayWay(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $this->map = $this->map->set('key', 'value');
 

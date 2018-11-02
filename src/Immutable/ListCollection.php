@@ -2,13 +2,15 @@
 
 namespace MF\Collection\Immutable;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\LogicException;
 use MF\Collection\ICollection;
 
 class ListCollection implements IList
 {
     /** @var array */
     protected $listArray;
-    /** @var ITuple[] of type <string, callable> */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     public static function of(...$values)
@@ -50,14 +52,14 @@ class ListCollection implements IList
 
     public function toArray(): array
     {
-        $this->modifiers[] = Tuple::from([
+        $this->modifiers[] = [
             self::MAP,
             function ($value) {
                 return $value instanceof ICollection
                     ? $value->toArray()
                     : $value;
             },
-        ]);
+        ];
 
         $this->applyModifiers();
 
@@ -216,7 +218,7 @@ class ListCollection implements IList
 
         $index = array_search($value, $this->listArray, true);
         if (is_string($index)) {
-            throw new \LogicException(sprintf('List must have only integer indexes, but has "%s".', $index));
+            throw new LogicException(sprintf('List must have only integer indexes, but has "%s".', $index));
         }
 
         return $index;
@@ -272,9 +274,7 @@ class ListCollection implements IList
      */
     private function assertCallback($callback): callable
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
-        }
+        Assertion::isCallable($callback);
 
         return $callback;
     }
@@ -288,7 +288,7 @@ class ListCollection implements IList
         $callback = $this->assertCallback($callback);
 
         $list = clone $this;
-        $list->modifiers[] = Tuple::of(self::MAP, $callback);
+        $list->modifiers[] = [self::MAP, $callback];
 
         return $list;
     }
@@ -302,7 +302,7 @@ class ListCollection implements IList
         $callback = $this->assertCallback($callback);
 
         $list = clone $this;
-        $list->modifiers[] = Tuple::of(self::FILTER, $callback);
+        $list->modifiers[] = [self::FILTER, $callback];
 
         return $list;
     }

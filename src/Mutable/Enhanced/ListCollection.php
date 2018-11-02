@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Mutable\Enhanced;
 
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Mutable\IList;
 use MF\Parser\CallbackParser;
 
@@ -12,7 +13,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection
 
     public static function create(iterable $source, $creator)
     {
-        $creator = (new CallbackParser())->parseArrowFunction($creator);
+        $creator = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($creator);
 
         return parent::create($source, $creator);
     }
@@ -20,7 +21,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection
     public function __construct()
     {
         parent::__construct();
-        $this->callbackParser = new CallbackParser();
+        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     /**

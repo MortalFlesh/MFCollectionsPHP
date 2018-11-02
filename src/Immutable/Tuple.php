@@ -2,7 +2,12 @@
 
 namespace MF\Collection\Immutable;
 
-use Assert\Assertion;
+use Assert\AssertionFailedException;
+use MF\Collection\Assertion;
+use MF\Collection\Exception\TupleBadMethodCallException;
+use MF\Collection\Exception\TupleException;
+use MF\Collection\Exception\TupleMatchException;
+use MF\Collection\Exception\TupleParseException;
 use MF\Collection\Helper\Strings;
 
 class Tuple implements ITuple
@@ -25,9 +30,18 @@ class Tuple implements ITuple
      * Tuple::parse('(1, 2, 3)', 2)  // 2 values expected, but got 3
      * Tuple::parse('(1, 2)', 3)     // 3 values expected, but got 2
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
      */
     public static function parse(string $tuple, int $expectedItemsCount = null): ITuple
+    {
+        try {
+            return self::parseTuple($tuple, $expectedItemsCount);
+        } catch (AssertionFailedException $e) {
+            throw TupleParseException::forFailedAssertion($e);
+        }
+    }
+
+    private static function parseTuple(string $tuple, ?int $expectedItemsCount): self
     {
         if (empty($tuple)) {
             return new self([]);
@@ -138,7 +152,8 @@ class Tuple implements ITuple
      * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
+     * @throws TupleMatchException
      */
     public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): ITuple
     {
@@ -168,7 +183,8 @@ class Tuple implements ITuple
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleParseException
+     * @throws TupleMatchException
      */
     public static function parseMatchTypes(string $tuple, array $types): ITuple
     {
@@ -176,13 +192,7 @@ class Tuple implements ITuple
         $parsedTuple = self::parse($tuple, count($types));
 
         if (!$parsedTuple->matchTypes($types)) {
-            [$expectedTypes, $actualTypes] = $parsedTuple->getTypes($types);
-
-            throw new \InvalidArgumentException(sprintf(
-                'Given tuple does NOT match expected types (%s) - got (%s).',
-                implode(', ', $expectedTypes),
-                implode(', ', $actualTypes)
-            ));
+            throw TupleMatchException::forTypes(...$parsedTuple->getTypes($types));
         }
 
         return $parsedTuple;
@@ -212,12 +222,16 @@ class Tuple implements ITuple
 
     private function __construct(array $values)
     {
-        Assertion::greaterOrEqualThan(
-            count($values),
-            self::MINIMAL_TUPLE_ITEMS_COUNT,
-            'Tuple must have at least two values.'
-        );
-        $this->values = $values;
+        try {
+            Assertion::greaterOrEqualThan(
+                count($values),
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+                'Tuple must have at least two values.'
+            );
+            $this->values = $values;
+        } catch (AssertionFailedException $e) {
+            throw TupleException::forFailedAssertion($e);
+        }
     }
 
     /**
@@ -546,7 +560,7 @@ class Tuple implements ITuple
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
      *
-     * @throws \InvalidArgumentException
+     * @throws TupleMatchException
      */
     public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple
     {
@@ -554,13 +568,7 @@ class Tuple implements ITuple
         $mergedTuple = self::merge($base, ...$additional);
 
         if (!$mergedTuple->matchTypes($types)) {
-            [$expectedTypes, $actualTypes] = $mergedTuple->getTypes($types);
-
-            throw new \InvalidArgumentException(sprintf(
-                'Merged tuple does NOT match expected types (%s) - got (%s).',
-                implode(', ', $expectedTypes),
-                implode(', ', $actualTypes)
-            ));
+            throw TupleMatchException::forTypes(...$mergedTuple->getTypes($types));
         }
 
         return $mergedTuple;
@@ -574,7 +582,7 @@ class Tuple implements ITuple
 
     private function forbiddenMethod(): void
     {
-        throw new \BadMethodCallException('Altering existing tuple is not permitted.');
+        throw TupleBadMethodCallException::forAlteringTuple();
     }
 
     /** @deprecated Altering existing tuple is not permitted */

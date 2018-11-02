@@ -3,6 +3,8 @@
 namespace MF\Collection\Immutable\Generic;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Fixtures\EntityInterface;
 use MF\Collection\Fixtures\SimpleEntity;
 use MF\Collection\Generic\ICollection;
@@ -33,7 +35,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This method should not be used with Generic Map. Use fromKT instead.');
 
         Map::from([]);
     }
@@ -58,7 +61,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $array = ['key' => 1, 'key2' => 2];
         $map = Map::fromKT('int', 'int', $array);
@@ -75,7 +78,7 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldNotCreateGenericMap($keyType, $valueType): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Map($keyType, $valueType);
     }
@@ -171,7 +174,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodUseExceptionWhenCreatingMapByCallback(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('This method should not be used with Generic Map. Use createKT instead.');
 
         Map::create([], function ($v) {
             return $v;
@@ -208,7 +212,8 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowBadMethodCallExceptionOnAddItemsToMapArrayWay(): void
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Immutable map cannot be used as array to set value. Use set() method instead.');
 
         $this->map['key'] = 'value';
     }
@@ -221,7 +226,7 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet($key, $value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->map->set($key, $value);
     }
@@ -274,7 +279,7 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType($key): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->map->containsKey($key);
     }
@@ -320,7 +325,7 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType($value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->map->contains($value);
     }
@@ -356,7 +361,7 @@ class MapTest extends AbstractTestCase
      */
     public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType($key): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->map->remove($key);
     }
@@ -415,7 +420,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $newMap = $this->map->filter('($k, $v) => true');
 

@@ -2,12 +2,13 @@
 
 namespace MF\Collection\Mutable;
 
+use MF\Collection\Assertion;
+
 class Map implements IMap
 {
     /** @var array */
     protected $mapArray;
-
-    /** @var array< Tuple<string, callable> > */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     /**
@@ -181,12 +182,7 @@ class Map implements IMap
      */
     public function set($key, $value): void
     {
-        if (is_object($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Object');
-        }
-        if (is_array($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Array');
-        }
+        Assertion::isValidKey($key);
 
         $this->applyModifiers();
 
@@ -299,9 +295,7 @@ class Map implements IMap
      */
     private function assertCallback($callback): callable
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
-        }
+        Assertion::isCallable($callback);
 
         return $callback;
     }

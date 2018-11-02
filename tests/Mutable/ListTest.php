@@ -3,6 +3,7 @@
 namespace MF\Collection\Mutable;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\CollectionExceptionInterface;
 
 class ListTest extends AbstractTestCase
 {
@@ -631,5 +632,12 @@ class ListTest extends AbstractTestCase
             ->implode(', ');
 
         $this->assertSame('1_, 2_, 3_', $result);
+    }
+
+    public function testShouldNotMapByInvalidCallback(): void
+    {
+        $this->expectException(CollectionExceptionInterface::class);
+
+        $this->list->map('123');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\IEnumerable;
 use MF\Collection\Immutable\ITuple;
 use MF\Collection\Immutable\Tuple;
@@ -33,7 +34,8 @@ class PrioritizedCollection implements IEnumerable
             TypeValidator::TYPE_INT,
             $TValue,
             [TypeValidator::TYPE_INT],
-            self::ALLOWED_TYPES
+            self::ALLOWED_TYPES,
+            InvalidArgumentException::class
         );
         $this->items = [];
     }

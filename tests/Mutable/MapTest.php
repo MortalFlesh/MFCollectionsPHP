@@ -3,6 +3,7 @@
 namespace MF\Collection\Mutable;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\IMap as BaseMapInterface;
 
 class MapTest extends AbstractTestCase
@@ -160,9 +161,10 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key): void
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key, string $expectedMessage): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CollectionExceptionInterface::class);
+        $this->expectExceptionMessage($expectedMessage);
 
         $this->map->set($key, 'value');
     }
@@ -172,18 +174,20 @@ class MapTest extends AbstractTestCase
      *
      * @dataProvider invalidKeyProvider
      */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key): void
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key, string $expectedMessage): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CollectionExceptionInterface::class);
+        $this->expectExceptionMessage($expectedMessage);
 
         $this->map[$key] = 'value';
     }
 
-    public function invalidKeyProvider()
+    public function invalidKeyProvider(): array
     {
         return [
-            ['key' => new \stdClass()],
-            ['key' => []],
+            // key, expectedMessage
+            [new \stdClass(), 'Key cannot be an Object'],
+            [[], 'Key cannot be an Array'],
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace MF\Collection\Immutable;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\ICollection;
 
 class ListTest extends AbstractTestCase
@@ -585,7 +586,7 @@ class ListTest extends AbstractTestCase
 
         $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
 
-        $this->assertLessThan(1, $mappingTime);
+        $this->assertLessThan(1.5, $mappingTime);
         $this->assertLessThan(
             $this->forPHP(['71' => $loopTime * 1.5, '72' => $loopTime * 1.6]),
             $loopWithMappingTime
@@ -605,5 +606,12 @@ class ListTest extends AbstractTestCase
         $result = $list->implode(', ');
 
         $this->assertSame('1, 2, 3', $result);
+    }
+
+    public function testShouldNotMapByInvalidCallback(): void
+    {
+        $this->expectException(CollectionExceptionInterface::class);
+
+        $this->list->map('123');
     }
 }

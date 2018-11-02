@@ -2,11 +2,14 @@
 
 namespace MF\Collection\Immutable;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\BadMethodCallException;
+
 class Map implements IMap
 {
     /** @var array */
     protected $mapArray;
-    /** @var ITuple[] of type <string, callable> */
+    /** @var array of type <string, callable> */
     protected $modifiers;
 
     /**
@@ -46,14 +49,14 @@ class Map implements IMap
 
     public function toArray(): array
     {
-        $this->modifiers[] = Tuple::from([
+        $this->modifiers[] = [
             self::MAP,
             function ($key, $value) {
                 return $value instanceof ICollection
                     ? $value->toArray()
                     : $value;
             },
-        ]);
+        ];
 
         $this->applyModifiers();
 
@@ -175,7 +178,7 @@ class Map implements IMap
      */
     public function offsetSet($offset, $value): void
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'Immutable map cannot be used as array to set value. Use set() method instead.'
         );
     }
@@ -187,12 +190,8 @@ class Map implements IMap
      */
     public function set($key, $value)
     {
-        if (is_object($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Object');
-        }
-        if (is_array($key)) {
-            throw new \InvalidArgumentException('Key cannot be an Array');
-        }
+        Assertion::isValidKey($key);
+
         $this->applyModifiers();
         $map = clone $this;
         $map->mapArray[$key] = $value;
@@ -205,7 +204,7 @@ class Map implements IMap
      */
     public function offsetUnset($offset): void
     {
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             'Immutable map cannot be used as array to unset value. Use remove() method instead.'
         );
     }
@@ -249,7 +248,7 @@ class Map implements IMap
         $callback = $this->assertCallback($callback);
 
         $map = clone $this;
-        $map->modifiers[] = Tuple::of(self::MAP, $callback);
+        $map->modifiers[] = [self::MAP, $callback];
 
         return $map;
     }
@@ -263,7 +262,7 @@ class Map implements IMap
         $callback = $this->assertCallback($callback);
 
         $map = clone $this;
-        $map->modifiers[] = Tuple::of(self::FILTER, $callback);
+        $map->modifiers[] = [self::FILTER, $callback];
 
         return $map;
     }
@@ -311,9 +310,7 @@ class Map implements IMap
      */
     private function assertCallback($callback): callable
     {
-        if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Callback must be callable');
-        }
+        Assertion::isCallable($callback);
 
         return $callback;
     }
