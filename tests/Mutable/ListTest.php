@@ -616,7 +616,7 @@ class ListTest extends AbstractTestCase
         $this->assertCount(10001, $bigList);
 
         // this test before lazy mapping lasts around 5-6 seconds, so now it is more than 3 times faster
-        if ($totalTime > $this->forPHP(['71' => 1700, '72' => 2500])) {
+        if ($totalTime > $this->forPHP(['71' => 1700, '72' => 2500, '73' => 1500])) {
             $this->markAsRisky();
         }
     }

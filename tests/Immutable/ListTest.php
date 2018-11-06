@@ -588,13 +588,13 @@ class ListTest extends AbstractTestCase
 
         $this->assertLessThan(1.5, $mappingTime);
         $this->assertLessThan(
-            $this->forPHP(['71' => $loopTime * 1.5, '72' => $loopTime * 1.6]),
+            $this->forPHP(['71' => $loopTime * 1.5, '72' => $loopTime * 1.6, '73' => $loopTime * 1.1]),
             $loopWithMappingTime
         );   // 50% is still fair enough
         $this->assertCount(10001, $bigList);
 
         // this test lasts much longer before lazy mapping, now it is faster
-        if ($totalTime > $this->forPHP(['71' => 2600, '72' => 2800])) {
+        if ($totalTime > $this->forPHP(['71' => 2600, '72' => 2800, '73' => 1800])) {
             $this->markAsRisky();
         }
     }

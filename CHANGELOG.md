@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Supports PHP 7.3
 
 ## 3.18.0 - 2018-11-02
 - Explicitly require `ext-mbstring`
