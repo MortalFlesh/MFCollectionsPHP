@@ -469,6 +469,7 @@ class ListTest extends AbstractTestCase
         $this->assertSame(['5', '6'], $newListCollection->toArray());
     }
 
+    /** @group propertyBased */
     public function testShouldSortCollection(): void
     {
         $this

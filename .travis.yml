@@ -1,20 +1,24 @@
 language: php
-php:
-    - 7.1
-    - 7.2
+#php:
+    #- 7.2
+    #- 7.3
 
 matrix:
   include:
-    - php: 7.1
-      env: DEPENDENCIES="--prefer-lowest"
+    #- php: 7.2
+    #  env: DEPENDENCIES="--prefer-lowest"
+    #- php: 7.2
+    #  env: CHECK_CODESTYLE=1
+    #  before_install: phpenv config-rm xdebug.ini
+    #  script:
+    #    - composer analyze
+    #  after_success: ~
     - php: 7.3
-      env: DEPENDENCIES="--ignore-platform-reqs"
-    - php: 7.2
-      env: CHECK_CODESTYLE=1
-      before_install: phpenv config-rm xdebug.ini
-      script:
-        - composer analyze
-      after_success: ~
+      before_script: composer require --dev roave/no-leaks
+      after_success: vendor/bin/roave-no-leaks -c phpunit.xml.dist --exclude-group local --exclude-group propertyBased --exclude-group sequence
+    - php: 7.3
+      before_script: composer require --dev roave/no-leaks
+      after_success: vendor/bin/roave-no-leaks -c phpunit.xml.dist --group sequence
 
 install:
   - travis_retry composer self-update && composer --version

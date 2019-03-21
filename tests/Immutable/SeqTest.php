@@ -7,6 +7,9 @@ use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Exception\OutOfRangeException;
 
+/**
+ * @group sequence
+ */
 class SeqTest extends AbstractTestCase
 {
     public function testShouldCreateSeqOfValue(): void

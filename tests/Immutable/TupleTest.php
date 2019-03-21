@@ -43,6 +43,7 @@ class TupleTest extends AbstractTestCase
         ];
     }
 
+    /** @group propertyBased */
     public function testShouldCreateTupleFromAnyArray(): void
     {
         try {
@@ -73,6 +74,7 @@ class TupleTest extends AbstractTestCase
         }
     }
 
+    /** @group propertyBased */
     public function testShouldCreateTupleFromArrayTransformToStringAndBackToTupleAgain(): void
     {
         $filterNotIn = function (array $data) {
