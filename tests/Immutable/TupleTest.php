@@ -131,7 +131,7 @@ class TupleTest extends AbstractTestCase
                         // and all parsed values should be found in original set
                         $originalSet = implode('', $originalValuesNotInResult);
                         foreach ($resultValuesNotFromOriginalValues as $value) {
-                            $this->assertContains(
+                            $this->assertStringContainsString(
                                 $value,
                                 $originalSet,
                                 $this->pbtMessage(

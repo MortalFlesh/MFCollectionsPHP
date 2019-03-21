@@ -35,7 +35,7 @@
         "php-coveralls/php-coveralls": "^2.1",
         "phpstan/phpstan-beberlei-assert": "^0.10.0",
         "phpstan/phpstan-shim": "^0.10",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^8.0",
         "symfony/var-dumper": "^4.1"
     },
     "repositories": [
@@ -60,6 +60,7 @@
         "phpstan": "vendor/bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
         "tests": "vendor/bin/phpunit",
         "tests-ci": "php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local",
+        "leaks": "vendor/bin/roave-no-leaks",
         "fix": [
             "vendor/bin/ecs check -vvv --ansi --clear-cache --fix -- src/ tests/"
         ]
