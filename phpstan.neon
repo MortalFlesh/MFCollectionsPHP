@@ -1,6 +1,3 @@
-includes:
-	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
-
 parameters:
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
@@ -9,8 +6,10 @@ parameters:
         - '#.*PHPDoc tag @return has invalid value.*#'
         - '#.*PHPDoc tag @param for parameter \$values with type mixed is not subtype.*#'
         - '#.*has invalid type .*?[TKey|TValue].*#'
+        - '#.*Method MF\\Collection\\Immutable\\Generic\\Map::keys\(\) should return iterable<MF\\Collection\\Immutable\\Generic\\TKey>&MF\\Collection\\Immutable\\Generic\\IList but returns iterable<MF\\Collection\\Immutable\\Generic\\TValue>&MF\\Collection\\Immutable\\Generic\\IList.#'
+        - '#Result of \|\| is always true\.#'
 
         # unit tests
         - '#.*Eris\\Generator\\.*#'
         - '#.*Call to an undefined method Eris\\Quantifier\\ForAll::then\(\).*#'
-        - '#.*Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects callable\|iterable\|string, null given.*#'
+        - '#.*Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects \(callable\(\): mixed\)\|iterable, null given.*#'

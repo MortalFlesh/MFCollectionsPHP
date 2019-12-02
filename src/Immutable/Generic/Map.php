@@ -5,7 +5,6 @@ namespace MF\Collection\Immutable\Generic;
 use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Immutable\Tuple;
-use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
 class Map extends \MF\Collection\Immutable\Map implements IMap
@@ -31,8 +30,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
         TypeValidator::TYPE_INSTANCE_OF,
     ];
 
-    /** @var CallbackParser */
-    private $callbackParser;
     /** @var TypeValidator */
     private $typeValidator;
 
@@ -52,13 +49,12 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @param iterable $source <TKey,mixed>
-     * @param callable|string $creator (value:mixed,key:TKey):TValue
+     * @param callable $creator (value:mixed,key:TKey):TValue
      * @return static|IMap<TKey,TValue>
      */
-    public static function createKT(string $TKey, string $TValue, iterable $source, $creator)
+    public static function createKT(string $TKey, string $TValue, iterable $source, callable $creator)
     {
         $map = new static($TKey, $TValue);
-        $creator = $map->callbackParser->parseArrowFunction($creator);
 
         foreach ($source as $key => $value) {
             $map = $map->set($key, $creator($value, $key));
@@ -82,10 +78,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     /**
      * @deprecated
      * @see IMap::createKT()
-     * @param mixed $creator
      * @return IMap
      */
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, callable $creator)
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic Map. Use createKT instead.'
@@ -103,7 +98,6 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
         );
 
         parent::__construct();
-        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     protected function applyModifiers(): void
@@ -160,12 +154,10 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:<TKey>,value:<TValue>):bool
+     * @param callable $callback (key:<TKey>,value:<TValue>):bool
      */
-    public function containsBy($callback): bool
+    public function containsBy(callable $callback): bool
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         return parent::containsBy($callback);
     }
 
@@ -220,14 +212,12 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
      * @return static
      */
-    public function map($callback, $TValue = null)
+    public function map(callable $callback, $TValue = null)
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         $map = clone $this;
         $map->modifiers[] = Tuple::of(self::MAP, $callback, $TValue);
 
@@ -235,13 +225,11 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:<TKey>,value:<TValue>):bool
+     * @param callable $callback (key:<TKey>,value:<TValue>):bool
      * @return static
      */
-    public function filter($callback)
+    public function filter(callable $callback)
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         $list = clone $this;
         $list->modifiers[] = Tuple::of(self::FILTER, $callback);
 
@@ -275,14 +263,12 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     }
 
     /**
-     * @param callable|string $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
+     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */
-    public function reduce($reducer, $initialValue = null)
+    public function reduce(callable $reducer, $initialValue = null)
     {
-        $reducer = $this->callbackParser->parseArrowFunction($reducer);
-
         return parent::reduce($reducer, $initialValue);
     }
 

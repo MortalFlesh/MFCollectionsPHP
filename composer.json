@@ -23,7 +23,6 @@
         "php": "^7.4",
         "ext-mbstring": "*",
         "beberlei/assert": "^2.9.3 || ^3.0",
-        "mf/callback-parser": "^2.1",
         "mf/type-validator": "^2.4"
     },
     "require-dev": {
@@ -31,8 +30,9 @@
         "lmc/coding-standard": "^1.1",
         "mockery/mockery": "^1.0",
         "php-coveralls/php-coveralls": "^2.1",
-        "phpstan/phpstan-beberlei-assert": "^0.10.0",
-        "phpstan/phpstan-shim": "^0.10",
+        "phpstan/extension-installer": "^1.0",
+        "phpstan/phpstan-beberlei-assert": "^0.11.0",
+        "phpstan/phpstan-shim": "^0.11",
         "phpunit/phpunit": "^8.0",
         "symfony/var-dumper": "^5.0"
     },

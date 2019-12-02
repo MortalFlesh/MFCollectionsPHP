@@ -3,7 +3,10 @@
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
 - [**BC**] Remove `Enhanced` Collections
+- [**BC**] Require PHP 7.4
 - Add tests for PHP 7.4
+- Remove dependency on `MF\CallbackParser`
+- [**BC**] Callbacks can be `callable` only
 
 ## 4.0.0 - 2019-12-02
 - [**BC**] Drop support for PHP 7.1

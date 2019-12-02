@@ -30,7 +30,7 @@ class Map implements IMap
         return $map;
     }
 
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, callable $creator)
     {
         $map = new static();
 
@@ -124,9 +124,9 @@ class Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):bool
+     * @param callable $callback (key:mixed,value:mixed):bool
      */
-    public function containsBy($callback): bool
+    public function containsBy(callable $callback): bool
     {
         $callback = $this->assertCallback($callback);
 
@@ -240,10 +240,10 @@ class Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):mixed
+     * @param callable $callback (key:mixed,value:mixed):mixed
      * @return static
      */
-    public function map($callback)
+    public function map(callable $callback)
     {
         $callback = $this->assertCallback($callback);
 
@@ -254,10 +254,10 @@ class Map implements IMap
     }
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):bool
+     * @param callable $callback (key:mixed,value:mixed):bool
      * @return static
      */
-    public function filter($callback)
+    public function filter(callable $callback)
     {
         $callback = $this->assertCallback($callback);
 
@@ -288,11 +288,11 @@ class Map implements IMap
     }
 
     /**
-     * @param callable|string $reducer (total:mixed,value:mixed,key:mixed,map:Map):mixed
+     * @param callable $reducer (total:mixed,value:mixed,key:mixed,map:Map):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
-    public function reduce($reducer, $initialValue = null)
+    public function reduce(callable $reducer, $initialValue = null)
     {
         $reducer = $this->assertCallback($reducer);
 
@@ -306,7 +306,7 @@ class Map implements IMap
     }
 
     /**
-     * @param callable|string $callback
+     * @param callable $callback
      */
     private function assertCallback($callback): callable
     {

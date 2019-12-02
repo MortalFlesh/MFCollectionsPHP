@@ -156,6 +156,7 @@ class MapTest extends AbstractTestCase
         ];
     }
 
+    /** @group arrow-fun */
     public function testShouldCreateMapByCallback(): void
     {
         $map = Map::createKT(
@@ -167,7 +168,7 @@ class MapTest extends AbstractTestCase
             }
         );
 
-        $map = $map->map('($k, $e) => $e->getId()', 'int');
+        $map = $map->map(fn ($k, SimpleEntity $e) => $e->getId(), 'int');
 
         $this->assertSame([1, 2, 3], $map->toArray());
     }
@@ -311,6 +312,7 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->contains($valueDoesNotExist));
     }
 
+    /** @group arrow-fun */
     public function testShouldContainsValueBy(): void
     {
         $valueExists = 1;
@@ -318,8 +320,8 @@ class MapTest extends AbstractTestCase
 
         $this->map->set('key', $valueExists);
 
-        $this->assertTrue($this->map->containsBy('($k, $v) => $v === ' . $valueExists));
-        $this->assertFalse($this->map->containsBy('($k, $v) => $v === ' . $valueDoesNotExist));
+        $this->assertTrue($this->map->containsBy(fn ($k, $v) => $v === $valueExists));
+        $this->assertFalse($this->map->containsBy(fn ($k, $v) => $v === $valueDoesNotExist));
     }
 
     /**
@@ -370,25 +372,27 @@ class MapTest extends AbstractTestCase
         $this->map->remove($key);
     }
 
+    /** @group arrow-fun */
     public function testShouldMapToNewMapWithSameGenericType(): void
     {
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->map('($k, $v) => $v + 1');
+        $newMap = $this->map->map(fn ($k, $v) => $v + 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldMapToNewMap(): void
     {
         $map = new Map('string', EntityInterface::class);
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map('($k, $v) => $v->getId()', 'int');
+        $newMap = $map->map(fn ($k, SimpleEntity $v) => $v->getId(), 'int');
 
         $this->assertNotSame($map, $newMap);
 
@@ -396,13 +400,14 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldMapToNewGenericMap(): void
     {
         $map = new Map('string', EntityInterface::class);
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map('($k, $v) => $v->getId()', 'int');
+        $newMap = $map->map(fn ($k, SimpleEntity $v) => $v->getId(), 'int');
 
         $this->assertNotSame($map, $newMap);
 
@@ -410,35 +415,38 @@ class MapTest extends AbstractTestCase
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldFilterItemsToNewMapByArrowFunction(): void
     {
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->filter('($k, $v) => $v > 1');
+        $newMap = $this->map->filter(fn ($k, $v) => $v > 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 2, 'key3' => 3], $newMap->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $newMap = $this->map->filter('($k, $v) => true');
+        $newMap = $this->map->filter(fn ($k, $v) => true);
 
         $newMap->set(1, '');
     }
 
+    /** @group arrow-fun */
     public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
 
         $newMap = $this->map
-            ->filter('($k, $v) => $v > 1')
-            ->map('($k, $v) => $v * 3');
+            ->filter(fn ($k, $v) => $v > 1)
+            ->map(fn ($k, $v) => $v * 3);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 6], $newMap->toArray());
@@ -464,13 +472,14 @@ class MapTest extends AbstractTestCase
         $this->assertEquals([1, 2], $values->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceMap(): void
     {
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
+        $this->assertEquals(6, $this->map->reduce(fn ($t, $c) => $t + $c));
     }
 
     public function testShouldGetMutableGenericMapAsImmutableGenericMap(): void
@@ -485,6 +494,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceMapWithInitialValue(): void
     {
         $map = new Map('string', 'int');
@@ -492,9 +502,10 @@ class MapTest extends AbstractTestCase
         $map->set('two', 2);
         $map->set('three', 3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce(fn ($t, $v) => $t + $v, 10));
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceListWithInitialValueToOtherType(): void
     {
         $map = new Map('string', 'int');
@@ -502,7 +513,7 @@ class MapTest extends AbstractTestCase
         $map->set('two', 2);
         $map->set('three', 3);
 
-        $this->assertEquals('123', $map->reduce('($t, $v) => $t . $v', ''));
+        $this->assertEquals('123', $map->reduce(fn ($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void

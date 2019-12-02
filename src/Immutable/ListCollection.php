@@ -33,7 +33,7 @@ class ListCollection implements IList
         return $list;
     }
 
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, callable $creator)
     {
         $list = new static();
 
@@ -138,7 +138,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return mixed
      */
     public function firstBy($callback)
@@ -193,9 +193,9 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      */
-    public function containsBy($callback): bool
+    public function containsBy(callable $callback): bool
     {
         $callback = $this->assertCallback($callback);
 
@@ -270,7 +270,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $callback
+     * @param callable $callback
      */
     private function assertCallback($callback): callable
     {
@@ -280,10 +280,10 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):mixed
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return static
      */
-    public function map($callback)
+    public function map(callable $callback)
     {
         $callback = $this->assertCallback($callback);
 
@@ -294,10 +294,10 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return static
      */
-    public function filter($callback)
+    public function filter(callable $callback)
     {
         $callback = $this->assertCallback($callback);
 
@@ -308,11 +308,11 @@ class ListCollection implements IList
     }
 
     /**
-     * @param callable|string $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
+     * @param callable $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
-    public function reduce($reducer, $initialValue = null)
+    public function reduce(callable $reducer, $initialValue = null)
     {
         $reducer = $this->assertCallback($reducer);
 

@@ -16,10 +16,10 @@ interface IList extends ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable|string $creator (value:mixed,index:int):mixed
+     * @param callable $creator (value:mixed,index:int):mixed
      * @return IList
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /** @param mixed $value */
     public function add($value);
@@ -31,7 +31,7 @@ interface IList extends ICollection
     public function first();
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return mixed
      */
     public function firstBy($callback);
@@ -49,16 +49,16 @@ interface IList extends ICollection
     public function removeAll($value);
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):mixed
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return IList
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return IList
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     public function implode(string $glue): string;
 }

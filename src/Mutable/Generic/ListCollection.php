@@ -4,7 +4,6 @@ namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
-use MF\Parser\CallbackParser;
 use MF\Validator\TypeValidator;
 
 class ListCollection extends \MF\Collection\Mutable\ListCollection implements IList
@@ -21,9 +20,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         TypeValidator::TYPE_OBJECT,
         TypeValidator::TYPE_INSTANCE_OF,
     ];
-
-    /** @var CallbackParser */
-    private $callbackParser;
 
     /** @var TypeValidator */
     private $typeValidator;
@@ -53,13 +49,12 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
 
     /**
      * @param iterable $source <TValue>
-     * @param callable|string $creator (value:mixed,index:int):TValue
+     * @param callable $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, $creator)
+    public static function createT(string $TValue, iterable $source, callable $creator)
     {
         $list = new static($TValue);
-        $creator = $list->callbackParser->parseArrowFunction($creator);
 
         foreach ($source as $index => $value) {
             $list->add($creator($value, $index));
@@ -69,9 +64,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @deprecated
-     * @see IList::ofT()
      * @return IList
+     * @see IList::ofT()
+     * @deprecated
      */
     public static function of(...$values)
     {
@@ -81,9 +76,9 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @deprecated
-     * @see IList::fromT()
      * @return IList
+     * @see IList::fromT()
+     * @deprecated
      */
     public static function from(array $array, bool $recursive = false)
     {
@@ -93,12 +88,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
+     * @return IList
      * @deprecated
      * @see IList::createT()
-     * @param mixed $creator
-     * @return IList
      */
-    public static function create(iterable $source, $creator)
+    public static function create(iterable $source, callable $creator)
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'
@@ -116,7 +110,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         );
 
         parent::__construct();
-        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
     }
 
     protected function applyModifiers(): void
@@ -173,13 +166,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      * @return <TValue>
      */
     public function firstBy($callback)
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         return parent::firstBy($callback);
     }
 
@@ -195,12 +186,10 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      */
-    public function containsBy($callback): bool
+    public function containsBy(callable $callback): bool
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         return parent::containsBy($callback);
     }
 
@@ -239,13 +228,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):<TValue>
+     * @param callable $callback (value:<TValue>,index:int):<TValue>
      * @return IList
      */
-    public function map($callback, string $TValue = null)
+    public function map(callable $callback, string $TValue = null)
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         $list = clone $this;
         $list->modifiers[] = [self::MAP, $callback, $TValue];
 
@@ -253,13 +240,11 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      * @return IList
      */
-    public function filter($callback)
+    public function filter(callable $callback)
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         $list = clone $this;
         $list->modifiers[] = [self::FILTER, $callback];
 
@@ -267,14 +252,12 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable|string $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */
-    public function reduce($reducer, $initialValue = null)
+    public function reduce(callable $reducer, $initialValue = null)
     {
-        $reducer = $this->callbackParser->parseArrowFunction($reducer);
-
         $total = $initialValue;
 
         foreach ($this as $i => $value) {

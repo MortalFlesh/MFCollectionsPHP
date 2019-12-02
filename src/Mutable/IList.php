@@ -16,10 +16,10 @@ interface IList extends \MF\Collection\IList, ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable|string $creator (value:mixed,index:int):mixed
+     * @param callable $creator (value:mixed,index:int):mixed
      * @return IList
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /** @return mixed */
     public function shift();
@@ -28,16 +28,16 @@ interface IList extends \MF\Collection\IList, ICollection
     public function pop();
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):mixed
+     * @param callable $callback (value:mixed,index:mixed):mixed
      * @return IList
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      * @return IList
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /** @return \MF\Collection\Immutable\IList */
     public function asImmutable();

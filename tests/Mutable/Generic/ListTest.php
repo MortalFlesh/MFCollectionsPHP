@@ -141,6 +141,7 @@ class ListTest extends AbstractTestCase
         ];
     }
 
+    /** @group arrow-fun */
     public function testShouldCreateListByCallback(): void
     {
         $list = ListCollection::createT(
@@ -151,7 +152,7 @@ class ListTest extends AbstractTestCase
             }
         );
 
-        $list = $list->map('($e) => $e->getId()', 'int');
+        $list = $list->map(fn (SimpleEntity $e) => $e->getId(), 'int');
 
         $this->assertSame([1, 2, 3], $list->toArray());
     }
@@ -204,9 +205,10 @@ class ListTest extends AbstractTestCase
         $this->assertSame('second', $this->list->firstBy($findSecond));
     }
 
+    /** @group arrow-fun */
     public function testShouldGetFirstValueByArrowFunction(): void
     {
-        $findSecond = '($value) => $value === "second"';
+        $findSecond = fn ($value) => $value === 'second';
 
         $this->assertNull($this->list->firstBy($findSecond));
 
@@ -231,12 +233,13 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->contains('value'));
     }
 
+    /** @group arrow-fun */
     public function testShouldContainsValueBy(): void
     {
         $this->assertFalse($this->list->contains('value'));
 
         $this->list->add('value');
-        $this->assertTrue($this->list->containsBy('($v) => $v === "value"'));
+        $this->assertTrue($this->list->containsBy(fn ($v) => $v === 'value'));
     }
 
     public function testShouldThrowInvalidArgumentExceptionWhenContainsInvalidType(): void
@@ -289,18 +292,20 @@ class ListTest extends AbstractTestCase
         $this->list->removeAll(2.54);
     }
 
+    /** @group arrow-fun */
     public function testShouldMapToNewListWithSameGenericType(): void
     {
         $this->list->add('key');
         $this->list->add('key2');
         $this->list->add('key3');
 
-        $newList = $this->list->map('($v, $i) => $v . "_"');
+        $newList = $this->list->map(fn ($v, $i) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_', 'key2_', 'key3_'], $newList->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldThrowInvalidArgumentExceptionWhenMapFunctionReturnsBadType(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -309,30 +314,32 @@ class ListTest extends AbstractTestCase
         $this->list->add('key2');
 
         $this->list
-            ->map('($v, $i) => 2', 'string')
+            ->map(fn ($v, $i) => 2, 'string')
             ->toArray();
     }
 
+    /** @group arrow-fun */
     public function testShouldFilterItemsToNewListByArrowFunction(): void
     {
         $this->list->add('key');
         $this->list->add('key2');
         $this->list->add('key3');
 
-        $newList = $this->list->filter('($v, $i) => strlen($v) > 3');
+        $newList = $this->list->filter(fn ($v, $i) => mb_strlen($v) > 3);
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldCombineMapAndFilterToCreateNewMap(): void
     {
         $this->list->add('key');
         $this->list->add('key2');
 
         $newList = $this->list
-            ->filter('($v, $i) => $v === "key"')
-            ->map('($v, $i) => $v . "_"');
+            ->filter(fn ($v, $i) => $v === 'key')
+            ->map(fn ($v, $i) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_'], $newList->toArray());
@@ -351,14 +358,16 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key', 'key2'], $array);
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceGenericList(): void
     {
         $this->list->add('key');
         $this->list->add('key2');
 
-        $this->assertEquals('key|key2|', $this->list->reduce('($t, $c) => $t . $c . "|"'));
+        $this->assertEquals('key|key2|', $this->list->reduce(fn ($t, $c) => $t . $c . '|'));
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceGenericListOfListCounts(): void
     {
         $list1 = \MF\Collection\Mutable\ListCollection::from([1, 2, 3]);
@@ -368,7 +377,7 @@ class ListTest extends AbstractTestCase
         $list->add($list1);
         $list->add($list2);
 
-        $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
+        $this->assertEquals(5, $list->reduce(fn ($t, \Countable $c) => $t + $c->count()));
     }
 
     public function testShouldGetMutableGenericListAsImmutableGenericList(): void
@@ -383,6 +392,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($this->list->toArray(), $immutable->toArray());
     }
 
+    /** @group arrow-fun */
     public function testShouldMapObjectsToDifferentList(): void
     {
         $list = new ListCollection(SimpleEntity::class);
@@ -391,13 +401,14 @@ class ListTest extends AbstractTestCase
         $list->add(new SimpleEntity(3));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()', 'int')
-            ->reduce('($t, $v) => $t + $v');
+            ->filter(fn (SimpleEntity $v, $i) => $v->getId() > 1)
+            ->map(fn (SimpleEntity $v, $i) => $v->getId(), 'int')
+            ->reduce(fn ($t, $v) => $t + $v);
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
 
+    /** @group arrow-fun */
     public function testShouldMapObjectsToDifferentGenericList(): void
     {
         $list = new ListCollection(EntityInterface::class);
@@ -406,13 +417,14 @@ class ListTest extends AbstractTestCase
         $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter('($v, $i) => $v->getSimpleEntity()->getId() > 1')
-            ->map('($v, $i) => $v->getSimpleEntity()', SimpleEntity::class)
-            ->reduce('($t, $v) => $t + $v->getId()');
+            ->filter(fn (ComplexEntity $v, $i) => $v->getSimpleEntity()->getId() > 1)
+            ->map(fn (ComplexEntity $v, $i) => $v->getSimpleEntity(), SimpleEntity::class)
+            ->reduce(fn ($t, SimpleEntity $v) => $t + $v->getId());
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceListWithInitialValue(): void
     {
         $list = new ListCollection('int');
@@ -420,9 +432,10 @@ class ListTest extends AbstractTestCase
         $list->add(2);
         $list->add(3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce(fn ($t, $v) => $t + $v, 10));
     }
 
+    /** @group arrow-fun */
     public function testShouldReduceListWithInitialValueToOtherType(): void
     {
         $list = new ListCollection('int');
@@ -430,7 +443,7 @@ class ListTest extends AbstractTestCase
         $list->add(2);
         $list->add(3);
 
-        $this->assertEquals('123', $list->reduce('($t, $v) => $t . $v', ''));
+        $this->assertEquals('123', $list->reduce(fn ($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void
@@ -451,16 +464,17 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->isEmpty());
     }
 
+    /** @group arrow-fun */
     public function testShouldMapAndFilterCollectionToNewListCollectionByArrowFunctionWithOneLoopOnly(): void
     {
         $this->list = ListCollection::fromT('int', [1, 2, 3]);
 
         $newListCollection = $this->list
-            ->map('($v, $i) => $v + 1')// 2, 3, 4
-            ->map('($v, $i) => $v * 2')// 4, 6, 8
-            ->filter('($v, $i) => $v % 3 === 0')// 6
-            ->map('($v, $i) => $v - 1')// 5
-            ->map('($v, $i) => (string) $v', 'string'); // '5'
+            ->map(fn ($v, $i) => $v + 1)// 2, 3, 4
+            ->map(fn ($v, $i) => $v * 2)// 4, 6, 8
+            ->filter(fn ($v, $i) => $v % 3 === 0)// 6
+            ->map(fn ($v, $i) => $v - 1)// 5
+            ->map(fn ($v, $i) => (string) $v, 'string'); // '5'
 
         $newListCollection->add('6');   // '5', '6'
 

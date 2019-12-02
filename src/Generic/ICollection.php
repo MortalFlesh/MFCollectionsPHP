@@ -17,7 +17,6 @@ interface ICollection extends \MF\Collection\ICollection
      * @deprecated
      * @see IList::createT()
      * @see IMap::createKT()
-     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 }

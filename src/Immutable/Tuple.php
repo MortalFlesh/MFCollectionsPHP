@@ -86,7 +86,7 @@ class Tuple implements ITuple
             ->map(function (string $match) {
                 return trim($match);
             })
-            ->filter('($match) => $match !== ""')
+            ->filter(fn ($match) => $match !== '')
             ->map(self::mapParsedItem())
             ->toArray();
 

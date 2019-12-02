@@ -18,10 +18,10 @@ interface IList extends \MF\Collection\IList, ICollection
 
     /**
      * @param iterable $source <TValue>
-     * @param callable|string $creator (value:mixed,index:int):TValue
+     * @param callable $creator (value:mixed,index:int):TValue
      * @return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, $creator);
+    public static function createT(string $TValue, iterable $source, callable $creator);
 
     /**
      * @deprecated
@@ -38,9 +38,8 @@ interface IList extends \MF\Collection\IList, ICollection
     /**
      * @deprecated
      * @see IList::createT()
-     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /**
      * @return <TValue>
@@ -48,32 +47,32 @@ interface IList extends \MF\Collection\IList, ICollection
     public function first();
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      * @return <TValue>
      */
     public function firstBy($callback);
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):<TValue>
+     * @param callable $callback (value:<TValue>,index:int):<TValue>
      * @return IList<TValue>
      */
-    public function map($callback, string $TValue = null);
+    public function map(callable $callback, string $TValue = null);
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      * @return IList<TValue>
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /**
-     * @param callable|string $reducer (total:<RValue>|<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
      * @param null|<RValue> $initialValue
      * @return <RValue>|<TValue>
      */
-    public function reduce($reducer, $initialValue = null);
+    public function reduce(callable $reducer, $initialValue = null);
 }
