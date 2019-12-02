@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 4.0.0 - 2019-12-02
 - [**BC**] Drop support for PHP 7.1
 - Update phpunit to 8
 - Test leaks on PHP 7.3
