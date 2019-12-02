@@ -12,11 +12,11 @@ class Assertion extends BaseAssertion
     /**
      * @param mixed $callback
      * @param string|callable|null $message
-     * @param string|null $propertyPath
+     * @param string $propertyPath
      */
-    public static function isCallable($callback, $message = null, $propertyPath = null): void
+    public static function isCallable($callback, $message = null, string $propertyPath = null): bool
     {
-        parent::isCallable($callback, $message ?? 'Callback must be callable but %s given.', $propertyPath);
+        return parent::isCallable($callback, $message ?? 'Callback must be callable but %s given.', $propertyPath);
     }
 
     /** @param mixed $key */

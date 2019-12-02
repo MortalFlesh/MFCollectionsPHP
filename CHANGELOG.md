@@ -6,6 +6,7 @@
 - Update phpunit to 8
 - Test leaks on PHP 7.3
 - Supports PHP 7.3
+- Fix `Assertion::isCallable` method signature
 
 ## 3.18.0 - 2018-11-02
 - Explicitly require `ext-mbstring`
