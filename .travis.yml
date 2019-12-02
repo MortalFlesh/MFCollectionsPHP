@@ -1,28 +1,38 @@
 language: php
-php:
-    - 7.1
-    - 7.2
 
 matrix:
   include:
-    - php: 7.1
+    - name: 'Lowest dependencies'
+      php: '7.3'
       env: DEPENDENCIES="--prefer-lowest"
-    - php: 7.3
-      env: DEPENDENCIES="--ignore-platform-reqs"
-    - php: 7.2
+    - name: 'Codestyle and static analysis'
+      php: '7.3'
       env: CHECK_CODESTYLE=1
       before_install: phpenv config-rm xdebug.ini
       script:
         - composer analyze
-      after_success: ~
+    - name: 'Check leaks with excluded groups'
+      php: '7.3'
+      before_script: composer require --dev roave/no-leaks
+      after_success: vendor/bin/roave-no-leaks -c phpunit.xml.dist --exclude-group local --exclude-group propertyBased --exclude-group sequence
+    - name: 'Check leaks'
+      php: '7.3'
+      before_script: composer require --dev roave/no-leaks
+      after_success: vendor/bin/roave-no-leaks -c phpunit.xml.dist --group sequence
+    - name: 'Tests on 7.2'
+      php: '7.2'
+      script: composer tests-ci
+      after_success: travis_retry php vendor/bin/php-coveralls -v
+    - name: 'Tests on 7.3'
+      php: '7.3'
+      script: composer tests-ci
+      after_success: travis_retry php vendor/bin/php-coveralls -v
 
 install:
   - travis_retry composer self-update && composer --version
   - composer config -g github-oauth.github.com $GITHUB_OAUTH
   - travis_retry composer update --no-interaction $DEPENDENCIES
 
-script:
-    - composer tests-ci
-
-after_success:
-    - travis_retry php vendor/bin/php-coveralls -v
+cache:
+  directories:
+    - $HOME/.composer/cache

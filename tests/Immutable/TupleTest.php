@@ -43,6 +43,7 @@ class TupleTest extends AbstractTestCase
         ];
     }
 
+    /** @group propertyBased */
     public function testShouldCreateTupleFromAnyArray(): void
     {
         try {
@@ -73,6 +74,7 @@ class TupleTest extends AbstractTestCase
         }
     }
 
+    /** @group propertyBased */
     public function testShouldCreateTupleFromArrayTransformToStringAndBackToTupleAgain(): void
     {
         $filterNotIn = function (array $data) {
@@ -131,7 +133,7 @@ class TupleTest extends AbstractTestCase
                         // and all parsed values should be found in original set
                         $originalSet = implode('', $originalValuesNotInResult);
                         foreach ($resultValuesNotFromOriginalValues as $value) {
-                            $this->assertContains(
+                            $this->assertStringContainsString(
                                 $value,
                                 $originalSet,
                                 $this->pbtMessage(

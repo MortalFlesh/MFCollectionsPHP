@@ -9,8 +9,7 @@ parameters:
         SlevomatCodingStandard\Sniffs\Exceptions\ReferenceThrowableOnlySniff.ReferencedGeneralException:
             - 'tests/Exception/*.php'
 
-    exclude_checkers:
-        - 'Symplify\CodingStandard\Sniffs\Naming\InterfaceNameSniff'
+        Symplify\CodingStandard\Sniffs\Naming\InterfaceNameSniff: ~
 
 services:
     PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer:

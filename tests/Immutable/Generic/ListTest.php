@@ -462,6 +462,7 @@ class ListTest extends AbstractTestCase
         $this->assertTrue($this->list->isEmpty());
     }
 
+    /** @group propertyBased */
     public function testShouldSortCollection(): void
     {
         $this
