@@ -2,3 +2,5 @@
 /vendor/
 /code-coverage/
 composer.lock
+
+.phpunit.result.cache
