@@ -20,7 +20,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": "^7.4",
         "ext-mbstring": "*",
         "beberlei/assert": "^2.9.3 || ^3.0",
         "mf/callback-parser": "^2.1",
@@ -34,7 +34,7 @@
         "phpstan/phpstan-beberlei-assert": "^0.10.0",
         "phpstan/phpstan-shim": "^0.10",
         "phpunit/phpunit": "^8.0",
-        "symfony/var-dumper": "^4.1"
+        "symfony/var-dumper": "^5.0"
     },
     "config": {
         "sort-packages": true

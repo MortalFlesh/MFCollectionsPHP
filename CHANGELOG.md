@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Remove `Enhanced` Collections
+- Add tests for PHP 7.4
 
 ## 4.0.0 - 2019-12-02
 - [**BC**] Drop support for PHP 7.1
