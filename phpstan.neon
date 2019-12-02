@@ -2,6 +2,7 @@ includes:
 	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
 
 parameters:
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # types
         - '#.*PHPDoc tag @param has invalid value.*#'

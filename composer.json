@@ -28,7 +28,7 @@
         "mf/type-validator": "^2.4"
     },
     "require-dev": {
-        "giorgiosironi/eris": "^0.10.0",
+        "giorgiosironi/eris": "^0.11.0",
         "lmc/coding-standard": "^1.1",
         "mockery/mockery": "^1.0",
         "php-coveralls/php-coveralls": "^2.1",
