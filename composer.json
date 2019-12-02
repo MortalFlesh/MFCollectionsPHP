@@ -49,13 +49,13 @@
             "@cs",
             "@phpstan"
         ],
-        "cs": "vendor/bin/ecs check -v --ansi -- src/ tests/",
+        "cs": "vendor/bin/ecs check --ansi -- src/ tests/",
         "phpstan": "vendor/bin/phpstan analyze src tests -c phpstan.neon --ansi --level 7",
         "tests": "vendor/bin/phpunit",
         "tests-ci": "php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local",
         "leaks": "vendor/bin/roave-no-leaks",
         "fix": [
-            "vendor/bin/ecs check -v --ansi --clear-cache --fix -- src/ tests/"
+            "vendor/bin/ecs check --ansi --clear-cache --fix -- src/ tests/"
         ]
     }
 }
