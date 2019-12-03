@@ -74,7 +74,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @see IList::fromT()
      * @deprecated
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): IList
     {
         throw new BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use fromT instead.'

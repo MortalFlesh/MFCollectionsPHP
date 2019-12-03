@@ -7,6 +7,7 @@
 - Add tests for PHP 7.4
 - Remove dependency on `MF\CallbackParser`
 - [**BC**] Callbacks can be `callable` only
+- Add covariant/contravariant types for Collections and Interfaces
 
 ## 4.0.0 - 2019-12-02
 - [**BC**] Drop support for PHP 7.1

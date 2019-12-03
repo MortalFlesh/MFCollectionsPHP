@@ -33,7 +33,7 @@ interface IList extends \MF\Collection\IList, ICollection
      * @deprecated
      * @see IList::fromT()
      */
-    public static function from(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false): IList;
 
     /**
      * @deprecated

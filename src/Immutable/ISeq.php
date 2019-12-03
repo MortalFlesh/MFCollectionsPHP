@@ -13,7 +13,7 @@ interface ISeq extends ICollection
     public static function of(...$args): self;
 
     /** @return ISeq */
-    public static function from(array $array, bool $recursive = false): self;
+    public static function from(array $array, bool $recursive = false): ISeq;
 
     /**
      * Seq::create([1,2,3], ($i) => $i * 2)

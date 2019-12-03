@@ -68,7 +68,7 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
      * @see IMap::fromKT()
      * @return IMap
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): IMap
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic Map. Use fromKT instead.'

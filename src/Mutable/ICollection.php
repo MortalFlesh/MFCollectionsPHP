@@ -7,7 +7,7 @@ interface ICollection extends \MF\Collection\ICollection
     /**
      * @return ICollection
      */
-    public static function from(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false): ICollection;
 
     /**
      * @param callable $creator (value:mixed,index:mixed):mixed

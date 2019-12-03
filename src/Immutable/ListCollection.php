@@ -18,7 +18,7 @@ class ListCollection implements IList
         return static::from($values);
     }
 
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): IList
     {
         $list = new static();
 

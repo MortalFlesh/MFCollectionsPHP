@@ -14,7 +14,7 @@ class Map implements IMap
     /**
      * @return static
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function from(array $array, bool $recursive = false): IMap
     {
         $map = new static();
 

@@ -13,7 +13,7 @@ interface IList extends \MF\Collection\IList, ICollection
     /**
      * @return IList
      */
-    public static function from(array $array, bool $recursive = false);
+    public static function from(array $array, bool $recursive = false): IList;
 
     /**
      * @param callable $creator (value:mixed,index:int):mixed
