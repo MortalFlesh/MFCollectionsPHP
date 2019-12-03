@@ -468,7 +468,7 @@ class Seq implements ISeq
     }
 
     /** @deprecated Seq does not have a mutable variant */
-    public function asMutable()
+    public function asMutable(): ISeq
     {
         throw new BadMethodCallException('Seq does not have mutable variant.');
     }

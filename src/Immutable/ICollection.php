@@ -4,10 +4,7 @@ namespace MF\Collection\Immutable;
 
 interface ICollection extends \MF\Collection\ICollection
 {
-    /**
-     * @return ICollection
-     */
-    public static function from(array $array, bool $recursive = false): ICollection;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @param callable $creator (value:mixed,index:mixed):mixed

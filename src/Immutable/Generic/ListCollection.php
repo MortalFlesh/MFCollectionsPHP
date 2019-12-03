@@ -70,7 +70,6 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     }
 
     /**
-     * @return IList
      * @see IList::fromT()
      * @deprecated
      */

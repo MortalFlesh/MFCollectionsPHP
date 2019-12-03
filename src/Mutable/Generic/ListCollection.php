@@ -76,7 +76,6 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return IList
      * @see IList::fromT()
      * @deprecated
      */

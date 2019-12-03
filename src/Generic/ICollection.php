@@ -11,7 +11,7 @@ interface ICollection extends \MF\Collection\ICollection
      * @see IList::fromT()
      * @see IMap::fromKT()
      */
-    public static function from(array $array, bool $recursive = false): ICollection;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @deprecated

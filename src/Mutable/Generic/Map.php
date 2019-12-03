@@ -66,7 +66,6 @@ class Map extends \MF\Collection\Mutable\Map implements IMap
     /**
      * @deprecated
      * @see IMap::fromKT()
-     * @return IMap
      */
     public static function from(array $array, bool $recursive = false): IMap
     {

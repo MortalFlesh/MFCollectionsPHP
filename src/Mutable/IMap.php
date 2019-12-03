@@ -4,10 +4,7 @@ namespace MF\Collection\Mutable;
 
 interface IMap extends \MF\Collection\IMap, ICollection
 {
-    /**
-     * @return IMap
-     */
-    public static function from(array $array, bool $recursive = false): IMap;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @param callable $creator (value:mixed,key:mixed):mixed

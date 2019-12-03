@@ -587,7 +587,7 @@ class ListTest extends AbstractTestCase
 
         $this->assertLessThan(1.5, $mappingTime);
         $this->assertLessThan(
-            $this->forPHP(['72' => $loopTime * 1.6, '73' => $loopTime * 1.1, '74' => $loopTime * 1.1]),
+            $this->forPHP(['72' => $loopTime * 1.6, '73' => $loopTime * 1.1, '74' => $loopTime * 1.2]),
             $loopWithMappingTime
         );   // 50% is still fair enough
         $this->assertCount(10001, $bigList);

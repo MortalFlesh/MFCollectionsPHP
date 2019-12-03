@@ -7,7 +7,7 @@ interface ICollection extends IEnumerable
     const MAP = 'map';
     const FILTER = 'filter';
 
-    public static function from(array $array, bool $recursive = false): ICollection;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @param callable $creator (value:mixed,index:mixed):mixed

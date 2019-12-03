@@ -20,7 +20,7 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @deprecated
      * @see IMap::fromKT()
      */
-    public static function from(array $array, bool $recursive = false): IMap;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @deprecated

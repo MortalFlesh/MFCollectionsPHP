@@ -10,10 +10,7 @@ interface IList extends ICollection
      */
     public static function of(...$values);
 
-    /**
-     * @return IList
-     */
-    public static function from(array $array, bool $recursive = false): IList;
+    public static function from(array $array, bool $recursive = false): self;
 
     /**
      * @param callable $creator (value:mixed,index:int):mixed
