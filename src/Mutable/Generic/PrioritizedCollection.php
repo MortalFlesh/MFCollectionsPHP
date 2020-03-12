@@ -4,10 +4,11 @@ namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\IEnumerable;
-use MF\Collection\Immutable\ITuple;
-use MF\Collection\Immutable\Tuple;
 use MF\Validator\TypeValidator;
 
+/**
+ * @phpstan-template T
+ */
 class PrioritizedCollection implements IEnumerable
 {
     private const ALLOWED_TYPES = [
@@ -25,47 +26,56 @@ class PrioritizedCollection implements IEnumerable
 
     /** @var TypeValidator */
     private $typeValidator;
-    /** @var ITuple[] (<TValue>, priority) */
+    /**
+     * @phpstan-var array<int, T>
+     * @var array
+     */
     private $items;
+    /** @var array<int, int> */
+    private $priorities;
 
-    public function __construct(string $TValue)
+    public function __construct(string $T)
     {
         $this->typeValidator = new TypeValidator(
             TypeValidator::TYPE_INT,
-            $TValue,
+            $T,
             [TypeValidator::TYPE_INT],
             self::ALLOWED_TYPES,
             InvalidArgumentException::class
         );
         $this->items = [];
+        $this->priorities = [];
     }
 
-    /** @param <TValue> $item */
+    /**
+     * @phpstan-param T $item
+     */
     public function add($item, int $priority): void
     {
         $this->typeValidator->assertValueType($item);
-        $this->items[] = Tuple::of($item, $priority);
+        $this->items[] = $item;
+        $this->priorities[] = $priority;
     }
 
-    /** @return <TValue>[] */
+    /** @phpstan-return iterable<T> */
     public function getIterator(): iterable
     {
         yield from $this->getItemsByPriority();
     }
 
-    /** @return <TValue>[] */
+    /** @phpstan-return iterable<T> */
     private function getItemsByPriority(): iterable
     {
-        $items = $this->items;
+        $priorities = $this->priorities;
         usort(
-            $items,
-            function (Tuple $a, Tuple $b): int {
-                return $b->second() <=> $a->second();
+            $priorities,
+            function (int $a, int $b): int {
+                return $b <=> $a;
             }
         );
 
-        foreach ($items as [$item]) {
-            yield $item;
+        foreach (array_keys($priorities) as $index) {
+            yield $this->items[$index];
         }
     }
 

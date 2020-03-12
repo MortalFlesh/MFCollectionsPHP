@@ -1,5 +1,5 @@
 parameters:
-    reportUnmatchedIgnoredErrors: false
+    #reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         # types
         - '#.*PHPDoc tag @param has invalid value.*#'

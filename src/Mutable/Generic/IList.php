@@ -2,32 +2,36 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+/**
+ * @template U
+ * @template TValue
+ */
 interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\IList
 {
     /**
      * @param <TValue> $values
-     * @return IList
-     */
-    public static function ofT(string $TValue, ...$values);
-
-    /**
-     * @param array $array <TValue>
      * @return IList<TValue>
      */
-    public static function fromT(string $TValue, array $array);
+    public static function ofT(string $TValue, ...$values): self;
 
     /**
-     * @param iterable $source <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
+     * @param array<TValue> $array
      * @return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, callable $creator);
+    public static function fromT(string $TValue, array $array): self;
+
+    /**
+     * @param iterable<U> $source
+     * @param callable(U, int): TValue $creator
+     * @return IList<TValue>
+     */
+    public static function createT(string $TValue, iterable $source, callable $creator): self;
 
     /**
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values);
+    public static function of(...$values): self;
 
     /**
      * @deprecated
@@ -39,25 +43,25 @@ interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\ILi
      * @deprecated
      * @see IList::createT()
      */
-    public static function create(iterable $source, callable $creator);
+    public static function create(iterable $source, callable $creator): self;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable(TValue, int): bool $callback
      */
     public function containsBy(callable $callback): bool;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
-     * @return IList<TValue>
+     * @template TMappedValue
+     * @param callable(TValue, int): TMappedValue $callback
+     * @return IList<TMappedValue>
      */
-    public function map(callable $callback, string $TValue = null);
+    public function map(callable $callback, string $TValue = null): self;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable(TValue, int): bool $callback
      * @return IList<TValue>
      */
-    public function filter(callable $callback);
+    public function filter(callable $callback): self;
 
-    /** @return \MF\Collection\Immutable\Generic\IList */
-    public function asImmutable();
+    public function asImmutable(): \MF\Collection\Immutable\Generic\IList;
 }

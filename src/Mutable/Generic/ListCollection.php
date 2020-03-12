@@ -6,6 +6,9 @@ use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
 use MF\Validator\TypeValidator;
 
+/**
+ * @template TValue
+ */
 class ListCollection extends \MF\Collection\Mutable\ListCollection implements IList
 {
     private const ALLOWED_VALUE_TYPES = [
@@ -26,17 +29,17 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
 
     /**
      * @param <TValue> $values
-     * @return static
+     * @return static<TValue>
      */
-    public static function ofT(string $TValue, ...$values)
+    public static function ofT(string $TValue, ...$values): IList
     {
         return static::fromT($TValue, $values);
     }
 
     /**
-     * @return static
+     * @return static<TValue>
      */
-    public static function fromT(string $TValue, array $array)
+    public static function fromT(string $TValue, array $array): IList
     {
         $list = new static($TValue);
 
@@ -48,11 +51,12 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param iterable $source <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
-     * @return IList<TValue>
+     * @template U
+     * @param iterable<TValue> $source
+     * @param callable(U, int): TValue $creator
+     * @return static<TValue>
      */
-    public static function createT(string $TValue, iterable $source, callable $creator)
+    public static function createT(string $TValue, iterable $source, callable $creator): IList
     {
         $list = new static($TValue);
 
@@ -64,11 +68,10 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return IList
      * @see IList::ofT()
      * @deprecated
      */
-    public static function of(...$values)
+    public static function of(...$values): IList
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic List. Use ofT instead.'
@@ -87,11 +90,10 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return IList
      * @deprecated
      * @see IList::createT()
      */
-    public static function create(iterable $source, callable $creator)
+    public static function create(iterable $source, callable $creator): IList
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic List. Use createT instead.'
@@ -165,8 +167,8 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return <TValue>
+     * @param callable(TValue, int): bool $callback
+     * @return <TValue>|null
      */
     public function firstBy($callback)
     {
@@ -185,7 +187,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable(TValue, int): bool $callback
      */
     public function containsBy(callable $callback): bool
     {
@@ -215,7 +217,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @return static|IList
+     * @return static<TValue>
      */
     public function sort(): IList
     {
@@ -227,22 +229,23 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
-     * @return IList
+     * @template TMappedValue
+     * @param callable(TValue, int): TMappedValue $callback
+     * @return static<TMappedValue>
      */
-    public function map(callable $callback, string $TValue = null)
+    public function map(callable $callback, string $TMappedValue = null): IList
     {
         $list = clone $this;
-        $list->modifiers[] = [self::MAP, $callback, $TValue];
+        $list->modifiers[] = [self::MAP, $callback, $TMappedValue];
 
         return $list;
     }
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return IList
+     * @param callable(TValue, int): bool $callback
+     * @return static<TValue>
      */
-    public function filter(callable $callback)
+    public function filter(callable $callback): IList
     {
         $list = clone $this;
         $list->modifiers[] = [self::FILTER, $callback];
@@ -251,9 +254,10 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     }
 
     /**
-     * @param callable $reducer (total:<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @template RValue
+     * @param callable(RValue, TValue, int, IList<TValue>): RValue $reducer
      * @param null|<RValue> $initialValue
-     * @return <RValue>|<TValue>
+     * @return <RValue>
      */
     public function reduce(callable $reducer, $initialValue = null)
     {
@@ -266,10 +270,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
         return $total;
     }
 
-    /**
-     * @return \MF\Collection\Immutable\Generic\IList
-     */
-    public function asImmutable()
+    public function asImmutable(): \MF\Collection\Immutable\Generic\IList
     {
         return \MF\Collection\Immutable\Generic\ListCollection::fromT(
             $this->typeValidator->getValueType(),

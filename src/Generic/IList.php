@@ -2,32 +2,36 @@
 
 namespace MF\Collection\Generic;
 
+/**
+ * @template TValue
+ */
 interface IList extends \MF\Collection\IList, ICollection
 {
     /**
      * @param <TValue> $values
-     * @return IList
-     */
-    public static function ofT(string $TValue, ...$values);
-
-    /**
-     * @param array $array <TValue>
      * @return IList<TValue>
      */
-    public static function fromT(string $TValue, array $array);
+    public static function ofT(string $TValue, ...$values): self;
 
     /**
-     * @param iterable $source <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
+     * @param array<TValue> $array
      * @return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, callable $creator);
+    public static function fromT(string $TValue, array $array): self;
+
+    /**
+     * @template U
+     * @param iterable<U> $source
+     * @param callable(U, int): TValue $creator
+     * @return IList<TValue>
+     */
+    public static function createT(string $TValue, iterable $source, callable $creator): self;
 
     /**
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values);
+    public static function of(...$values): self;
 
     /**
      * @deprecated
@@ -39,40 +43,42 @@ interface IList extends \MF\Collection\IList, ICollection
      * @deprecated
      * @see IList::createT()
      */
-    public static function create(iterable $source, callable $creator);
+    public static function create(iterable $source, callable $creator): self;
 
     /**
-     * @return <TValue>
+     * @return <TValue>|null
      */
     public function first();
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return <TValue>
+     * @param callable(TValue, int): bool $callback
+     * @return <TValue>|null
      */
     public function firstBy($callback);
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable(TValue, int): bool $callback
      */
     public function containsBy(callable $callback): bool;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
-     * @return IList<TValue>
+     * @template TMappedValue
+     * @param callable(TValue, int): TMappedValue $callback
+     * @return IList<TMappedValue>
      */
-    public function map(callable $callback, string $TValue = null);
+    public function map(callable $callback, string $TMappedValue = null): self;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @param callable(TValue, int): bool $callback (value:<TValue>,index:int):bool
      * @return IList<TValue>
      */
-    public function filter(callable $callback);
+    public function filter(callable $callback): self;
 
     /**
-     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:int,list:IList):<RValue>|<TValue>
+     * @template RValue
+     * @param callable(RValue, TValue, int, IList<TValue>): RValue $reducer
      * @param null|<RValue> $initialValue
-     * @return <RValue>|<TValue>
+     * @return <RValue>
      */
     public function reduce(callable $reducer, $initialValue = null);
 }

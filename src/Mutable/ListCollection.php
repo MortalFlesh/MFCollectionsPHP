@@ -9,7 +9,7 @@ class ListCollection implements IList
 {
     /** @var array */
     protected $listArray;
-    /** @var array of type <string, callable> */
+    /** @var array<string, callable> */
     protected $modifiers;
 
     public static function of(...$values)
