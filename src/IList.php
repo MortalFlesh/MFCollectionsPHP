@@ -16,25 +16,31 @@ interface IList extends ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable|string $creator (value:mixed,index:int):mixed
+     * @param callable $creator (value:mixed,index:int):mixed
      * @return IList
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function add($value);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function unshift($value);
 
     /** @return mixed */
     public function first();
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return mixed
      */
-    public function firstBy($callback);
+    public function firstBy(callable $callback);
 
     /** @return mixed */
     public function last();
@@ -42,23 +48,29 @@ interface IList extends ICollection
     /** @return IList */
     public function sort();
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function removeFirst($value);
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @return void
+     */
     public function removeAll($value);
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):mixed
+     * @param callable $callback (value:mixed,index:int):mixed
      * @return IList
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /**
-     * @param callable|string $callback (value:mixed,index:int):bool
+     * @param callable $callback (value:mixed,index:int):bool
      * @return IList
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     public function implode(string $glue): string;
 }

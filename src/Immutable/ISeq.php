@@ -8,6 +8,7 @@ interface ISeq extends ICollection
      * Seq::of(1, 2, 3)
      * Seq::of(...$array, ...$array2)
      *
+     * @param mixed $args
      * @return ISeq
      */
     public static function of(...$args): self;
@@ -20,10 +21,9 @@ interface ISeq extends ICollection
      * Seq::create(range(1, 10), ($i) => $i * 2)
      * Seq::create($list, ($i) => $i * 2)
      *
-     * @param callable|string|null $callable
      * @return ISeq
      */
-    public static function create(iterable $iterable, $callable = null): self;
+    public static function create(iterable $iterable, ?callable $callable = null): self;
 
     /**
      * Alias for empty sequence
@@ -54,15 +54,15 @@ interface ISeq extends ICollection
 
     /**
      * F#: seq { for i in 1 .. 10 do yield i * i }
-     * Seq::forDo('($i) => yield $i * $i', '1 .. 10')
+     * Seq::forDo(fn($i) => yield $i * $i, '1 .. 10')
      * 1, 4, 9, ... 100
      *
      * F#: seq { for i in 1 .. 10 -> i * i }
-     * Seq::forDo('($i) => $i * $i', '1 .. 10')
+     * Seq::forDo(fn($i) => $i * $i, '1 .. 10')
      * 1, 4, 9, ... 100
      *
      * F#: seq { for i in 1 .. 10 do if $i % 2 === 0 then yield i }
-     * Seq::forDo('($i) => if($i % 2 === 0) yield $i', '1 .. 10')
+     * Seq::forDo(fn($i) => if($i % 2 === 0) yield $i, '1 .. 10')
      * 2, 4, 6, 8, 10
      *
      * F#:
@@ -74,10 +74,10 @@ interface ISeq extends ICollection
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
      * @param string|array $range string is for range '1..10'
-     * @param callable|string $callable (int) => mixed
+     * @param callable $callable (int) => mixed
      * @return ISeq
      */
-    public static function forDo($range, $callable): self;
+    public static function forDo($range, callable $callable): self;
 
     /**
      * Seq::init(function() {
@@ -92,17 +92,17 @@ interface ISeq extends ICollection
      *     }
      * })
      *
-     * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
+     * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      * @return ISeq
      */
     public static function init($iterable): self;
 
     /**
-     * @param callable|string $callable (State) => [State, State|null]
-     * @param <State> $initialValue
-     * @return ISeq<State>
+     * @param callable $callable (State) => [State, State|null]
+     * @param mixed $initialValue T: <State>
+     * @return ISeq T: <State>
      */
-    public static function unfold($callable, $initialValue): self;
+    public static function unfold(callable $callable, $initialValue): self;
 
     public function toArray(): array;
 
@@ -120,13 +120,13 @@ interface ISeq extends ICollection
      * Note: Item and Key given to callable will be mapped by given mapping.
      *
      * @example
-     * Seq::range('1..Inf')->takeWhile('($i) => $i < 100') creates [1, 2, 3, ..., 99]
-     * Seq::infinite()->filter('($i) => $i % 2 === 0')->map('($i) => $i * $i')->takeWhile('($i) => $i < 25')->toArray(); creates [4, 16]
+     * Seq::range('1..Inf')->takeWhile(fn($i) => $i < 100) creates [1, 2, 3, ..., 99]
+     * Seq::infinite()->filter(fn($i) => $i % 2 === 0)->map(fn($i) => $i * $i)->takeWhile(fn($i) => $i < 25)->toArray(); creates [4, 16]
      *
-     * @param callable|string $callable (Item, Key) => bool
+     * @param callable $callable (Item, Key) => bool
      * @return ISeq
      */
-    public function takeWhile($callable): self;
+    public function takeWhile(callable $callable): self;
 
     /**
      * Seq takes up to n items from sequence.
@@ -137,17 +137,17 @@ interface ISeq extends ICollection
     public function takeUpTo(int $limit): self;
 
     /**
-     * @param callable|string $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
-    public function reduce($reducer, $initialValue = null);
+    public function reduce(callable $reducer, $initialValue = null);
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      * @return ISeq
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /**
      * @param mixed $value
@@ -155,9 +155,9 @@ interface ISeq extends ICollection
     public function contains($value): bool;
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
     public function isEmpty(): bool;
 
@@ -170,10 +170,10 @@ interface ISeq extends ICollection
     public function count(): int;
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):mixed
+     * @param callable $callback (value:mixed,index:mixed):mixed
      * @return ISeq
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /** @param callable $callback (value:mixed,index:mixed):void */
     public function each(callable $callback): void;
@@ -184,9 +184,9 @@ interface ISeq extends ICollection
      * Note: if mapping is not necessary, you can use just concat instead
      * @see ISeq::concat()
      *
-     * @param callable|string $callback (value:mixed,index:mixed):iterable
+     * @param callable $callback (value:mixed,index:mixed):iterable
      */
-    public function collect($callback): self;
+    public function collect(callable $callback): self;
 
     /**
      * Combines the given iterable-of-iterables as a single concatenated iterable

@@ -9,16 +9,6 @@ class Assertion extends BaseAssertion
 {
     protected static $exceptionClass = InvalidArgumentException::class;
 
-    /**
-     * @param mixed $callback
-     * @param string|callable|null $message
-     * @param string $propertyPath
-     */
-    public static function isCallable($callback, $message = null, string $propertyPath = null): bool
-    {
-        return parent::isCallable($callback, $message ?? 'Callback must be callable but %s given.', $propertyPath);
-    }
-
     /** @param mixed $key */
     public static function isValidKey($key): void
     {

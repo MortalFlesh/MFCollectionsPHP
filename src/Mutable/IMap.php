@@ -10,27 +10,27 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable|string $creator (value:mixed,key:mixed):mixed
+     * @param callable $creator (value:mixed,key:mixed):mixed
      * @return IMap
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):bool
+     * @param callable $callback (key:mixed,value:mixed):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):mixed
+     * @param callable $callback (key:mixed,value:mixed):mixed
      * @return IMap
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /**
-     * @param callable|string $callback (key:mixed,value:mixed):bool
+     * @param callable $callback (key:mixed,value:mixed):bool
      * @return IMap
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /** @return \MF\Collection\Immutable\IMap */
     public function asImmutable();

@@ -4,11 +4,9 @@ namespace MF\Collection\Immutable;
 
 use MF\Collection\Assertion;
 use MF\Collection\Exception\BadMethodCallException;
-use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Exception\OutOfRangeException;
 use MF\Collection\Range;
-use MF\Parser\CallbackParser;
 
 class Seq implements ISeq
 {
@@ -31,27 +29,19 @@ class Seq implements ISeq
      *
      * @var array array<Modifier>
      */
-    protected $modifiers;
+    protected array $modifiers;
 
-    /** @var bool */
-    private $isInfinite = false;
-
-    /** @var CallbackParser */
-    private $callbackParser;
+    private bool $isInfinite = false;
 
     /**
-     * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
+     * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      */
     public function __construct($iterable)
     {
         Assertion::notNull($iterable, 'Iterable source for Seq must not be null.');
 
         $this->modifiers = [];
-        $this->callbackParser = new CallbackParser(InvalidArgumentException::class);
-
-        $this->iterable = is_string($iterable)
-            ? $this->callbackParser->parseArrowFunction($iterable)
-            : $iterable;
+        $this->iterable = $iterable;
     }
 
     /**
@@ -65,15 +55,15 @@ class Seq implements ISeq
 
     /**
      * F#: seq { for i in 1 .. 10 do yield i * i }
-     * Seq::forDo('($i) => yield $i * $i', '1 .. 10')
+     * Seq::forDo(fn($i) => yield $i * $i, '1 .. 10')
      * 1, 4, 9, ... 100
      *
      * F#: seq { for i in 1 .. 10 -> i * i }
-     * Seq::forDo('($i) => $i * $i', '1 .. 10')
+     * Seq::forDo(fn($i) => $i * $i, '1 .. 10')
      * 1, 4, 9, ... 100
      *
      * F#: seq { for i in 1 .. 10 do if $i % 2 === 0 then yield i }
-     * Seq::forDo('($i) => if($i % 2 === 0) yield $i', '1 .. 10')
+     * Seq::forDo(fn($i) => if($i % 2 === 0) yield $i, '1 .. 10')
      * 2, 4, 6, 8, 10
      *
      * F#:
@@ -85,12 +75,11 @@ class Seq implements ISeq
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
      * @param string|array $range string is for range '1..10'
-     * @param callable|string $callable (int) => mixed
+     * @param callable $callable (int) => mixed
      */
-    public static function forDo($range, $callable): ISeq
+    public static function forDo($range, callable $callable): ISeq
     {
         [$start, $end, $step] = Range::parse($range);
-        $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
 
         if ($end === self::INFINITE) {
             $seq = new static(
@@ -126,14 +115,12 @@ class Seq implements ISeq
     }
 
     /**
-     * @param callable|string $callable (State) => [State, State|null]
-     * @param <State> $initialValue
-     * @return ISeq<State>
+     * @param callable $callable (State) => [State, State|null]
+     * @param mixed $initialValue T: <State>
+     * @return ISeq T: <State>
      */
-    public static function unfold($callable, $initialValue): ISeq
+    public static function unfold(callable $callable, $initialValue): ISeq
     {
-        $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
-
         return new static(
             function () use ($callable, $initialValue) {
                 $next = $initialValue;
@@ -180,14 +167,10 @@ class Seq implements ISeq
      * Seq::create([1,2,3], ($i) => $i * 2)
      * Seq::create(range(1, 10), ($i) => $i * 2)
      * Seq::create($list, ($i) => $i * 2)
-     *
-     * @param callable|string|null $callable
      */
-    public static function create(iterable $iterable, $callable = null): ISeq
+    public static function create(iterable $iterable, ?callable $callable = null): ISeq
     {
         if ($callable !== null) {
-            $callable = (new CallbackParser(InvalidArgumentException::class))->parseArrowFunction($callable);
-
             return new static(function () use ($iterable, $callable) {
                 foreach ($iterable as $i) {
                     $item = $callable($i);
@@ -251,7 +234,7 @@ class Seq implements ISeq
      *     }
      * })
      *
-     * @param iterable|callable|string $iterable string is for arrow function; Callable must be () => iterable
+     * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      */
     public static function init($iterable): ISeq
     {
@@ -336,6 +319,11 @@ class Seq implements ISeq
         );
     }
 
+    /**
+     * @param mixed $value
+     * @param mixed $key
+     * @return mixed
+     */
     private function mapValue(callable $modifier, $value, $key)
     {
         $value = $modifier($value, $key);
@@ -359,7 +347,7 @@ class Seq implements ISeq
 
     private function clone(): self
     {
-        return clone($this);
+        return clone ($this);
     }
 
     /**
@@ -378,12 +366,12 @@ class Seq implements ISeq
      * Note: Item and Key given to callable will be mapped by given mapping.
      *
      * @example
-     * Seq::range('1..Inf')->takeWhile('($i) => $i < 100') creates [1, 2, 3, ..., 99]
-     * Seq::infinite()->filter('($i) => $i % 2 === 0')->map('($i) => $i * $i')->takeWhile('($i) => $i < 25')->toArray(); creates [4, 16]
+     * Seq::range('1..Inf')->takeWhile(fn($i) => $i < 100) creates [1, 2, 3, ..., 99]
+     * Seq::infinite()->filter(fn($i) => $i % 2 === 0)->map(fn($i) => $i * $i)->takeWhile(fn($i) => $i < 25)->toArray(); creates [4, 16]
      *
-     * @param callable|string $callable (Item, Key) => bool
+     * @param callable $callable (Item, Key) => bool
      */
-    public function takeWhile($callable): ISeq
+    public function takeWhile(callable $callable): ISeq
     {
         return $this->clone()
             ->addModifier(self::TAKE_WHILE, $callable)
@@ -401,14 +389,13 @@ class Seq implements ISeq
     }
 
     /**
-     * @param callable|string $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
+     * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
      * @param mixed|null $initialValue
      * @return mixed
      */
-    public function reduce($reducer, $initialValue = null)
+    public function reduce(callable $reducer, $initialValue = null)
     {
         $this->assertFinite('reduce');
-        $reducer = $this->callbackParser->parseArrowFunction($reducer);
 
         $total = $initialValue;
         foreach ($this as $i => $value) {
@@ -426,9 +413,9 @@ class Seq implements ISeq
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      */
-    public function filter($callback): ISeq
+    public function filter(callable $callback): ISeq
     {
         return $this->clone()
             ->addModifier(self::FILTER, $callback)
@@ -438,12 +425,7 @@ class Seq implements ISeq
     /** @param mixed $modifier */
     private function addModifier(string $type, $modifier): self
     {
-        $this->modifiers[] = [
-            $type,
-            in_array($type, [self::MAP, self::FILTER, self::TAKE_WHILE], true)
-                ? $this->callbackParser->parseArrowFunction($modifier)
-                : $modifier,
-        ];
+        $this->modifiers[] = [$type, $modifier];
 
         return $this;
     }
@@ -463,12 +445,10 @@ class Seq implements ISeq
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):bool
+     * @param callable $callback (value:mixed,index:mixed):bool
      */
-    public function containsBy($callback): bool
+    public function containsBy(callable $callback): bool
     {
-        $callback = $this->callbackParser->parseArrowFunction($callback);
-
         foreach ($this as $i => $value) {
             if ($callback($value, $i) === true) {
                 return true;
@@ -493,7 +473,7 @@ class Seq implements ISeq
     }
 
     /** @deprecated Seq does not have a mutable variant */
-    public function asMutable(): void
+    public function asMutable(): ICollection
     {
         throw new BadMethodCallException('Seq does not have mutable variant.');
     }
@@ -509,9 +489,9 @@ class Seq implements ISeq
     }
 
     /**
-     * @param callable|string $callback (value:mixed,index:mixed):mixed
+     * @param callable $callback (value:mixed,index:mixed):mixed
      */
-    public function map($callback): ISeq
+    public function map(callable $callback): ISeq
     {
         return $this->clone()
             ->addModifier(self::MAP, $callback);
@@ -525,8 +505,8 @@ class Seq implements ISeq
         }
     }
 
-    /** @param callable|string $callback (value:mixed,index:mixed):iterable */
-    public function collect($callback): ISeq
+    /** @param callable $callback (value:mixed,index:mixed):iterable */
+    public function collect(callable $callback): ISeq
     {
         return $this
             ->map($callback)

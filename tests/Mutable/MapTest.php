@@ -34,7 +34,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
-    public function arrayProvider()
+    public function arrayProvider(): array
     {
         return [
             [
@@ -84,7 +84,7 @@ class MapTest extends AbstractTestCase
         }
     }
 
-    public function recursiveProvider()
+    public function recursiveProvider(): array
     {
         return [
             ['recursive' => false],
@@ -130,7 +130,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $this->map->get($key));
     }
 
-    public function addItemsProvider()
+    public function addItemsProvider(): array
     {
         return [
             [
@@ -400,7 +400,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($expected, $this->map->reduce($reducer));
     }
 
-    public function reduceProvider()
+    public function reduceProvider(): array
     {
         return [
             'total count' => [
@@ -437,7 +437,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($expected, $this->map->reduce($reducer, $initialValue));
     }
 
-    public function reduceInitialProvider()
+    public function reduceInitialProvider(): array
     {
         return [
             'total count' => [
@@ -540,7 +540,7 @@ class MapTest extends AbstractTestCase
         $this->assertCount(10001, $bigMap);
 
         // this test before lazy mapping lasts around 5-6 seconds, and now it is less than 2 seconds
-        if ($totalTime > $this->forPHP(['71' => 2000, '72' => 2600, '73' => 1500])) {
+        if ($totalTime > $this->forPHP(['74' => 1500])) {
             $this->markAsRisky();
         }
     }

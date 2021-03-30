@@ -88,6 +88,7 @@ interface ITuple extends IEnumerable, \ArrayAccess
      *
      * @param mixed $first
      * @param mixed $second
+     * @param mixed $value
      */
     public static function of($first, $second, ...$value): self;
 
@@ -203,6 +204,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
+     *
+     * @param mixed $additional
      */
     public static function merge(ITuple $base, ...$additional): ITuple;
 
@@ -228,13 +231,21 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
      *
+     * @param mixed $additional
      * @throws TupleMatchException
      */
     public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple;
 
-    /** @deprecated Altering existing tuple is not permitted */
+    /**
+     * @deprecated Altering existing tuple is not permitted
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value): void;
 
-    /** @deprecated Altering existing tuple is not permitted */
+    /**
+     * @deprecated Altering existing tuple is not permitted
+     * @param mixed $offset
+     */
     public function offsetUnset($offset): void;
 }

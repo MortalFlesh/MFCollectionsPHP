@@ -5,16 +5,16 @@ namespace MF\Collection\Immutable\Generic;
 interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMap
 {
     /**
-     * @param array $array <TKey, TValue>
-     * @return IMap<TKey, TValue>
+     * @param array $array T: <TKey, TValue>
+     * @return IMap T: <TKey, TValue>
      */
     public static function fromKT(string $TKey, string $TValue, array $array);
 
     /**
-     * @param callable|string $creator (value:mixed,key:TKey):TValue
-     * @return IMap<TKey, TValue>
+     * @param callable $creator (value:mixed,key:TKey):TValue
+     * @return IMap T: <TKey, TValue>
      */
-    public static function createKT(string $TKey, string $TValue, iterable $source, $creator);
+    public static function createKT(string $TKey, string $TValue, iterable $source, callable $creator);
 
     /**
      * @deprecated
@@ -25,24 +25,23 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     /**
      * @deprecated
      * @see IMap::createKT()
-     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /**
-     * @param <TKey> $key
-     * @param <TValue> $value
+     * @param mixed $key T: <TKey>
+     * @param mixed $value T: <TValue>
      * @return IMap
      */
     public function set($key, $value);
 
     /**
-     * @param callable|string $callback (value:TValue,key:TKey):bool
+     * @param callable $callback (value:TValue,key:TKey):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
     /**
-     * @param <TKey> $key
+     * @param mixed $key T: <TKey>
      * @return IMap
      */
     public function remove($key);
@@ -50,24 +49,24 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
     /** @return IMap */
     public function clear();
 
-    /** @return IList<TKey> */
+    /** @return IList T: <TKey> */
     public function keys();
 
-    /** @return IList<TValue> */
+    /** @return IList T: <TValue> */
     public function values();
 
     /**
-     * @param callable|string $callback (key:<TKey>,value:<TValue>):<TValue>
+     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
      * @param string|null $TValue
-     * @return IMap<TKey, TValue>
+     * @return IMap T: <TKey, TValue>
      */
-    public function map($callback, $TValue = null);
+    public function map(callable $callback, $TValue = null);
 
     /**
-     * @param callable|string $callback (value:TValue,key:TKey):bool
-     * @return IMap<TKey, TValue>
+     * @param callable $callback (value:TValue,key:TKey):bool
+     * @return IMap T: <TKey, TValue>
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /** @return \MF\Collection\Mutable\Generic\IMap */
     public function asMutable();

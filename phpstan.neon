@@ -1,16 +1,16 @@
-includes:
-	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
-
 parameters:
-    reportUnmatchedIgnoredErrors: false
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
     ignoreErrors:
+        - '#Result of \|\| is always true.#'
+        - '#Unsafe usage of new static\(\)#'
+
         # types
         - '#.*PHPDoc tag @param has invalid value.*#'
         - '#.*PHPDoc tag @return has invalid value.*#'
-        - '#.*PHPDoc tag @param for parameter \$values with type mixed is not subtype.*#'
-        - '#.*has invalid type .*?[TKey|TValue].*#'
 
         # unit tests
-        - '#.*Eris\\Generator\\.*#'
-        - '#.*Call to an undefined method Eris\\Quantifier\\ForAll::then\(\).*#'
-        - '#.*Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects callable\|iterable\|string, null given.*#'
+        - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>, string given.#'
+        - '#You should use assertCount.* instead of assertSame.*#'
+        - '#Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects \(callable\(\): mixed\)\|iterable, null given#'

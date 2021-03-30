@@ -83,7 +83,7 @@ class MapTest extends AbstractTestCase
         new Map($keyType, $valueType);
     }
 
-    public function invalidTypesProvider()
+    public function invalidTypesProvider(): array
     {
         return [
             [
@@ -130,7 +130,7 @@ class MapTest extends AbstractTestCase
         $this->assertInstanceOf(Map::class, $map);
     }
 
-    public function validTypesProvider()
+    public function validTypesProvider(): array
     {
         return [
             [
@@ -167,7 +167,7 @@ class MapTest extends AbstractTestCase
             }
         );
 
-        $map = $map->map('($k, $e) => $e->getId()', 'int');
+        $map = $map->map(fn ($k, $e) => $e->getId(), 'int');
 
         $this->assertSame([1, 2, 3], $map->toArray());
     }
@@ -208,7 +208,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $this->map->get($key));
     }
 
-    public function addItemsProvider()
+    public function addItemsProvider(): array
     {
         return [
             [
@@ -235,7 +235,7 @@ class MapTest extends AbstractTestCase
         $this->map->set($key, $value);
     }
 
-    public function invalidParamTypesProvider()
+    public function invalidParamTypesProvider(): array
     {
         return [
             [
@@ -288,7 +288,7 @@ class MapTest extends AbstractTestCase
         $this->map->containsKey($key);
     }
 
-    public function invalidKeyTypesProvider()
+    public function invalidKeyTypesProvider(): array
     {
         return [
             ['key' => 1],
@@ -318,8 +318,8 @@ class MapTest extends AbstractTestCase
 
         $this->map->set('key', $valueExists);
 
-        $this->assertTrue($this->map->containsBy('($k, $v) => $v === ' . $valueExists));
-        $this->assertFalse($this->map->containsBy('($k, $v) => $v === ' . $valueDoesNotExist));
+        $this->assertTrue($this->map->containsBy(fn ($k, $v) => $v === $valueExists));
+        $this->assertFalse($this->map->containsBy(fn ($k, $v) => $v === $valueDoesNotExist));
     }
 
     /**
@@ -334,7 +334,7 @@ class MapTest extends AbstractTestCase
         $this->map->contains($value);
     }
 
-    public function invalidValueTypeProvider()
+    public function invalidValueTypeProvider(): array
     {
         return [
             ['value' => ''],
@@ -376,7 +376,7 @@ class MapTest extends AbstractTestCase
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->map('($k, $v) => $v + 1');
+        $newMap = $this->map->map(fn ($k, $v) => $v + 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
@@ -388,7 +388,7 @@ class MapTest extends AbstractTestCase
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map('($k, $v) => $v->getId()', 'int');
+        $newMap = $map->map(fn ($k, $v) => $v->getId(), 'int');
 
         $this->assertNotSame($map, $newMap);
 
@@ -402,7 +402,7 @@ class MapTest extends AbstractTestCase
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map('($k, $v) => $v->getId()', 'int');
+        $newMap = $map->map(fn ($k, $v) => $v->getId(), 'int');
 
         $this->assertNotSame($map, $newMap);
 
@@ -416,7 +416,7 @@ class MapTest extends AbstractTestCase
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->filter('($k, $v) => $v > 1');
+        $newMap = $this->map->filter(fn ($k, $v) => $v > 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 2, 'key3' => 3], $newMap->toArray());
@@ -426,7 +426,7 @@ class MapTest extends AbstractTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $newMap = $this->map->filter('($k, $v) => true');
+        $newMap = $this->map->filter(fn ($k, $v) => true);
 
         $newMap->set(1, '');
     }
@@ -437,8 +437,8 @@ class MapTest extends AbstractTestCase
         $this->map->set('key2', 2);
 
         $newMap = $this->map
-            ->filter('($k, $v) => $v > 1')
-            ->map('($k, $v) => $v * 3');
+            ->filter(fn ($k, $v) => $v > 1)
+            ->map(fn ($k, $v) => $v * 3);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 6], $newMap->toArray());
@@ -470,7 +470,7 @@ class MapTest extends AbstractTestCase
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $this->assertEquals(6, $this->map->reduce('($t, $c) => $t + $c'));
+        $this->assertEquals(6, $this->map->reduce(fn ($t, $c) => $t + $c));
     }
 
     public function testShouldGetMutableGenericMapAsImmutableGenericMap(): void
@@ -492,7 +492,7 @@ class MapTest extends AbstractTestCase
         $map->set('two', 2);
         $map->set('three', 3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce('($t, $v) => $t + $v', 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce(fn ($t, $v) => $t + $v, 10));
     }
 
     public function testShouldReduceListWithInitialValueToOtherType(): void
@@ -502,7 +502,7 @@ class MapTest extends AbstractTestCase
         $map->set('two', 2);
         $map->set('three', 3);
 
-        $this->assertEquals('123', $map->reduce('($t, $v) => $t . $v', ''));
+        $this->assertEquals('123', $map->reduce(fn ($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void
