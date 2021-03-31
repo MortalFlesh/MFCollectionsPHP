@@ -7,8 +7,7 @@ use Assert\AssertionFailedException;
 class InvalidArgumentException extends \InvalidArgumentException implements CollectionExceptionInterface, AssertionFailedException
 {
     private ?string $propertyPath;
-    /** @var mixed */
-    private $value;
+    private mixed $value;
     private array $constraints;
 
     public static function forFailedAssertion(AssertionFailedException $e): self
@@ -23,14 +22,11 @@ class InvalidArgumentException extends \InvalidArgumentException implements Coll
         );
     }
 
-    /**
-     * @param mixed $value
-     */
     public function __construct(
         string $message,
         int $code = null,
         ?string $propertyPath = null,
-        $value = null,
+        mixed $value = null,
         array $constraints = null,
         \Throwable $previous = null
     ) {
@@ -45,8 +41,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Coll
         return $this->propertyPath;
     }
 
-    /** @return mixed */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }

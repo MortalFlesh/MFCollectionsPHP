@@ -61,7 +61,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @see IList::ofT()
      * @deprecated
      */
-    public static function of(...$values)
+    public static function of(mixed ...$values)
     {
         throw new BadMethodCallException(
             'This method should not be used with Immutable Generic List. Use ofT instead.'
@@ -140,7 +140,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param mixed $value T: <TValue>
      * @return static
      */
-    public function add($value)
+    public function add(mixed $value)
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -164,7 +164,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param callable $callback (value:<TValue>,index:int):bool
      * @return mixed T: <TValue>
      */
-    public function firstBy(callable $callback)
+    public function firstBy(callable $callback): mixed
     {
         return parent::firstBy($callback);
     }
@@ -172,7 +172,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
     /**
      * @param mixed $value T: <TValue>
      */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -192,7 +192,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param mixed $value T: <TValue>
      * @return IList
      */
-    public function removeFirst($value)
+    public function removeFirst(mixed $value)
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -218,7 +218,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param mixed $value T: <TValue>
      * @return static
      */
-    public function removeAll($value)
+    public function removeAll(mixed $value)
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -267,7 +267,7 @@ class ListCollection extends \MF\Collection\Immutable\ListCollection implements 
      * @param null|mixed $initialValue null|<RValue>
      * @return mixed <RValue>|<TValue>
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         return parent::reduce($reducer, $initialValue);
     }

@@ -82,12 +82,8 @@ class PrioritizedCollectionTest extends AbstractTestCase
         $this->assertCount(2, $prioritizedCollection);
     }
 
-    /**
-     * @param mixed $item
-     *
-     * @dataProvider provideInvalidItems
-     */
-    public function testShouldNotAddValuesOfDifferentType(string $type, $item, string $expectedMessage): void
+    /** @dataProvider provideInvalidItems */
+    public function testShouldNotAddValuesOfDifferentType(string $type, mixed $item, string $expectedMessage): void
     {
         $prioritizedCollection = new PrioritizedCollection($type);
 

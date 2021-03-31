@@ -5,10 +5,9 @@ namespace MF\Collection\Mutable;
 interface IList extends \MF\Collection\IList, ICollection
 {
     /**
-     * @param mixed $values
      * @return IList
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @return IList
@@ -21,11 +20,9 @@ interface IList extends \MF\Collection\IList, ICollection
      */
     public static function create(iterable $source, callable $creator);
 
-    /** @return mixed */
-    public function shift();
+    public function shift(): mixed;
 
-    /** @return mixed */
-    public function pop();
+    public function pop(): mixed;
 
     /**
      * @param callable $callback (value:mixed,index:mixed):mixed

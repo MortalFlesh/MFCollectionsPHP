@@ -5,10 +5,9 @@ namespace MF\Collection;
 interface IList extends ICollection
 {
     /**
-     * @param mixed $values
      * @return IList
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @return IList
@@ -22,43 +21,36 @@ interface IList extends ICollection
     public static function create(iterable $source, callable $creator);
 
     /**
-     * @param mixed $value
      * @return void
      */
-    public function add($value);
+    public function add(mixed $value);
 
     /**
-     * @param mixed $value
      * @return void
      */
-    public function unshift($value);
+    public function unshift(mixed $value);
 
-    /** @return mixed */
-    public function first();
+    public function first(): mixed;
 
     /**
      * @param callable $callback (value:mixed,index:int):bool
-     * @return mixed
      */
-    public function firstBy(callable $callback);
+    public function firstBy(callable $callback): mixed;
 
-    /** @return mixed */
-    public function last();
+    public function last(): mixed;
 
     /** @return IList */
     public function sort();
 
     /**
-     * @param mixed $value
      * @return void
      */
-    public function removeFirst($value);
+    public function removeFirst(mixed $value);
 
     /**
-     * @param mixed $value
      * @return void
      */
-    public function removeAll($value);
+    public function removeAll(mixed $value);
 
     /**
      * @param callable $callback (value:mixed,index:int):mixed

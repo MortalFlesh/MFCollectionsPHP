@@ -91,9 +91,7 @@ class Map implements IMap
         yield from $this->mapArray;
     }
 
-    /**
-     * @param mixed $offset
-     */
+    /** @param mixed $offset */
     public function offsetExists($offset): bool
     {
         $this->applyModifiers();
@@ -101,20 +99,14 @@ class Map implements IMap
         return $this->containsKey($offset);
     }
 
-    /**
-     * @param mixed $key
-     */
-    public function containsKey($key): bool
+    public function containsKey(mixed $key): bool
     {
         $this->applyModifiers();
 
         return array_key_exists($key, $this->mapArray);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         return $this->find($value) !== false;
     }
@@ -133,11 +125,7 @@ class Map implements IMap
         return false;
     }
 
-    /**
-     * @param mixed $value
-     * @return mixed|false
-     */
-    public function find($value)
+    public function find(mixed $value): mixed
     {
         $this->applyModifiers();
 
@@ -153,11 +141,7 @@ class Map implements IMap
         return $this->get($offset);
     }
 
-    /**
-     * @param mixed $key
-     * @return mixed
-     */
-    public function get($key)
+    public function get(mixed $key): mixed
     {
         $this->applyModifiers();
 
@@ -173,11 +157,7 @@ class Map implements IMap
         $this->set($offset, $value);
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function set($key, $value): void
+    public function set(mixed $key, mixed $value): void
     {
         Assertion::isValidKey($key);
 
@@ -186,18 +166,13 @@ class Map implements IMap
         $this->mapArray[$key] = $value;
     }
 
-    /**
-     * @param mixed $offset
-     */
+    /** @param mixed $offset */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }
 
-    /**
-     * @param mixed $key
-     */
-    public function remove($key): void
+    public function remove(mixed $key): void
     {
         $this->applyModifiers();
 
@@ -267,10 +242,8 @@ class Map implements IMap
 
     /**
      * @param callable $reducer (value:mixed,index:int):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $total = $initialValue;
 

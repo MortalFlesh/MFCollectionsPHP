@@ -33,7 +33,7 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
      * @param mixed $value T: <TValue>
      * @return IMap
      */
-    public function set($key, $value);
+    public function set(mixed $key, mixed $value);
 
     /**
      * @param callable $callback (value:TValue,key:TKey):bool
@@ -44,7 +44,7 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
      * @param mixed $key T: <TKey>
      * @return IMap
      */
-    public function remove($key);
+    public function remove(mixed $key);
 
     /** @return IMap */
     public function clear();
@@ -57,10 +57,9 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Immutable\IMa
 
     /**
      * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
-     * @param string|null $TValue
      * @return IMap T: <TKey, TValue>
      */
-    public function map(callable $callback, $TValue = null);
+    public function map(callable $callback, ?string $TValue = null);
 
     /**
      * @param callable $callback (value:TValue,key:TKey):bool

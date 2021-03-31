@@ -2,15 +2,15 @@ parameters:
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
 
+    # reportUnmatchedIgnoredErrors: false
+
     ignoreErrors:
         - '#Result of \|\| is always true.#'
         - '#Unsafe usage of new static\(\)#'
 
         # types
-        - '#.*PHPDoc tag @param has invalid value.*#'
         - '#.*PHPDoc tag @return has invalid value.*#'
 
         # unit tests
         - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>, string given.#'
         - '#You should use assertCount.* instead of assertSame.*#'
-        - '#Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects \(callable\(\): mixed\)\|iterable, null given#'

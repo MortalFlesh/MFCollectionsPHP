@@ -41,10 +41,9 @@ interface IMap extends \MF\Collection\IMap, ICollection
 
     /**
      * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
-     * @param string|null $TValue
      * @return IMap T: <TKey, TValue>
      */
-    public function map(callable $callback, $TValue = null);
+    public function map(callable $callback, ?string $TValue = null);
 
     /**
      * @param callable $callback (value:TValue,key:TKey):bool
@@ -57,5 +56,5 @@ interface IMap extends \MF\Collection\IMap, ICollection
      * @param null|mixed $initialValue null|<RValue>
      * @return mixed <RValue>|<TValue>
      */
-    public function reduce(callable $reducer, $initialValue = null);
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 }

@@ -8,7 +8,7 @@ interface IList extends \MF\Collection\IList, ICollection
      * @param mixed $values T: <TValue>
      * @return IList
      */
-    public static function ofT(string $TValue, ...$values);
+    public static function ofT(string $TValue, mixed ...$values);
 
     /**
      * @param array $array T: <TValue>
@@ -27,7 +27,7 @@ interface IList extends \MF\Collection\IList, ICollection
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @deprecated
@@ -44,13 +44,13 @@ interface IList extends \MF\Collection\IList, ICollection
     /**
      * @return mixed T: <TValue>
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * @param callable $callback (value:<TValue>,index:int):bool
      * @return mixed T: <TValue>
      */
-    public function firstBy(callable $callback);
+    public function firstBy(callable $callback): mixed;
 
     /**
      * @param callable $callback (value:<TValue>,index:int):bool
@@ -74,5 +74,5 @@ interface IList extends \MF\Collection\IList, ICollection
      * @param null|mixed $initialValue null|<RValue>
      * @return mixed <RValue>|<TValue>
      */
-    public function reduce(callable $reducer, $initialValue = null);
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 }

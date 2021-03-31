@@ -70,13 +70,8 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
-    /**
-     * @param string $keyType
-     * @param string $valueType
-     *
-     * @dataProvider invalidTypesProvider
-     */
-    public function testShouldNotCreateGenericMap($keyType, $valueType): void
+    /** @dataProvider invalidTypesProvider */
+    public function testShouldNotCreateGenericMap(string $keyType, string $valueType): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -117,13 +112,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param string $keyType
-     * @param string $valueType
-     *
-     * @dataProvider validTypesProvider
-     */
-    public function testShouldCreateGenericMap($keyType, $valueType): void
+    /** @dataProvider validTypesProvider */
+    public function testShouldCreateGenericMap(string $keyType, string $valueType): void
     {
         $map = new Map($keyType, $valueType);
 
@@ -182,26 +172,16 @@ class MapTest extends AbstractTestCase
         });
     }
 
-    /**
-     * @param string $key
-     * @param int $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMapArrayWay($key, $value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMapArrayWay(string $key, int $value): void
     {
         $this->map[$key] = $value;
 
         $this->assertEquals($value, $this->map[$key]);
     }
 
-    /**
-     * @param string $key
-     * @param int $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMap($key, $value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMap(string $key, int $value): void
     {
         $this->map->set($key, $value);
 
@@ -222,13 +202,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @dataProvider invalidParamTypesProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet($key, $value): void
+    /** @dataProvider invalidParamTypesProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet(mixed $key, mixed $value): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -276,12 +251,8 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsKey($keyDoesNotExist));
     }
 
-    /**
-     * @param string $key
-     *
-     * @dataProvider invalidKeyTypesProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType($key): void
+    /** @dataProvider invalidKeyTypesProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType(mixed $key): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -322,12 +293,8 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsBy(fn ($k, $v) => $v === $valueDoesNotExist));
     }
 
-    /**
-     * @param int $value
-     *
-     * @dataProvider invalidValueTypeProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType($value): void
+    /** @dataProvider invalidValueTypeProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType(mixed $value): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -358,12 +325,8 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsKey($key));
     }
 
-    /**
-     * @param string $key
-     *
-     * @dataProvider invalidKeyTypesProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType($key): void
+    /** @dataProvider invalidKeyTypesProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType(mixed $key): void
     {
         $this->expectException(InvalidArgumentException::class);
 

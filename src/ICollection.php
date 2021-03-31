@@ -18,10 +18,7 @@ interface ICollection extends IEnumerable
      */
     public static function create(iterable $source, callable $creator);
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool;
+    public function contains(mixed $value): bool;
 
     /**
      * @param callable $callback (value:mixed,index:mixed):bool
@@ -52,8 +49,6 @@ interface ICollection extends IEnumerable
 
     /**
      * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ICollection):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null);
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 }

@@ -34,12 +34,8 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([1, 2, 3, 4, 5, 6], $list->toArray());
     }
 
-    /**
-     * @param bool $recursive
-     *
-     * @dataProvider arrayProvider
-     */
-    public function testShouldCreateListFromArray(array $array, $recursive): void
+    /** @dataProvider arrayProvider */
+    public function testShouldCreateListFromArray(array $array, bool $recursive): void
     {
         $list = ListCollection::from($array, $recursive);
 
@@ -72,12 +68,8 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param bool $recursive
-     *
-     * @dataProvider recursiveProvider
-     */
-    public function testShouldCreateListFromArrayWithSubArray($recursive): void
+    /** @dataProvider recursiveProvider */
+    public function testShouldCreateListFromArrayWithSubArray(bool $recursive): void
     {
         $subArray = ['value'];
 
@@ -115,12 +107,8 @@ class ListTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $list->toArray());
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMap($value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMap(mixed $value): void
     {
         $newList = $this->list->add($value);
 
@@ -403,12 +391,8 @@ class ListTest extends AbstractTestCase
         $this->assertEquals('initialvalue0', $reduced);
     }
 
-    /**
-     * @param mixed $expected
-     *
-     * @dataProvider reduceProvider
-     */
-    public function testShouldReduceList(callable $reducer, array $values, $expected): void
+    /** @dataProvider reduceProvider */
+    public function testShouldReduceList(callable $reducer, array $values, mixed $expected): void
     {
         foreach ($values as $value) {
             $this->list = $this->list->add($value);
@@ -440,17 +424,12 @@ class ListTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param mixed $initialValue
-     * @param mixed $expected
-     *
-     * @dataProvider reduceInitialProvider
-     */
+    /** @dataProvider reduceInitialProvider */
     public function testShouldReduceListWithInitialValue(
         callable $reducer,
         array $values,
-        $initialValue,
-        $expected
+        mixed $initialValue,
+        mixed $expected
     ): void {
         foreach ($values as $value) {
             $this->list = $this->list->add($value);
@@ -586,16 +565,11 @@ class ListTest extends AbstractTestCase
         $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
 
         $this->assertLessThan(1.5, $mappingTime);
-        $this->assertLessThan(
-            $this->forPHP(['74' => $loopTime * 1.5]),
-            $loopWithMappingTime
-        );   // 50% is still fair enough
+        $this->assertLessThan($this->forPHP(['80' => $loopTime * 1.4]), $loopWithMappingTime);
         $this->assertCount(10001, $bigList);
 
         // this test lasts much longer before lazy mapping, now it is faster
-        if ($totalTime > $this->forPHP(['74' => 1800])) {
-            $this->markAsRisky();
-        }
+        $this->assertLessThan($this->forPHP(['80' => 500]), $totalTime);
     }
 
     public function testShouldImplodeItems(): void
