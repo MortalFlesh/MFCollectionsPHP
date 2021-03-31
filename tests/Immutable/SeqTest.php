@@ -3,7 +3,6 @@
 namespace MF\Collection\Immutable;
 
 use MF\Collection\AbstractTestCase;
-use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Exception\OutOfRangeException;
 
@@ -305,11 +304,8 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expectedValues, $values);
     }
 
-    /**
-     * @dataProvider rangeProvider
-     * @param mixed $range
-     */
-    public function testShouldGenerateRange($range, array $expected): void
+    /** @dataProvider rangeProvider */
+    public function testShouldGenerateRange(mixed $range, array $expected): void
     {
         $result = Seq::range($range)->toArray();
 
@@ -658,12 +654,8 @@ class SeqTest extends AbstractTestCase
         $this->assertSame(165, $sumOfSquaredOddNumbersFrom1to10);
     }
 
-    /**
-     * @dataProvider containsProvider
-     * @param mixed $value
-     * @param mixed $expected
-     */
-    public function testShouldContainsValue(ISeq $seq, $value, $expected): void
+    /** @dataProvider containsProvider */
+    public function testShouldContainsValue(ISeq $seq, mixed $value, mixed $expected): void
     {
         $result = $seq->contains($value);
 
@@ -684,12 +676,8 @@ class SeqTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @dataProvider containsProvider
-     * @param mixed $value
-     * @param mixed $expected
-     */
-    public function testShouldContainsValueBy(ISeq $seq, $value, $expected): void
+    /** @dataProvider containsProvider */
+    public function testShouldContainsValueBy(ISeq $seq, mixed $value, mixed $expected): void
     {
         $result = $seq->containsBy($this->findByValue($value));
 
@@ -868,14 +856,6 @@ class SeqTest extends AbstractTestCase
             ->implode(', ');
 
         $this->assertSame($expected, $result);
-    }
-
-    public function testShouldNotCreateSeqFromNull(): void
-    {
-        $this->expectException(CollectionExceptionInterface::class);
-        $this->expectExceptionMessage('Iterable source for Seq must not be null.');
-
-        new Seq(null);
     }
 
     public function testShouldCreateSequenceByArrowFunctionWithGenerator(): void

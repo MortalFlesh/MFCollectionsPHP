@@ -201,11 +201,8 @@ class Tuple implements ITuple
      * @example
      * Tuple::of(1, 2, 3)->toArray() -> [1, 2, 3]
      * Tuple::of(...$array)->toArray() -> $array    // same as Tuple::from()
-     *
-     * @param mixed $first
-     * @param mixed $second
      */
-    public static function of($first, $second, ...$value): ITuple
+    public static function of(mixed $first, mixed $second, mixed ...$value): ITuple
     {
         return new self(array_merge([$first, $second], $value));
     }
@@ -235,17 +232,15 @@ class Tuple implements ITuple
 
     /**
      * @param int $offset
-     * @return bool true on success or false on failure
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         self::assertKey($offset);
 
         return array_key_exists($offset, $this->values);
     }
 
-    /** @param mixed $key */
-    private static function assertKey($key): void
+    private static function assertKey(mixed $key): void
     {
         Assertion::integer($key, 'Tuples can only have integer indexes.');
     }
@@ -351,10 +346,8 @@ class Tuple implements ITuple
      *
      * For third, fourth, ... use destructuring
      * [$_, $_, $third] = $tuple
-     *
-     * @return mixed
      */
-    public function first()
+    public function first(): mixed
     {
         return $this->values[0] ?? null;
     }
@@ -367,10 +360,8 @@ class Tuple implements ITuple
      *
      * For third, fourth, ... use destructuring
      * [$_, $_, $third] = $tuple
-     *
-     * @return mixed
      */
-    public function second()
+    public function second(): mixed
     {
         return $this->values[1] ?? null;
     }
@@ -520,7 +511,7 @@ class Tuple implements ITuple
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
      */
-    public static function merge(ITuple $base, ...$additional): ITuple
+    public static function merge(ITuple $base, mixed ...$additional): ITuple
     {
         return self::from(
             array_merge(
@@ -562,7 +553,7 @@ class Tuple implements ITuple
      *
      * @throws TupleMatchException
      */
-    public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple
+    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple
     {
         /** @var self $mergedTuple */
         $mergedTuple = self::merge($base, ...$additional);
@@ -574,7 +565,11 @@ class Tuple implements ITuple
         return $mergedTuple;
     }
 
-    /** @deprecated Altering existing tuple is not permitted */
+    /**
+     * @deprecated Altering existing tuple is not permitted
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value): void
     {
         $this->forbiddenMethod();
@@ -585,7 +580,10 @@ class Tuple implements ITuple
         throw TupleBadMethodCallException::forAlteringTuple();
     }
 
-    /** @deprecated Altering existing tuple is not permitted */
+    /**
+     * @deprecated Altering existing tuple is not permitted
+     * @param mixed $offset
+     */
     public function offsetUnset($offset): void
     {
         $this->forbiddenMethod();

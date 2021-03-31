@@ -40,7 +40,7 @@ class PrioritizedCollection implements IEnumerable
     }
 
     /** @param mixed $item T: <TValue> */
-    public function add($item, int $priority): void
+    public function add(mixed $item, int $priority): void
     {
         $this->typeValidator->assertValueType($item);
         $this->items[] = Tuple::of($item, $priority);

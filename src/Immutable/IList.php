@@ -5,10 +5,9 @@ namespace MF\Collection\Immutable;
 interface IList extends \MF\Collection\IList, ICollection
 {
     /**
-     * @param mixed $values
      * @return IList
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @return IList
@@ -22,28 +21,24 @@ interface IList extends \MF\Collection\IList, ICollection
     public static function create(iterable $source, callable $creator);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function add($value);
+    public function add(mixed $value);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function unshift($value);
+    public function unshift(mixed $value);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function removeFirst($value);
+    public function removeFirst(mixed $value);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function removeAll($value);
+    public function removeAll(mixed $value);
 
     /** @return IList */
     public function clear();

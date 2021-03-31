@@ -8,7 +8,7 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
      * @param mixed $values T: <TValue>
      * @return IList
      */
-    public static function ofT(string $TValue, ...$values);
+    public static function ofT(string $TValue, mixed ...$values);
 
     /**
      * @param array $array T: <TValue>
@@ -27,7 +27,7 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @deprecated
@@ -42,27 +42,25 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public static function create(iterable $source, callable $creator);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function add($value);
+    public function add(mixed $value);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function unshift($value);
+    public function unshift(mixed $value);
 
     /**
      * @return mixed T: <TValue>
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * @param callable $callback (value:<TValue>,index:int):bool
      * @return mixed T: <TValue>
      */
-    public function firstBy(callable $callback);
+    public function firstBy(callable $callback): mixed;
 
     /**
      * @param callable $callback (value:<TValue>,index:int):bool
@@ -70,16 +68,14 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public function containsBy(callable $callback): bool;
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function removeFirst($value);
+    public function removeFirst(mixed $value);
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function removeAll($value);
+    public function removeAll(mixed $value);
 
     /** @return IList */
     public function clear();

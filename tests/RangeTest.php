@@ -6,12 +6,8 @@ use MF\Collection\Exception\CollectionExceptionInterface;
 
 class RangeTest extends AbstractTestCase
 {
-    /**
-     * @dataProvider provideValidRange
-     *
-     * @param string|array $input
-     */
-    public function testShouldParseRange($input, array $expected): void
+    /** @dataProvider provideValidRange */
+    public function testShouldParseRange(string|array $input, array $expected): void
     {
         $result = Range::parse($input);
 
@@ -36,12 +32,8 @@ class RangeTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideInvalidRange
-     *
-     * @param mixed $invalidInput
-     */
-    public function testShouldNotParseInvalidRange($invalidInput, string $expectedMessage): void
+    /** @dataProvider provideInvalidRange */
+    public function testShouldNotParseInvalidRange(string|array $invalidInput, string $expectedMessage): void
     {
         $this->expectException(CollectionExceptionInterface::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -53,7 +45,6 @@ class RangeTest extends AbstractTestCase
     {
         return [
             // invalidRange, expectedMessage
-            'int' => [1, 'Range can only be set by array or by string.'],
             'empty array' => [[], 'Range must have [start, end] or [start, step, end] items. 0 values given.'],
             'array with only 1 item' => [
                 [42],

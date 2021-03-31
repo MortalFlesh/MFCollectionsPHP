@@ -133,7 +133,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     /**
      * @param mixed $key T: <TKey>
      */
-    public function containsKey($key): bool
+    public function containsKey(mixed $key): bool
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
@@ -144,7 +144,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
     /**
      * @param mixed $value T: <TValue>
      */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -162,9 +162,8 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @param mixed $value T: <TValue>
-     * @return mixed|false
      */
-    public function find($value)
+    public function find(mixed $value): mixed
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -176,7 +175,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param mixed $key T: <TKey>
      * @return mixed T: <TValue>
      */
-    public function get($key)
+    public function get(mixed $key): mixed
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
@@ -189,7 +188,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param mixed $value T: <TValue>
      * @return static
      */
-    public function set($key, $value)
+    public function set(mixed $key, mixed $value)
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
@@ -202,7 +201,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param mixed $key T: <TKey>
      * @return static
      */
-    public function remove($key)
+    public function remove(mixed $key)
     {
         $this->applyModifiers();
         $this->typeValidator->assertKeyType($key);
@@ -212,10 +211,9 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
 
     /**
      * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
-     * @param string|null $TValue
      * @return static
      */
-    public function map(callable $callback, $TValue = null)
+    public function map(callable $callback, ?string $TValue = null)
     {
         $map = clone $this;
         $map->modifiers[] = Tuple::of(self::MAP, $callback, $TValue);
@@ -266,7 +264,7 @@ class Map extends \MF\Collection\Immutable\Map implements IMap
      * @param null|mixed $initialValue null|<RValue>
      * @return mixed <RValue>|<TValue>
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         return parent::reduce($reducer, $initialValue);
     }

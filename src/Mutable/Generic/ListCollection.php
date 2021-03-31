@@ -27,7 +27,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param mixed $values T: <TValue>
      * @return static
      */
-    public static function ofT(string $TValue, ...$values)
+    public static function ofT(string $TValue, mixed ...$values)
     {
         return static::fromT($TValue, $values);
     }
@@ -67,7 +67,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @see IList::ofT()
      * @return IList
      */
-    public static function of(...$values)
+    public static function of(mixed ...$values)
     {
         throw new BadMethodCallException(
             'This method should not be used with Generic List. Use ofT instead.'
@@ -145,7 +145,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param mixed $value T: <TValue>
      */
-    public function add($value): void
+    public function add(mixed $value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -156,7 +156,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param mixed $value T: <TValue>
      */
-    public function unshift($value): void
+    public function unshift(mixed $value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -168,7 +168,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param callable $callback (value:<TValue>,index:int):bool
      * @return mixed T: <TValue>
      */
-    public function firstBy(callable $callback)
+    public function firstBy(callable $callback): mixed
     {
         return parent::firstBy($callback);
     }
@@ -176,7 +176,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param mixed $value T: <TValue>
      */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -195,7 +195,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param mixed $value T: <TValue>
      */
-    public function removeFirst($value): void
+    public function removeFirst(mixed $value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -206,7 +206,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     /**
      * @param mixed $value T: <TValue>
      */
-    public function removeAll($value): void
+    public function removeAll(mixed $value): void
     {
         $this->applyModifiers();
         $this->typeValidator->assertValueType($value);
@@ -255,7 +255,7 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
      * @param null|mixed $initialValue null|<RValue>
      * @return mixed <RValue>|<TValue>
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $total = $initialValue;
 

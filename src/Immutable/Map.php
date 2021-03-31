@@ -92,9 +92,7 @@ class Map implements IMap
         yield from $this->mapArray;
     }
 
-    /**
-     * @param mixed $offset
-     */
+    /** @param mixed $offset */
     public function offsetExists($offset): bool
     {
         $this->applyModifiers();
@@ -102,20 +100,14 @@ class Map implements IMap
         return $this->containsKey($offset);
     }
 
-    /**
-     * @param mixed $key
-     */
-    public function containsKey($key): bool
+    public function containsKey(mixed $key): bool
     {
         $this->applyModifiers();
 
         return array_key_exists($key, $this->mapArray);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         $this->applyModifiers();
 
@@ -136,11 +128,7 @@ class Map implements IMap
         return false;
     }
 
-    /**
-     * @param $value
-     * @return mixed|false
-     */
-    public function find($value)
+    public function find(mixed $value): mixed
     {
         $this->applyModifiers();
 
@@ -158,11 +146,7 @@ class Map implements IMap
         return $this->get($offset);
     }
 
-    /**
-     * @param mixed $key
-     * @return mixed
-     */
-    public function get($key)
+    public function get(mixed $key): mixed
     {
         $this->applyModifiers();
 
@@ -181,11 +165,9 @@ class Map implements IMap
     }
 
     /**
-     * @param mixed $key
-     * @param mixed $value
      * @return static
      */
-    public function set($key, $value)
+    public function set(mixed $key, mixed $value)
     {
         Assertion::isValidKey($key);
 
@@ -196,9 +178,7 @@ class Map implements IMap
         return $map;
     }
 
-    /**
-     * @param mixed $offset
-     */
+    /** @param mixed $offset */
     public function offsetUnset($offset): void
     {
         throw new BadMethodCallException(
@@ -207,10 +187,9 @@ class Map implements IMap
     }
 
     /**
-     * @param mixed $key
      * @return static
      */
-    public function remove($key)
+    public function remove(mixed $key)
     {
         $this->applyModifiers();
         $map = clone $this;
@@ -282,10 +261,8 @@ class Map implements IMap
 
     /**
      * @param callable $reducer (total:mixed,value:mixed,key:mixed,map:Map):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $total = $initialValue;
 

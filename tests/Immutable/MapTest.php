@@ -26,12 +26,8 @@ class MapTest extends AbstractTestCase
         $this->assertInstanceOf(\Countable::class, $this->map);
     }
 
-    /**
-     * @param bool $recursive
-     *
-     * @dataProvider arrayProvider
-     */
-    public function testShouldCreateMapFromArray(array $array, $recursive): void
+    /** @dataProvider arrayProvider */
+    public function testShouldCreateMapFromArray(array $array, bool $recursive): void
     {
         $map = Map::from($array, $recursive);
 
@@ -64,12 +60,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param bool $recursive
-     *
-     * @dataProvider recursiveProvider
-     */
-    public function testShouldCreateMapFromArrayWithSubArray($recursive): void
+    /** @dataProvider recursiveProvider */
+    public function testShouldCreateMapFromArrayWithSubArray(bool $recursive): void
     {
         $key = 'array-key';
         $subArray = ['key' => 'value'];
@@ -116,13 +108,8 @@ class MapTest extends AbstractTestCase
         $this->map['key'] = 'value';
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMap($key, $value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMap(mixed $key, mixed $value): void
     {
         $newMap = $this->map->set($key, $value);
 
@@ -156,12 +143,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param object|array $key
-     *
-     * @dataProvider invalidKeyProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key, string $expectedMessage): void
+    /** @dataProvider invalidKeyProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay(object|array $key, string $expectedMessage): void
     {
         $this->expectException(CollectionExceptionInterface::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -169,12 +152,8 @@ class MapTest extends AbstractTestCase
         $this->map->set($key, 'value');
     }
 
-    /**
-     * @param object|array $key
-     *
-     * @dataProvider invalidKeyProvider
-     */
-    public function testShouldThrowBadMethodCallExceptionOnAddingObject($key): void
+    /** @dataProvider invalidKeyProvider */
+    public function testShouldThrowBadMethodCallExceptionOnAddingObject(object|array $key): void
     {
         $this->expectException(CollectionExceptionInterface::class);
         $this->expectExceptionMessage('Immutable map cannot be used as array to set value. Use set() method instead.');
@@ -388,12 +367,8 @@ class MapTest extends AbstractTestCase
         $this->assertEquals('initialvaluekey', $reduced);
     }
 
-    /**
-     * @param mixed $expected
-     *
-     * @dataProvider reduceProvider
-     */
-    public function testShouldReduceMap(callable $reducer, array $values, $expected): void
+    /** @dataProvider reduceProvider */
+    public function testShouldReduceMap(callable $reducer, array $values, mixed $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map = $this->map->set($key, $value);
@@ -424,13 +399,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param mixed $initialValue
-     * @param mixed $expected
-     *
-     * @dataProvider reduceInitialProvider
-     */
-    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
+    /** @dataProvider reduceInitialProvider */
+    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, mixed $initialValue, mixed $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map = $this->map->set($key, $value);

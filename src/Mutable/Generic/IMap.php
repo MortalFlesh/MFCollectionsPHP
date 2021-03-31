@@ -41,10 +41,9 @@ interface IMap extends \MF\Collection\Generic\IMap, \MF\Collection\Mutable\IMap
 
     /**
      * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
-     * @param string|null $TValue
      * @return IMap T: <TKey, TValue>
      */
-    public function map(callable $callback, $TValue = null);
+    public function map(callable $callback, ?string $TValue = null);
 
     /**
      * @param callable $callback (value:TValue,key:TKey):bool

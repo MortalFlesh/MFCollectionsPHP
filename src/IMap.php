@@ -15,29 +15,16 @@ interface IMap extends ICollection, \ArrayAccess
      */
     public static function create(iterable $source, callable $creator);
 
-    /**
-     * @param mixed $key
-     */
-    public function containsKey($key): bool;
+    public function containsKey(mixed $key): bool;
+
+    public function find(mixed $value): mixed;
+
+    public function get(mixed $key): mixed;
 
     /**
-     * @param mixed $value
-     * @return mixed|false
-     */
-    public function find($value);
-
-    /**
-     * @param mixed $key
-     * @return mixed
-     */
-    public function get($key);
-
-    /**
-     * @param mixed $key
-     * @param mixed $value
      * @return void
      */
-    public function set($key, $value);
+    public function set(mixed $key, mixed $value);
 
     /**
      * @param callable $callback (value:mixed,key:mixed):bool
@@ -45,10 +32,9 @@ interface IMap extends ICollection, \ArrayAccess
     public function containsBy(callable $callback): bool;
 
     /**
-     * @param mixed $key
      * @return void
      */
-    public function remove($key);
+    public function remove(mixed $key);
 
     /** @return IList */
     public function keys();

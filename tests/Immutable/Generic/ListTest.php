@@ -72,12 +72,8 @@ class ListTest extends AbstractTestCase
         ListCollection::ofT('int', 1, 'string', 3);
     }
 
-    /**
-     * @param string $valueType
-     *
-     * @dataProvider validValuesProvider
-     */
-    public function testShouldCreateList($valueType, array $values): void
+    /** @dataProvider validValuesProvider */
+    public function testShouldCreateList(string $valueType, array $values): void
     {
         $list = ListCollection::fromT($valueType, $values);
 
@@ -118,13 +114,8 @@ class ListTest extends AbstractTestCase
         ListCollection::from([]);
     }
 
-    /**
-     * @param string $valueType
-     * @param array $values
-     *
-     * @dataProvider invalidValuesProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList($valueType, $values): void
+    /** @dataProvider invalidValuesProvider */
+    public function testShouldThrowInvalidArgumentExceptionWhenCreatingBadList(string $valueType, array $values): void
     {
         $this->expectException(InvalidArgumentException::class);
 

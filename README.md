@@ -33,7 +33,7 @@ composer require mf/collections-php
 
 
 ## Requirements
-- `PHP ^7.4`
+- `PHP ^8.0`
 
 
 ## Base Interfaces
@@ -71,7 +71,7 @@ A _sequence_ is a logical series of elements all of one type.
 
 ### <a name="tuple-interface"></a>ITuple
 A _tuple_ is a grouping of unnamed but ordered values, possibly of different types.
-- extends `IEnumerable`, `ArrayAccess`
+- extends `IEnumerable`, `ArrayAccess`, `Stringable`
 - [see Immutable tuple](#immutable-tuple)
 
 

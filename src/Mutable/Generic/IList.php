@@ -27,7 +27,7 @@ interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\ILi
      * @deprecated
      * @see IList::ofT()
      */
-    public static function of(...$values);
+    public static function of(mixed ...$values);
 
     /**
      * @deprecated

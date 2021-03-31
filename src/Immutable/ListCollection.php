@@ -11,7 +11,7 @@ class ListCollection implements IList
     /** @var array of type <string, callable> */
     protected array $modifiers;
 
-    public static function of(...$values)
+    public static function of(mixed ...$values)
     {
         return static::from($values);
     }
@@ -96,10 +96,9 @@ class ListCollection implements IList
     }
 
     /**
-     * @param mixed $value
      * @return static
      */
-    public function add($value)
+    public function add(mixed $value)
     {
         $this->applyModifiers();
         $list = clone $this;
@@ -110,10 +109,9 @@ class ListCollection implements IList
     }
 
     /**
-     * @param mixed $value
      * @return static
      */
-    public function unshift($value)
+    public function unshift(mixed $value)
     {
         $this->applyModifiers();
         $list = clone $this;
@@ -123,10 +121,7 @@ class ListCollection implements IList
         return $list;
     }
 
-    /**
-     * @return mixed
-     */
-    public function first()
+    public function first(): mixed
     {
         $this->applyModifiers();
 
@@ -137,9 +132,8 @@ class ListCollection implements IList
 
     /**
      * @param callable $callback (value:mixed,index:int):bool
-     * @return mixed
      */
-    public function firstBy(callable $callback)
+    public function firstBy(callable $callback): mixed
     {
         $this->applyModifiers();
 
@@ -152,10 +146,7 @@ class ListCollection implements IList
         return null;
     }
 
-    /**
-     * @return mixed
-     */
-    public function last()
+    public function last(): mixed
     {
         $this->applyModifiers();
         $list = $this->listArray;
@@ -179,10 +170,7 @@ class ListCollection implements IList
         return count($this->listArray);
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         $this->applyModifiers();
 
@@ -203,11 +191,7 @@ class ListCollection implements IList
         return false;
     }
 
-    /**
-     * @param mixed $value
-     * @return int|false
-     */
-    protected function find($value)
+    protected function find(mixed $value): int|false
     {
         $this->applyModifiers();
 
@@ -220,10 +204,9 @@ class ListCollection implements IList
     }
 
     /**
-     * @param mixed $value
      * @return IList
      */
-    public function removeFirst($value)
+    public function removeFirst(mixed $value)
     {
         $this->applyModifiers();
         $index = $this->find($value);
@@ -244,10 +227,9 @@ class ListCollection implements IList
     }
 
     /**
-     * @param mixed $value
      * @return static
      */
-    public function removeAll($value)
+    public function removeAll(mixed $value)
     {
         $this->applyModifiers();
 
@@ -290,10 +272,8 @@ class ListCollection implements IList
 
     /**
      * @param callable $reducer (total:mixed,value:mixed,index:int,list:IList):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $total = $initialValue;
 

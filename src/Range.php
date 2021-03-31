@@ -6,8 +6,7 @@ class Range
 {
     public const INFINITE = 'Inf';
 
-    /** @param string|array $range */
-    public static function parse($range): array
+    public static function parse(string|array $range): array
     {
         Assertion::true(
             is_string($range) || is_array($range),
@@ -40,11 +39,7 @@ class Range
         ];
     }
 
-    /**
-     * @param float|int|string $start
-     * @return float|int
-     */
-    private static function toNumeric($start)
+    private static function toNumeric(float|int|string $start): float|int
     {
         return is_float($start)
             ? $start

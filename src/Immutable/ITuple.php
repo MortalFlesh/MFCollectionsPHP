@@ -6,7 +6,7 @@ use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
 use MF\Collection\IEnumerable;
 
-interface ITuple extends IEnumerable, \ArrayAccess
+interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 {
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
@@ -85,12 +85,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * @example
      * Tuple::of(1, 2, 3)->toArray() -> [1, 2, 3]
      * Tuple::of(...$array)->toArray() -> $array    // same as Tuple::from()
-     *
-     * @param mixed $first
-     * @param mixed $second
-     * @param mixed $value
      */
-    public static function of($first, $second, ...$value): self;
+    public static function of(mixed $first, mixed $second, mixed ...$value): self;
 
     /**
      * @example
@@ -128,10 +124,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      *
      * For third, fourth, ... use destructuring
      * [, , $third] = $tuple
-     *
-     * @return mixed
      */
-    public function first();
+    public function first(): mixed;
 
     /**
      * Will return second value from tuple
@@ -141,10 +135,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      *
      * For third, fourth, ... use destructuring
      * [, , $third] = $tuple
-     *
-     * @return mixed
      */
-    public function second();
+    public function second(): mixed;
 
     /**
      * Compares values of this Tuple with given Tuple and returns if they are same
@@ -204,10 +196,8 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
      * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
-     *
-     * @param mixed $additional
      */
-    public static function merge(ITuple $base, ...$additional): ITuple;
+    public static function merge(ITuple $base, mixed ...$additional): ITuple;
 
     /**
      * Merge base tuple with additional items and checks whether result matches given types
@@ -231,10 +221,9 @@ interface ITuple extends IEnumerable, \ArrayAccess
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
      *
-     * @param mixed $additional
      * @throws TupleMatchException
      */
-    public static function mergeMatch(array $types, ITuple $base, ...$additional): ITuple;
+    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple;
 
     /**
      * @deprecated Altering existing tuple is not permitted

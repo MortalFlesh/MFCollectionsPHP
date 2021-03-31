@@ -8,10 +8,9 @@ interface ISeq extends ICollection
      * Seq::of(1, 2, 3)
      * Seq::of(...$array, ...$array2)
      *
-     * @param mixed $args
      * @return ISeq
      */
-    public static function of(...$args): self;
+    public static function of(mixed ...$args): self;
 
     /** @return ISeq */
     public static function from(array $array, bool $recursive = false): self;
@@ -39,10 +38,9 @@ interface ISeq extends ICollection
      * Seq::range('1..10')
      * Seq::range('1..10..100')
      *
-     * @param string|array $range
      * @return ISeq
      */
-    public static function range($range): self;
+    public static function range(string|array $range): self;
 
     /**
      * Alias for infinite range 1..Inf
@@ -73,11 +71,10 @@ interface ISeq extends ICollection
      * }
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
-     * @param string|array $range string is for range '1..10'
      * @param callable $callable (int) => mixed
      * @return ISeq
      */
-    public static function forDo($range, callable $callable): self;
+    public static function forDo(string|array $range, callable $callable): self;
 
     /**
      * Seq::init(function() {
@@ -95,14 +92,14 @@ interface ISeq extends ICollection
      * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      * @return ISeq
      */
-    public static function init($iterable): self;
+    public static function init(iterable|callable $iterable): self;
 
     /**
      * @param callable $callable (State) => [State, State|null]
      * @param mixed $initialValue T: <State>
      * @return ISeq T: <State>
      */
-    public static function unfold(callable $callable, $initialValue): self;
+    public static function unfold(callable $callable, mixed $initialValue): self;
 
     public function toArray(): array;
 
@@ -138,10 +135,8 @@ interface ISeq extends ICollection
 
     /**
      * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null);
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 
     /**
      * @param callable $callback (value:mixed,index:mixed):bool
@@ -149,10 +144,7 @@ interface ISeq extends ICollection
      */
     public function filter(callable $callback);
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool;
+    public function contains(mixed $value): bool;
 
     /**
      * @param callable $callback (value:mixed,index:mixed):bool

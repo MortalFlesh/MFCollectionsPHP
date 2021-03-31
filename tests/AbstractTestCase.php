@@ -32,14 +32,12 @@ abstract class AbstractTestCase extends TestCase
         return $time * $timer;
     }
 
-    /** @param mixed $args */
-    protected function ignore(...$args): void
+    protected function ignore(mixed ...$args): void
     {
         // ignore anything
     }
 
-    /** @return mixed */
-    protected function forPHP(array $versionDifferences)
+    protected function forPHP(array $versionDifferences): mixed
     {
         $version = sprintf('%s%s', PHP_MAJOR_VERSION, PHP_MINOR_VERSION);
         $this->assertArrayHasKey($version, $versionDifferences);
@@ -47,16 +45,14 @@ abstract class AbstractTestCase extends TestCase
         return $versionDifferences[$version];
     }
 
-    /** @param mixed $needle */
-    protected function findByKeyOrValue($needle): \Closure
+    protected function findByKeyOrValue(mixed $needle): \Closure
     {
         return function ($key, $value) use ($needle) {
             return $key === $needle || $value === $needle;
         };
     }
 
-    /** @param mixed $needle */
-    protected function findByValue($needle): \Closure
+    protected function findByValue(mixed $needle): \Closure
     {
         return function ($value) use ($needle) {
             return $value === $needle;

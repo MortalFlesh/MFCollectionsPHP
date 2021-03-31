@@ -36,10 +36,8 @@ class Seq implements ISeq
     /**
      * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      */
-    public function __construct($iterable)
+    public function __construct(iterable|callable $iterable)
     {
-        Assertion::notNull($iterable, 'Iterable source for Seq must not be null.');
-
         $this->modifiers = [];
         $this->iterable = $iterable;
     }
@@ -48,7 +46,7 @@ class Seq implements ISeq
      * Seq::of(1, 2, 3)
      * Seq::of(...$array, ...$array2)
      */
-    public static function of(...$args): ISeq
+    public static function of(mixed ...$args): ISeq
     {
         return new static($args);
     }
@@ -74,10 +72,9 @@ class Seq implements ISeq
      * }
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
-     * @param string|array $range string is for range '1..10'
      * @param callable $callable (int) => mixed
      */
-    public static function forDo($range, callable $callable): ISeq
+    public static function forDo(string|array $range, callable $callable): ISeq
     {
         [$start, $end, $step] = Range::parse($range);
 
@@ -119,7 +116,7 @@ class Seq implements ISeq
      * @param mixed $initialValue T: <State>
      * @return ISeq T: <State>
      */
-    public static function unfold(callable $callable, $initialValue): ISeq
+    public static function unfold(callable $callable, mixed $initialValue): ISeq
     {
         return new static(
             function () use ($callable, $initialValue) {
@@ -192,10 +189,8 @@ class Seq implements ISeq
      * Seq::range([1, 10, 100])
      * Seq::range('1..10')
      * Seq::range('1..10..100')
-     *
-     * @param string|array $range
      */
-    public static function range($range): ISeq
+    public static function range(string|array $range): ISeq
     {
         [$start, $end, $step] = Range::parse($range);
 
@@ -236,7 +231,7 @@ class Seq implements ISeq
      *
      * @param iterable|callable $iterable string is for arrow function; Callable must be () => iterable
      */
-    public static function init($iterable): ISeq
+    public static function init(iterable|callable $iterable): ISeq
     {
         return new static($iterable);
     }
@@ -319,12 +314,7 @@ class Seq implements ISeq
         );
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $key
-     * @return mixed
-     */
-    private function mapValue(callable $modifier, $value, $key)
+    private function mapValue(callable $modifier, mixed $value, mixed $key): mixed
     {
         $value = $modifier($value, $key);
         Assertion::notIsInstanceOf($value, \Generator::class, 'Mapping must not generate new values.');
@@ -390,10 +380,8 @@ class Seq implements ISeq
 
     /**
      * @param callable $reducer (total:mixed,value:mixed,index:mixed,collection:ISeq):mixed
-     * @param mixed|null $initialValue
-     * @return mixed
      */
-    public function reduce(callable $reducer, $initialValue = null)
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $this->assertFinite('reduce');
 
@@ -422,18 +410,14 @@ class Seq implements ISeq
             ->setIsInfinite(false);
     }
 
-    /** @param mixed $modifier */
-    private function addModifier(string $type, $modifier): self
+    private function addModifier(string $type, mixed $modifier): self
     {
         $this->modifiers[] = [$type, $modifier];
 
         return $this;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         foreach ($this as $i) {
             if ($i === $value) {

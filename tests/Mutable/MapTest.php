@@ -60,12 +60,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param bool $recursive
-     *
-     * @dataProvider recursiveProvider
-     */
-    public function testShouldCreateMapFromArrayWithSubArray($recursive): void
+    /** @dataProvider recursiveProvider */
+    public function testShouldCreateMapFromArrayWithSubArray(bool $recursive): void
     {
         $key = 'array-key';
         $subArray = ['key' => 'value'];
@@ -104,26 +100,16 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMapArrayWay($key, $value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMapArrayWay(mixed $key, mixed $value): void
     {
         $this->map[$key] = $value;
 
         $this->assertEquals($value, $this->map[$key]);
     }
 
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     *
-     * @dataProvider addItemsProvider
-     */
-    public function testShouldAddItemsToMap($key, $value): void
+    /** @dataProvider addItemsProvider */
+    public function testShouldAddItemsToMap(mixed $key, mixed $value): void
     {
         $this->map->set($key, $value);
 
@@ -156,12 +142,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param object|array $key
-     *
-     * @dataProvider invalidKeyProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay($key, string $expectedMessage): void
+    /** @dataProvider invalidKeyProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObjectArrayWay(object|array $key, string $expectedMessage): void
     {
         $this->expectException(CollectionExceptionInterface::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -169,12 +151,8 @@ class MapTest extends AbstractTestCase
         $this->map->set($key, 'value');
     }
 
-    /**
-     * @param object|array $key
-     *
-     * @dataProvider invalidKeyProvider
-     */
-    public function testShouldThrowInvalidArgumentExceptionOnAddingObject($key, string $expectedMessage): void
+    /** @dataProvider invalidKeyProvider */
+    public function testShouldThrowInvalidArgumentExceptionOnAddingObject(object|array $key, string $expectedMessage): void
     {
         $this->expectException(CollectionExceptionInterface::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -386,12 +364,8 @@ class MapTest extends AbstractTestCase
         $this->assertEquals('initialvaluekey', $reduced);
     }
 
-    /**
-     * @param mixed $expected
-     *
-     * @dataProvider reduceProvider
-     */
-    public function testShouldReduceMap(callable $reducer, array $values, $expected): void
+    /** @dataProvider reduceProvider */
+    public function testShouldReduceMap(callable $reducer, array $values, mixed $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map->set($key, $value);
@@ -422,13 +396,8 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param mixed $initialValue
-     * @param mixed $expected
-     *
-     * @dataProvider reduceInitialProvider
-     */
-    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, $initialValue, $expected): void
+    /** @dataProvider reduceInitialProvider */
+    public function testShouldReduceMapWithInitialValue(callable $reducer, array $values, mixed $initialValue, mixed $expected): void
     {
         foreach ($values as $key => $value) {
             $this->map->set($key, $value);
@@ -536,12 +505,10 @@ class MapTest extends AbstractTestCase
         $totalTime = $creatingCollection + $loopTime + $mappingTime + $loopWithMappingTime;
 
         $this->assertLessThan(1, $mappingTime);
-        $this->assertLessThan($loopTime * 1.6, $loopWithMappingTime);   // 40% is still fair enough
+        $this->assertLessThan($loopTime * 1.4, $loopWithMappingTime);
         $this->assertCount(10001, $bigMap);
 
         // this test before lazy mapping lasts around 5-6 seconds, and now it is less than 2 seconds
-        if ($totalTime > $this->forPHP(['74' => 1500])) {
-            $this->markAsRisky();
-        }
+        $this->assertLessThan($this->forPHP(['80' => 200]), $totalTime);
     }
 }

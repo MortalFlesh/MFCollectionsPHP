@@ -16,17 +16,14 @@ interface IMap extends \MF\Collection\IMap, ICollection
     public static function create(iterable $source, callable $creator);
 
     /**
-     * @param mixed $key
-     * @param mixed $value
      * @return IMap
      */
-    public function set($key, $value);
+    public function set(mixed $key, mixed $value);
 
     /**
-     * @param mixed $key
      * @return IMap
      */
-    public function remove($key);
+    public function remove(mixed $key);
 
     /** @return IMap */
     public function clear();
