@@ -38,7 +38,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
-    public function arrayProvider()
+    public function arrayProvider(): array
     {
         return [
             [
@@ -88,7 +88,7 @@ class MapTest extends AbstractTestCase
         }
     }
 
-    public function recursiveProvider()
+    public function recursiveProvider(): array
     {
         return [
             ['recursive' => false],
@@ -130,7 +130,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $newMap->get($key));
     }
 
-    public function addItemsProvider()
+    public function addItemsProvider(): array
     {
         return [
             [
@@ -182,7 +182,7 @@ class MapTest extends AbstractTestCase
         $this->map[$key] = 'value';
     }
 
-    public function invalidKeyProvider()
+    public function invalidKeyProvider(): array
     {
         return [
             // key, expectedMessage
@@ -402,7 +402,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($expected, $this->map->reduce($reducer));
     }
 
-    public function reduceProvider()
+    public function reduceProvider(): array
     {
         return [
             'total count' => [
@@ -439,7 +439,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($expected, $this->map->reduce($reducer, $initialValue));
     }
 
-    public function reduceInitialProvider()
+    public function reduceInitialProvider(): array
     {
         return [
             'total count' => [

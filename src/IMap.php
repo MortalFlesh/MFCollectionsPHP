@@ -10,10 +10,10 @@ interface IMap extends ICollection, \ArrayAccess
     public static function from(array $array, bool $recursive = false);
 
     /**
-     * @param callable|string $creator (value:mixed,key:mixed):mixed
+     * @param callable $creator (value:mixed,key:mixed):mixed
      * @return IMap
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /**
      * @param mixed $key
@@ -35,15 +35,19 @@ interface IMap extends ICollection, \ArrayAccess
     /**
      * @param mixed $key
      * @param mixed $value
+     * @return void
      */
     public function set($key, $value);
 
     /**
-     * @param callable|string $callback (value:mixed,key:mixed):bool
+     * @param callable $callback (value:mixed,key:mixed):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
-    /** @param mixed $key */
+    /**
+     * @param mixed $key
+     * @return void
+     */
     public function remove($key);
 
     /** @return IList */
@@ -53,14 +57,14 @@ interface IMap extends ICollection, \ArrayAccess
     public function values();
 
     /**
-     * @param callable|string $callback (value:mixed,key:mixed):mixed
+     * @param callable $callback (value:mixed,key:mixed):mixed
      * @return IMap
      */
-    public function map($callback);
+    public function map(callable $callback);
 
     /**
-     * @param callable|string $callback (value:mixed,key:mixed):bool
+     * @param callable $callback (value:mixed,key:mixed):bool
      * @return IMap
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 }

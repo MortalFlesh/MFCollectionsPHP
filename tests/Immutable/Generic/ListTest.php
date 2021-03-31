@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Immutable\Generic;
 
-use Eris\Generator;
 use MF\Collection\AbstractTestCase;
 use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
@@ -85,7 +84,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($values, $list->toArray());
     }
 
-    public function validValuesProvider()
+    public function validValuesProvider(): array
     {
         return [
             [
@@ -132,7 +131,7 @@ class ListTest extends AbstractTestCase
         ListCollection::fromT($valueType, $values);
     }
 
-    public function invalidValuesProvider()
+    public function invalidValuesProvider(): array
     {
         return [
             [
@@ -160,7 +159,7 @@ class ListTest extends AbstractTestCase
             }
         );
 
-        $list = $list->map('($e) => $e->getId()', 'int');
+        $list = $list->map(fn ($e) => $e->getId(), 'int');
 
         $this->assertSame([1, 2, 3], $list->toArray());
     }
@@ -216,7 +215,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldGetFirstValueByArrowFunction(): void
     {
-        $findSecond = '($value) => $value === "second"';
+        $findSecond = fn ($value) => $value === 'second';
 
         $this->assertNull($this->list->firstBy($findSecond));
 
@@ -239,7 +238,7 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains('value'));
 
         $this->list = $this->list->add('value');
-        $this->assertTrue($this->list->containsBy('($v) => $v === "value"'));
+        $this->assertTrue($this->list->containsBy(fn ($v) => $v === 'value'));
     }
 
     public function testShouldRemoveFirstValue(): void
@@ -306,7 +305,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
         $this->list = $this->list->add('key3');
 
-        $newList = $this->list->map('($v, $i) => $v . "_"');
+        $newList = $this->list->map(fn ($v, $i) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_', 'key2_', 'key3_'], $newList->toArray());
@@ -320,7 +319,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
 
         $this->list
-            ->map('($v, $i) => 2', 'string')
+            ->map(fn ($v, $i) => 2, 'string')
             ->toArray();
     }
 
@@ -330,7 +329,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
         $this->list = $this->list->add('key3');
 
-        $newList = $this->list->filter('($v, $i) => strlen($v) > 3');
+        $newList = $this->list->filter(fn ($v, $i) => mb_strlen($v) > 3);
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
@@ -342,8 +341,8 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
 
         $newList = $this->list
-            ->filter('($v, $i) => $v === "key"')
-            ->map('($v, $i) => $v . "_"');
+            ->filter(fn ($v, $i) => $v === 'key')
+            ->map(fn ($v, $i) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_'], $newList->toArray());
@@ -367,7 +366,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
 
-        $this->assertEquals('key|key2|', $this->list->reduce('($t, $c) => $t . $c . "|"'));
+        $this->assertEquals('key|key2|', $this->list->reduce(fn ($t, $c) => $t . $c . '|'));
     }
 
     public function testShouldReduceGenericListOfListCounts(): void
@@ -379,7 +378,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add($list1);
         $list = $list->add($list2);
 
-        $this->assertEquals(5, $list->reduce('($t, $c) => $t + $c->count()'));
+        $this->assertEquals(5, $list->reduce(fn ($t, $c) => $t + $c->count()));
     }
 
     public function testShouldGetMutableGenericListAsImmutableGenericList(): void
@@ -402,9 +401,9 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new SimpleEntity(3));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter('($v, $i) => $v->getId() > 1')
-            ->map('($v, $i) => $v->getId()', 'int')
-            ->reduce('($t, $v) => $t + $v');
+            ->filter(fn ($v, $i) => $v->getId() > 1)
+            ->map(fn ($v, $i) => $v->getId(), 'int')
+            ->reduce(fn ($t, $v) => $t + $v);
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
@@ -417,9 +416,9 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter('($v, $i) => $v->getSimpleEntity()->getId() > 1')
-            ->map('($v, $i) => $v->getSimpleEntity()', SimpleEntity::class)
-            ->reduce('($t, $v) => $t + $v->getId()');
+            ->filter(fn ($v, $i) => $v->getSimpleEntity()->getId() > 1)
+            ->map(fn ($v, $i) => $v->getSimpleEntity(), SimpleEntity::class)
+            ->reduce(fn ($t, $v) => $t + $v->getId());
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
@@ -431,7 +430,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(2);
         $list = $list->add(3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce('($t, $v) => $t + $v', 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce(fn ($t, $v) => $t + $v, 10));
     }
 
     public function testShouldReduceListWithInitialValueToOtherType(): void
@@ -441,7 +440,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(2);
         $list = $list->add(3);
 
-        $this->assertEquals('123', $list->reduce('($t, $v) => $t . $v', ''));
+        $this->assertEquals('123', $list->reduce(fn ($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void
@@ -460,26 +459,6 @@ class ListTest extends AbstractTestCase
 
         $this->list = $this->list->clear();
         $this->assertTrue($this->list->isEmpty());
-    }
-
-    /** @group propertyBased */
-    public function testShouldSortCollection(): void
-    {
-        $this
-            ->forAll(Generator\seq(Generator\nat()))
-            ->then(function (array $array): void {
-                $list = ListCollection::fromT('int', $array);
-                $sorted = $list->sort();
-                $sortedArray = $sorted->toArray();
-
-                $this->assertSameItems(
-                    $list,
-                    $sorted,
-                    $this->pbtMessage($array, $sortedArray, 'does not contains all items')
-                );
-
-                $this->assertSorted($sorted, $this->pbtMessage($array, $sortedArray, 'is not sorted'));
-            });
     }
 
     public function testShouldImplodeItems(): void
@@ -508,5 +487,15 @@ class ListTest extends AbstractTestCase
         }, '  10');
 
         $this->assertSame(11, $result);
+    }
+
+    public function testShouldSortValues(): void
+    {
+        $list = ListCollection::fromT('int', [1, 4, 3, 4, 2, 5, 4]);
+
+        $sortedList = $list->sort();
+
+        $this->assertNotEquals($list, $sortedList);
+        $this->assertEquals([1, 2, 3, 4, 4, 4, 5], $sortedList->toArray());
     }
 }

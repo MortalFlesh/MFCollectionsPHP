@@ -3,7 +3,6 @@
 namespace MF\Collection\Immutable;
 
 use MF\Collection\AbstractTestCase;
-use MF\Collection\Exception\CollectionExceptionInterface;
 use MF\Collection\ICollection;
 
 class ListTest extends AbstractTestCase
@@ -47,7 +46,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($array, $list->toArray());
     }
 
-    public function arrayProvider()
+    public function arrayProvider(): array
     {
         return [
             [
@@ -96,7 +95,7 @@ class ListTest extends AbstractTestCase
         }
     }
 
-    public function recursiveProvider()
+    public function recursiveProvider(): array
     {
         return [
             ['recursive' => false],
@@ -129,7 +128,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(1, $newList->count());
     }
 
-    public function addItemsProvider()
+    public function addItemsProvider(): array
     {
         return [
             ['value' => 'string-value'],
@@ -343,7 +342,7 @@ class ListTest extends AbstractTestCase
                 $this->assertEquals('one', $value);
             } elseif ($i === 1) {
                 $this->assertEquals('two', $value);
-            } elseif ($i === 1) {
+            } elseif ($i === 2) {
                 $this->assertEquals(3, $value);
             }
         });
@@ -418,7 +417,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($expected, $this->list->reduce($reducer));
     }
 
-    public function reduceProvider()
+    public function reduceProvider(): array
     {
         return [
             'total count' => [
@@ -460,7 +459,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($expected, $this->list->reduce($reducer, $initialValue));
     }
 
-    public function reduceInitialProvider()
+    public function reduceInitialProvider(): array
     {
         return [
             'total count' => [
@@ -588,13 +587,13 @@ class ListTest extends AbstractTestCase
 
         $this->assertLessThan(1.5, $mappingTime);
         $this->assertLessThan(
-            $this->forPHP(['71' => $loopTime * 1.5, '72' => $loopTime * 1.6, '73' => $loopTime * 1.1]),
+            $this->forPHP(['74' => $loopTime * 1.5]),
             $loopWithMappingTime
         );   // 50% is still fair enough
         $this->assertCount(10001, $bigList);
 
         // this test lasts much longer before lazy mapping, now it is faster
-        if ($totalTime > $this->forPHP(['71' => 2600, '72' => 2800, '73' => 1800])) {
+        if ($totalTime > $this->forPHP(['74' => 1800])) {
             $this->markAsRisky();
         }
     }
@@ -606,12 +605,5 @@ class ListTest extends AbstractTestCase
         $result = $list->implode(', ');
 
         $this->assertSame('1, 2, 3', $result);
-    }
-
-    public function testShouldNotMapByInvalidCallback(): void
-    {
-        $this->expectException(CollectionExceptionInterface::class);
-
-        $this->list->map('123');
     }
 }

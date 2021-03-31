@@ -57,7 +57,7 @@ class SeqTest extends AbstractTestCase
         );
     }
 
-    public function seqProvider()
+    public function seqProvider(): array
     {
         return [
             // input, expectedKeys, expectedValues
@@ -101,7 +101,7 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldGenerateSeqFor(): void
     {
-        $result = Seq::forDo('0..10', '() => yield 1')->take(5)->toArray();
+        $result = Seq::forDo('0..10', fn () => yield 1)->take(5)->toArray();
 
         $this->assertSame([1, 1, 1, 1, 1], $result);
     }
@@ -230,9 +230,9 @@ class SeqTest extends AbstractTestCase
     public function testShouldSquareInfiniteWhile(): void
     {
         $result = Seq::infinite()
-            ->filter('($i) => $i % 2 === 0')
-            ->map('($i) => $i * $i')
-            ->takeWhile('($i) => $i < 25')
+            ->filter(fn ($i) => $i % 2 === 0)
+            ->map(fn ($i) => $i * $i)
+            ->takeWhile(fn ($i) => $i < 25)
             ->toArray();
 
         $this->assertSame([4, 16], $result);
@@ -241,12 +241,12 @@ class SeqTest extends AbstractTestCase
     public function testShouldSquareInfiniteWhileAndThenMapIt(): void
     {
         $result = Seq::infinite()
-            ->filter('($i) => $i % 2 === 0')// 2, 4, 6, ... Inf
-            ->map('($i) => $i * $i')// 4, 16, 36 ... Inf
-            ->takeWhile('($i) => $i < 25')// 4, 16
-            ->map('($i) => sqrt($i)')// 2.0, 4.0
-            ->map('($i) => (int) $i')// 2, 4
-            ->filter('($i) => $i > 2')// 4
+            ->filter(fn ($i) => $i % 2 === 0)// 2, 4, 6, ... Inf
+            ->map(fn ($i) => $i * $i)// 4, 16, 36 ... Inf
+            ->takeWhile(fn ($i) => $i < 25)// 4, 16
+            ->map(fn ($i) => sqrt($i))// 2.0, 4.0
+            ->map(fn ($i) => (int) $i)// 2, 4
+            ->filter(fn ($i) => $i > 2)// 4
             ->toArray();
 
         $this->assertSame([4], $result);
@@ -305,7 +305,10 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expectedValues, $values);
     }
 
-    /** @dataProvider rangeProvider */
+    /**
+     * @dataProvider rangeProvider
+     * @param mixed $range
+     */
     public function testShouldGenerateRange($range, array $expected): void
     {
         $result = Seq::range($range)->toArray();
@@ -409,10 +412,10 @@ class SeqTest extends AbstractTestCase
     {
         $result = Seq::range('1..100')
             ->take(10)
-            ->filter('($i) => $i % 2 === 0')// 2, 4, 6, 8, 10
-            ->map('($i) => $i * $i')// 4, 16, 36, 64, 100
-            ->map('($i) => $i . "_item"')// '4_item', '16_item', '36_item', '64_item', '100_item'
-            ->filter('($i) => $i[0] !== "1"')// '4_item', '36_item', '64_item'
+            ->filter(fn ($i) => $i % 2 === 0)// 2, 4, 6, 8, 10
+            ->map(fn ($i) => $i * $i)// 4, 16, 36, 64, 100
+            ->map(fn ($i) => $i . '_item')// '4_item', '16_item', '36_item', '64_item', '100_item'
+            ->filter(fn ($i) => $i[0] !== '1')// '4_item', '36_item', '64_item'
             ->take(2)// '4_item', '36_item'
             ->toArray();
 
@@ -426,7 +429,7 @@ class SeqTest extends AbstractTestCase
             yield 2;
             yield 3;
         })
-            ->map('($i) => "item_" . $i')
+            ->map(fn ($i) => 'item_' . $i)
             ->take(2)
             ->toArray();
 
@@ -510,7 +513,7 @@ class SeqTest extends AbstractTestCase
     public function testShouldGenerateInfiniteRangeByStringDefinitionUntilLimit(): void
     {
         $result = Seq::range('1..Inf')
-            ->takeWhile('($i) => $i < 100')
+            ->takeWhile(fn ($i) => $i < 100)
             ->toArray();
 
         $this->assertCount(99, $result);
@@ -539,7 +542,7 @@ class SeqTest extends AbstractTestCase
             'empty for-do' => [Seq::create([]), true],
             'empty from' => [Seq::from([]), true],
             'not empty infinite' => [Seq::infinite(), false],
-            'not empty init' => [Seq::init('() => yield 1'), false],
+            'not empty init' => [Seq::init(fn () => yield 1), false],
             'not empty init with generator' => [
                 Seq::init(function () {
                     foreach ([1, 2, 3] as $i) {
@@ -560,8 +563,8 @@ class SeqTest extends AbstractTestCase
             'empty after clear' => [Seq::of(1, 2)->clear(), true],
             'empty after take 0' => [Seq::range('1..Inf')->take(0), true],
             'empty after takeUpTo 0' => [Seq::from([1, 2])->takeUpTo(0), true],
-            'empty after takeWhile' => [Seq::infinite()->takeWhile('() => false'), true],
-            'empty after filterAll' => [Seq::range('1..10..100')->filter('() => false'), true],
+            'empty after takeWhile' => [Seq::infinite()->takeWhile(fn () => false), true],
+            'empty after filterAll' => [Seq::range('1..10..100')->filter(fn () => false), true],
         ];
     }
 
@@ -581,7 +584,7 @@ class SeqTest extends AbstractTestCase
             'count create' => [Seq::create([]), 0],
             'count from' => [Seq::from([]), 0],
             'count from 2' => [Seq::from([1, 2]), 2],
-            'count init' => [Seq::init('() => yield 1'), 1],
+            'count init' => [Seq::init(fn () => yield 1), 1],
             'count init with generator' => [
                 Seq::init(function () {
                     foreach ([1, 2, 3] as $i) {
@@ -601,13 +604,13 @@ class SeqTest extends AbstractTestCase
             'count after clear' => [Seq::of(1, 2)->clear(), 0],
             'count after take 0' => [Seq::range('1..Inf')->take(0), 0],
             'count after takeUpTo 0' => [Seq::from([1, 2])->takeUpTo(0), 0],
-            'count after takeWhile' => [Seq::infinite()->takeWhile('() => false'), 0],
+            'count after takeWhile' => [Seq::infinite()->takeWhile(fn () => false), 0],
             'count forDo on infinite while' => [
-                Seq::forDo('0..10..Inf', '($i) => yield $i => "item_" . $i')->takeWhile('($i, $k) => $k < 100'),
+                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k) => $k < 100),
                 10,
             ],
             'count forDo on infinite' => [
-                Seq::forDo('0..10..Inf', '($i) => yield $i')->take(10),
+                Seq::forDo('0..10..Inf', fn ($i) => yield $i)->take(10),
                 10,
             ],
             'large - count range' => [
@@ -619,15 +622,15 @@ class SeqTest extends AbstractTestCase
                 1000,
             ],
             'large - count forDo on infinite while' => [
-                Seq::forDo('0..10..Inf', '($i) => yield $i => "item_" . $i')->takeWhile('($i, $k) => $k < 10000'),
+                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k) => $k < 10000),
                 1000,
             ],
             'large - count forDo on infinite' => [
-                Seq::forDo('0..10..Inf', '($i) => yield "item_" . $i')->take(1000),
+                Seq::forDo('0..10..Inf', fn ($i) => yield 'item_' . $i)->take(1000),
                 1000,
             ],
             'large - count create' => [
-                Seq::create(range(1, 1000), '($i) => yield "item_" . $i'),
+                Seq::create(range(1, 1000), fn ($i) => yield 'item_' . $i),
                 1000,
             ],
             'seq of seq' => [
@@ -648,14 +651,18 @@ class SeqTest extends AbstractTestCase
     public function testShouldReduceSeq(): void
     {
         $sumOfSquaredOddNumbersFrom1to10 = Seq::range('1..10')
-            ->filter('($i) => $i % 2 === 1')// 1, 3, 5, 7, 9
-            ->map('($i) => $i * $i')// 1, 9, 25, 49, 81
-            ->reduce('($t, $i) => $t + $i', 0);
+            ->filter(fn ($i) => $i % 2 === 1)// 1, 3, 5, 7, 9
+            ->map(fn ($i) => $i * $i)// 1, 9, 25, 49, 81
+            ->reduce(fn ($t, $i) => $t + $i, 0);
 
         $this->assertSame(165, $sumOfSquaredOddNumbersFrom1to10);
     }
 
-    /** @dataProvider containsProvider */
+    /**
+     * @dataProvider containsProvider
+     * @param mixed $value
+     * @param mixed $expected
+     */
     public function testShouldContainsValue(ISeq $seq, $value, $expected): void
     {
         $result = $seq->contains($value);
@@ -671,13 +678,17 @@ class SeqTest extends AbstractTestCase
             'in range' => [Seq::range('1..10'), 5, true],
             'not in range' => [Seq::range('1..10'), 11, false],
             'in infinite' => [Seq::range('0..10..Inf'), 100, true],
-            'not in filtered range' => [Seq::range('0..10..100')->filter('($i) => $i !== 100'), 100, false],
+            'not in filtered range' => [Seq::range('0..10..100')->filter(fn ($i) => $i !== 100), 100, false],
             'not in limited range' => [Seq::range('0..10..100')->take(2), 30, false],
             'in static' => [Seq::from(['hello']), 'hello', true],
         ];
     }
 
-    /** @dataProvider containsProvider */
+    /**
+     * @dataProvider containsProvider
+     * @param mixed $value
+     * @param mixed $expected
+     */
     public function testShouldContainsValueBy(ISeq $seq, $value, $expected): void
     {
         $result = $seq->containsBy($this->findByValue($value));
@@ -688,8 +699,8 @@ class SeqTest extends AbstractTestCase
     public function testShouldContainsValueByArrowFunction(): void
     {
         $seq = Seq::from(['1', '2']);
-        $contains2NonStrict = $seq->containsBy('($v) => $v == 2');
-        $contains3NonStrict = $seq->containsBy('($v) => $v == 3');
+        $contains2NonStrict = $seq->containsBy(fn ($v) => $v == 2);
+        $contains3NonStrict = $seq->containsBy(fn ($v) => $v == 3);
 
         $this->assertTrue($contains2NonStrict);
         $this->assertFalse($contains3NonStrict);
@@ -698,7 +709,7 @@ class SeqTest extends AbstractTestCase
     public function testShouldCheckIfNumberFromRangeIsOdd(): void
     {
         $result = Seq::range('3..2..Inf')
-            ->filter('($i) => $i % 2 === 1')
+            ->filter(fn ($i) => $i % 2 === 1)
             ->take(5)
             ->toArray();
 
@@ -723,7 +734,7 @@ class SeqTest extends AbstractTestCase
         };
 
         $result = Seq::of($entity)
-            ->collect(('($s) => $s->toArray()'))
+            ->collect((fn ($s) => $s->toArray()))
             ->toArray();
 
         $this->assertSame([1, 2, 3], $result);
@@ -763,12 +774,12 @@ class SeqTest extends AbstractTestCase
         $word = Seq::init(function () use ($data): iterable {
             yield from $data;
         })
-            ->map('($i) => (int) $i')
+            ->map(fn ($i) => (int) $i)
             ->collect(function (int $item) use ($subData): iterable {
                 return $subData[$item];
             })
-            ->filter('($l) => $l < "f"')
-            ->map('($l) => $l . " "')
+            ->filter(fn ($l) => $l < 'f')
+            ->map(fn ($l) => $l . ' ')
             ->reduce(function (string $word, string $subItem): string {
                 return $word . $subItem;
             }, 'Word: ');
@@ -820,13 +831,13 @@ class SeqTest extends AbstractTestCase
         $word = Seq::init(function () use ($data): iterable {
             yield from $data;
         })
-            ->map('($i) => (int) $i')
+            ->map(fn ($i) => (int) $i)
             ->map(function (int $item) use ($subData): iterable {
                 return $subData[$item];
             })
             ->concat()
-            ->filter('($l) => $l < "f"')
-            ->map('($l) => $l . " "')
+            ->filter(fn ($l) => $l < 'f')
+            ->map(fn ($l) => $l . ' ')
             ->reduce(function (string $word, string $subItem): string {
                 return $word . $subItem;
             }, 'Word: ');
@@ -869,8 +880,61 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldCreateSequenceByArrowFunctionWithGenerator(): void
     {
-        $result = Seq::init('() => yield from range(1, 5)')->toArray();
+        $result = Seq::init(fn () => yield from range(1, 5))->toArray();
 
         $this->assertSame([1, 2, 3, 4, 5], $result);
+    }
+
+    public function testShouldBeEmptyAfterClear(): void
+    {
+        $empty = Seq::createEmpty();
+        $withItems = Seq::range('0..10');
+
+        $this->assertNotEquals($empty, $withItems);
+        $this->assertEquals($empty, $withItems->clear());
+    }
+
+    public function testShouldAccessEachItemInInfiniteSeqWhileConditionIsMet(): void
+    {
+        $data = [];
+
+        Seq::range('0 .. Inf')
+            ->map(fn ($i) => $i * 2)
+            ->takeWhile(fn ($i) => $i < 10)
+            ->each(function ($i) use (&$data): void {
+                $data[] = $i;
+            });
+
+        $this->assertSame([0, 2, 4, 6, 8], $data);
+    }
+
+    public function testShouldIterateTheSeqMoreThanOnce(): void
+    {
+        $data = [];
+
+        $infiniteRange = Seq::range('0 .. Inf');
+        $infiniteRangeDoubled = $infiniteRange->map(fn ($i) => $i * 2);
+        $infiniteRangeTripled = $infiniteRange->map(fn ($i) => $i * 3);
+
+        foreach ($infiniteRangeDoubled->take(5) as $i) {
+            $this->ignore($i);
+        }
+        foreach ($infiniteRangeDoubled->take(5) as $i) {
+            $this->ignore($i);
+        }
+
+        $infiniteRangeDoubled
+            ->takeWhile(fn ($i) => $i < 10)
+            ->each(function ($i) use (&$data): void {
+                $data[] = $i;
+            });
+
+        $infiniteRangeTripled
+            ->takeWhile(fn ($i) => $i < 10)
+            ->each(function ($i) use (&$data): void {
+                $data[] = $i;
+            });
+
+        $this->assertSame([0, 2, 4, 6, 8, 0, 3, 6, 9], $data);
     }
 }

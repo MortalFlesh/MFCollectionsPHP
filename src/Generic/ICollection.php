@@ -4,7 +4,7 @@ namespace MF\Collection\Generic;
 
 interface ICollection extends \MF\Collection\ICollection
 {
-    const INDEX_TVALUE = 2;
+    public const INDEX_TVALUE = 2;
 
     /**
      * @deprecated
@@ -17,7 +17,6 @@ interface ICollection extends \MF\Collection\ICollection
      * @deprecated
      * @see IList::createT()
      * @see IMap::createKT()
-     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 }

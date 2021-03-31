@@ -6,6 +6,17 @@
          colors="true"
          bootstrap="vendor/autoload.php"
 >
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <report>
+            <clover outputFile="./code-coverage/clover.xml"/>
+            <html outputDirectory="./code-coverage" highLowerBound="90"/>
+        </report>
+    </coverage>
+
     <php>
         <!-- E_ALL = 30719 -->
         <ini name="error_reporting" value="30719"/>
@@ -17,15 +28,7 @@
         </testsuite>
     </testsuites>
 
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
-
     <logging>
-        <log type="coverage-html" target="./code-coverage" highLowerBound="90"/>
-        <log type="coverage-clover" target="./code-coverage/clover.xml"/>
-        <log type="junit" target="./code-coverage/junit.xml"/>
+        <junit outputFile="./code-coverage/junit.xml"/>
     </logging>
 </phpunit>

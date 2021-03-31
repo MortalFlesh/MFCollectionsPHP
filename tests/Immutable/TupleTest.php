@@ -2,7 +2,6 @@
 
 namespace MF\Collection\Immutable;
 
-use Eris\Generator;
 use MF\Collection\AbstractTestCase;
 use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Exception\TupleBadMethodCallException;
@@ -41,113 +40,6 @@ class TupleTest extends AbstractTestCase
             '"", """' => [['', '"'], ['', '"'], '("", """)'],
             'array' => [[[1, 2], 'three', ['four']], [[1, 2], 'three', ['four']], '([1; 2], "three", ["four"])'],
         ];
-    }
-
-    /** @group propertyBased */
-    public function testShouldCreateTupleFromAnyArray(): void
-    {
-        try {
-            $this
-                ->forAll(Generator\seq(Generator\oneOf(
-                    Generator\string(),
-                    Generator\int(),
-                    Generator\float(),
-                    Generator\bool()
-                )))
-                ->when(function (array $values) {
-                    $count = count($values);
-
-                    return $count >= 2 && $count < 50;
-                })
-                ->then(function (array $values): void {
-                    $tuple = Tuple::from($values);
-                    $result = $tuple->toArray();
-
-                    $this->assertSame(
-                        $values,
-                        $result,
-                        $this->pbtMessage($values, $result, 'are not same')
-                    );
-                });
-        } catch (\OutOfBoundsException $e) {
-            $this->markTestSkipped($e->getMessage());
-        }
-    }
-
-    /** @group propertyBased */
-    public function testShouldCreateTupleFromArrayTransformToStringAndBackToTupleAgain(): void
-    {
-        $filterNotIn = function (array $data) {
-            return function ($item) use ($data) {
-                return !in_array($item, $data, true);
-            };
-        };
-
-        try {
-            $this
-                ->forAll(Generator\seq(Generator\oneOf(
-                    Generator\string(),
-                    Generator\int(),
-                    Generator\bool()
-                )))
-                ->when(function (array $values) {
-                    $count = count($values);
-
-                    return $count >= 2 && $count < 50;
-                })
-                ->then(function (array $values) use ($filterNotIn): void {
-                    $asString = Tuple::from($values)->toString();
-                    $result = Tuple::parse($asString)->toArray();
-
-                    $valuesCount = count($values);
-                    $resultCount = count($result);
-
-                    if ($valuesCount > $resultCount) {
-                        // this case means that some values have unfinished string definition and another value too
-                        // and the combined together while parsing
-                        // or that some value end or start with , and is not in ""
-
-                        // reproduce with:
-                        // ERIS_SEED=1530111780272593 vendor/bin/phpunit --filter 'MF\\Collection\\Immutable\\TupleTest::testShouldCreateTupleFromArrayTransformToStringAndBackToTupleAgain'
-
-                        //var_dump([
-                        //    $values,
-                        //    array_filter($result, $filterNotIn($values)),
-                        //    array_filter($values, $filterNotIn($result)),
-                        //]);
-                        $this->assertTrue(true);
-                    } elseif ($valuesCount === $resultCount) {
-                        $this->assertSame(
-                            $values,
-                            $result,
-                            $this->pbtMessage($values, $result, sprintf('are not same (as string "%s")', $asString))
-                        );
-                    } else {
-                        // original values contained some complex string with , and was parsed into more values
-                        $resultValuesNotFromOriginalValues = array_filter($result, $filterNotIn($values));
-                        $originalValuesNotInResult = array_filter($values, $filterNotIn($result));
-
-                        // Count of parsed values should be greater then original items count
-                        $this->assertTrue(count($originalValuesNotInResult) < count($resultValuesNotFromOriginalValues));
-
-                        // and all parsed values should be found in original set
-                        $originalSet = implode('', $originalValuesNotInResult);
-                        foreach ($resultValuesNotFromOriginalValues as $value) {
-                            $this->assertStringContainsString(
-                                $value,
-                                $originalSet,
-                                $this->pbtMessage(
-                                    $originalValuesNotInResult,
-                                    $resultValuesNotFromOriginalValues,
-                                    sprintf('not contained %s', $value)
-                                )
-                            );
-                        }
-                    }
-                });
-        } catch (\OutOfBoundsException $e) {
-            $this->markTestSkipped($e->getMessage());
-        }
     }
 
     public function testShouldDeconstructTuple(): void

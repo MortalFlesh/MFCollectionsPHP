@@ -2,6 +2,10 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Require php 7.4 and update dependencies
+- [**BC**] Remove Enhanced collections - _arrow functions are now in php itself_
+- [**BC**] Remove Callback parser from everywhere
+- [**BC**] Callbacks must be callable - not just any string
 
 ## 4.0.0 - 2019-12-02
 - [**BC**] Drop support for PHP 7.1

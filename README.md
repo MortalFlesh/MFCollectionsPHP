@@ -4,7 +4,7 @@ MFCollections for PHP
 [![Latest Stable Version](https://img.shields.io/packagist/v/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
 [![License](https://img.shields.io/packagist/l/mf/collections-php.svg)](https://packagist.org/packages/mf/collections-php)
-[![Build Status](https://travis-ci.org/MortalFlesh/MFCollectionsPHP.svg?branch=master)](https://travis-ci.org/MortalFlesh/MFCollectionsPHP)
+[![Tests and linting](https://github.com/MortalFlesh/MFCollectionsPHP/actions/workflows/tests.yaml/badge.svg)](https://github.com/MortalFlesh/MFCollectionsPHP/actions/workflows/tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/MortalFlesh/MFCollectionsPHP/badge.svg?branch=master)](https://coveralls.io/github/MortalFlesh/MFCollectionsPHP?branch=master)
 
 It's basically a syntax sugar over classic array structure, which allows you to use it as classic array, but adds some cool features.
@@ -87,10 +87,6 @@ A _tuple_ is a grouping of unnamed but ordered values, possibly of different typ
 - implements `Mutable\IList`
 - basic List Collection
 
-### Mutable\Enhanced\ListCollection
-- extends `ListCollection`
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-
 ### Mutable\Generic\ListCollection
 - implements `Generic\IList`
 - extends `ListCollection`
@@ -104,10 +100,6 @@ $list = new Mutable\Generic\ListCollection('string');
 ### <a name="mutable-map"></a>Mutable\Map
 - implements `Mutable\IMap`
 - basic Map Collection
-
-### Mutable\Enhanced\Map
-- extends `Map`
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 
 ### Mutable\Generic\Map
 - implements `Generic\IMap`
@@ -166,10 +158,6 @@ echo $listWith1->count();   // 1
 - implements `Immutable\IList`
 - basic Immutable List Collection
 
-### Immutable\Enhanced\ListCollection
-- extends `Immutable\ListCollection`
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-
 ### Immutable\Generic\ListCollection
 - implements `Generic\IList`
 - extends `Immutable\ListCollection`
@@ -183,10 +171,6 @@ $list = new Immutable\Generic\ListCollection('string');
 ### <a name="immutable-map"></a>Immutable\Map
 - implements `Immutable\IMap`
 - basic Immutable Map Collection
-
-### Immutable\Enhanced\Map
-- extends `Immutable\Map`
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
 
 ### Immutable\Generic\Map
 - implements `Generic\IMap`
@@ -205,9 +189,9 @@ $map = new Immutable\Generic\Map('int', 'string');
 - allows `Arrow Functions` everywhere where `callable` is wanted
 ```php
 Seq::infinite()
-    ->filter('($i) => $i % 2 === 0')
-    ->map('($i) => $i * $i')
-    ->takeWhile('($i) => $i < 25')
+    ->filter(fn($i) => $i % 2 === 0)
+    ->map(fn($i) => $i * $i)
+    ->takeWhile(fn($i) => $i < 25)
     ->toArray();
 // [4, 16]
 ```
@@ -302,19 +286,18 @@ Tuple::mergeMatch(['string', 'string'], $base, 3); // throws \InvalidArgumentExc
 
 
 ## Arrow Functions
-- To see more check: [MF/CallbackParser](https://github.com/MortalFlesh/CallbackParser)
 
 ### Usage:
 ```php
-$map = new Mutable\Enhanced\Map();
+$map = new Mutable\Map();
 $map->set(1, 'one');
 $map[2] = 'two';
 
 $map->toArray(); // [1 => 'one', 2 => 'two']
 
 $map
-    ->filter('($v, $k) => $k > 1')
-    ->map('($v, $k) => $k . " - " . $v')
+    ->filter(fn($v, $k) => $k > 1)
+    ->map(fn($v, $k) => $k . " - " . $v)
     ->toArray(); // [2 => '2 - two']
 
 //against classic PHP
@@ -357,9 +340,9 @@ $list->add(new SimpleEntity(2));
 $list->add(new SimpleEntity(3));
 
 $sumOfIdsGreaterThan1 = $list
-    ->filter('($v, $i) => $v->getId() > 1') // filter entities with id > 1
-    ->map('($v, $i) => $v->getId()')        // map filtered entities to just ids
-    ->reduce('($t, $v) => $t + $v');        // reduce ids to their sum
+    ->filter(fn($v, $i) => $v->getId() > 1) // filter entities with id > 1
+    ->map(fn($v, $i) => $v->getId())        // map filtered entities to just ids
+    ->reduce(fn($t, $v) => $t + $v);        // reduce ids to their sum
 
 echo $sumOfIdsGreaterThan1;     // 5
 ```

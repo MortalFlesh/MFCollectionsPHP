@@ -5,23 +5,23 @@ namespace MF\Collection\Immutable\Generic;
 interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\IList
 {
     /**
-     * @param <TValue> $values
+     * @param mixed $values T: <TValue>
      * @return IList
      */
     public static function ofT(string $TValue, ...$values);
 
     /**
-     * @param array $array <TValue>
-     * @return IList<TValue>
+     * @param array $array T: <TValue>
+     * @return IList T: <TValue>
      */
     public static function fromT(string $TValue, array $array);
 
     /**
-     * @param iterable $source <TValue>
-     * @param callable|string $creator (value:mixed,index:int):TValue
-     * @return IList<TValue>
+     * @param iterable $source T: <TValue>
+     * @param callable $creator (value:mixed,index:int):TValue
+     * @return IList T: <TValue>
      */
-    public static function createT(string $TValue, iterable $source, $creator);
+    public static function createT(string $TValue, iterable $source, callable $creator);
 
     /**
      * @deprecated
@@ -38,9 +38,8 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     /**
      * @deprecated
      * @see IList::createT()
-     * @param mixed $creator
      */
-    public static function create(iterable $source, $creator);
+    public static function create(iterable $source, callable $creator);
 
     /**
      * @param mixed $value
@@ -55,20 +54,20 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public function unshift($value);
 
     /**
-     * @return <TValue>
+     * @return mixed T: <TValue>
      */
     public function first();
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
-     * @return <TValue>
+     * @param callable $callback (value:<TValue>,index:int):bool
+     * @return mixed T: <TValue>
      */
-    public function firstBy($callback);
+    public function firstBy(callable $callback);
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
+     * @param callable $callback (value:<TValue>,index:int):bool
      */
-    public function containsBy($callback): bool;
+    public function containsBy(callable $callback): bool;
 
     /**
      * @param mixed $value
@@ -89,16 +88,16 @@ interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\I
     public function sort();
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):<TValue>
-     * @return IList<TValue>
+     * @param callable $callback (value:<TValue>,index:int):<TValue>
+     * @return IList T: <TValue>
      */
-    public function map($callback, string $TValue = null);
+    public function map(callable $callback, string $TValue = null);
 
     /**
-     * @param callable|string $callback (value:<TValue>,index:int):bool
-     * @return IList<TValue>
+     * @param callable $callback (value:<TValue>,index:int):bool
+     * @return IList T: <TValue>
      */
-    public function filter($callback);
+    public function filter(callable $callback);
 
     /** @return \MF\Collection\Mutable\Generic\IList */
     public function asMutable();

@@ -23,10 +23,9 @@ class PrioritizedCollection implements IEnumerable
         TypeValidator::TYPE_INSTANCE_OF,
     ];
 
-    /** @var TypeValidator */
-    private $typeValidator;
+    private TypeValidator $typeValidator;
     /** @var ITuple[] (<TValue>, priority) */
-    private $items;
+    private array $items;
 
     public function __construct(string $TValue)
     {
@@ -40,20 +39,20 @@ class PrioritizedCollection implements IEnumerable
         $this->items = [];
     }
 
-    /** @param <TValue> $item */
+    /** @param mixed $item T: <TValue> */
     public function add($item, int $priority): void
     {
         $this->typeValidator->assertValueType($item);
         $this->items[] = Tuple::of($item, $priority);
     }
 
-    /** @return <TValue>[] */
+    /** @return iterable T: <TValue>[] */
     public function getIterator(): iterable
     {
         yield from $this->getItemsByPriority();
     }
 
-    /** @return <TValue>[] */
+    /** @return iterable T: <TValue>[] */
     private function getItemsByPriority(): iterable
     {
         $items = $this->items;

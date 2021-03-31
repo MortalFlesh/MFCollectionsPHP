@@ -14,8 +14,7 @@ class Tuple implements ITuple
 {
     private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
 
-    /** @var array */
-    private $values;
+    private array $values;
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
@@ -86,7 +85,7 @@ class Tuple implements ITuple
             ->map(function (string $match) {
                 return trim($match);
             })
-            ->filter('($match) => $match !== ""')
+            ->filter(fn ($match) => $match !== '')
             ->map(self::mapParsedItem())
             ->toArray();
 
@@ -152,8 +151,8 @@ class Tuple implements ITuple
      * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
      *
-     * @throws TupleParseException
      * @throws TupleMatchException
+     * @throws TupleParseException
      */
     public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): ITuple
     {
@@ -183,8 +182,8 @@ class Tuple implements ITuple
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
-     * @throws TupleParseException
      * @throws TupleMatchException
+     * @throws TupleParseException
      */
     public static function parseMatchTypes(string $tuple, array $types): ITuple
     {
@@ -245,6 +244,7 @@ class Tuple implements ITuple
         return array_key_exists($offset, $this->values);
     }
 
+    /** @param mixed $key */
     private static function assertKey($key): void
     {
         Assertion::integer($key, 'Tuples can only have integer indexes.');
