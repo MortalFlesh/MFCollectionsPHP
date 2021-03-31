@@ -33,8 +33,7 @@ composer require mf/collections-php
 
 
 ## Requirements
-- `PHP >=7.1`
-- `eval()` function for parsing [Arrow Functions](#arrow-functions)
+- `PHP ^7.4`
 
 
 ## Base Interfaces
