@@ -346,9 +346,6 @@ $sumOfIdsGreaterThan1 = $list
 echo $sumOfIdsGreaterThan1;     // 5
 ```
 
-### How does it work?
-- it parses function from string and evaluate it with `eval()`
-
 
 ### Some performance tests:
 - benchmarks and memory usage tests ([here](https://github.com/MortalFlesh/PerformanceTests))
