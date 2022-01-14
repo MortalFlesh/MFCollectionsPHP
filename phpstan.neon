@@ -10,7 +10,12 @@ parameters:
 
         # types
         - '#.*PHPDoc tag @return has invalid value.*#'
+        - '#Method .*?::offsetGet\(\) has no return type specified.#'
+        - '#Method .*?::offsetGet\(\) has parameter \$offset with no type specified.#'
+        - '#Parameter \#2 \$callback of function usort expects .*? given.#'
 
         # unit tests
         - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>, string given.#'
         - '#You should use assertCount.* instead of assertSame.*#'
+        - '#Call to method PHPUnit\\Framework\\Assert::assertArrayHasKey\(\) with .*? will always evaluate to false.#'
+        - '#Parameter \#1 \$callback of function array_map expects .*? given.#'

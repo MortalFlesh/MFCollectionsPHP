@@ -137,7 +137,7 @@ class MapTest extends AbstractTestCase
                 'value' => false,
             ],
             [
-                'key' => 24.23,
+                'key' => '24.23',
                 'value' => 24.12,
             ],
         ];

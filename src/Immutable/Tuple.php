@@ -247,9 +247,8 @@ class Tuple implements ITuple
 
     /**
      * @param int $offset
-     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         self::assertKey($offset);
 
@@ -328,7 +327,7 @@ class Tuple implements ITuple
         return count($this->values);
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         yield from $this->toArray();
     }

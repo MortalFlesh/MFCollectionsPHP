@@ -12,7 +12,7 @@ jobs:
 
         strategy:
             matrix:
-                php-version: ['8.0']
+                php-version: ['8.0', '8.1']
                 dependencies: ['']
                 include:
                     - { php-version: '8.0', dependencies: '--prefer-lowest --prefer-stable' }
@@ -38,7 +38,6 @@ jobs:
                   COLUMNS: 120
               run: |
                   composer tests-ci
-
             - name: Submit coverage to Coveralls
               env:
                   COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}

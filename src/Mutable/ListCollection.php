@@ -86,7 +86,7 @@ class ListCollection implements IList
         $this->modifiers = [];
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         // todo try to optimize - there are 2 loops for iterating and applying modifiers
         $this->applyModifiers();
