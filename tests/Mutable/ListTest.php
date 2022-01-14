@@ -594,7 +594,7 @@ class ListTest extends AbstractTestCase
         $this->assertCount(10001, $bigList);
 
         // this test before lazy mapping lasts around 5-6 seconds, so now it is more than 3 times faster
-        $this->assertLessThan($this->forPHP(['80' => 200]), $totalTime);
+        $this->assertLessThan($this->forPHP(['80' => 200, '81' => 200]), $totalTime);
     }
 
     public function testShouldImplodeItems(): void

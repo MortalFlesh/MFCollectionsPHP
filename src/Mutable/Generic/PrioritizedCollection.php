@@ -46,8 +46,8 @@ class PrioritizedCollection implements IEnumerable
         $this->items[] = Tuple::of($item, $priority);
     }
 
-    /** @return iterable T: <TValue>[] */
-    public function getIterator(): iterable
+    /** @return \Traversable T: <TValue>[] */
+    public function getIterator(): \Traversable
     {
         yield from $this->getItemsByPriority();
     }
@@ -58,9 +58,7 @@ class PrioritizedCollection implements IEnumerable
         $items = $this->items;
         usort(
             $items,
-            function (Tuple $a, Tuple $b): int {
-                return $b->second() <=> $a->second();
-            }
+            fn (Tuple $a, Tuple $b) => $b->second() <=> $a->second()
         );
 
         foreach ($items as [$item]) {

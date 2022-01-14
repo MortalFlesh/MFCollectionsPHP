@@ -136,7 +136,7 @@ class MapTest extends AbstractTestCase
                 'value' => false,
             ],
             [
-                'key' => 24.23,
+                'key' => '24.23',
                 'value' => 24.12,
             ],
         ];
@@ -509,6 +509,6 @@ class MapTest extends AbstractTestCase
         $this->assertCount(10001, $bigMap);
 
         // this test before lazy mapping lasts around 5-6 seconds, and now it is less than 2 seconds
-        $this->assertLessThan($this->forPHP(['80' => 200]), $totalTime);
+        $this->assertLessThan($this->forPHP(['80' => 200, '81' => 200]), $totalTime);
     }
 }

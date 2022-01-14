@@ -6,5 +6,5 @@ interface IEnumerable extends \IteratorAggregate, \Countable
 {
     public function count(): int;
 
-    public function getIterator(): iterable;
+    public function getIterator(): \Traversable;
 }

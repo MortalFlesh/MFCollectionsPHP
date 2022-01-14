@@ -236,7 +236,7 @@ class Seq implements ISeq
         return new static($iterable);
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         $counter = 0;
         $strictLimit = null;

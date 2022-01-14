@@ -85,7 +85,7 @@ class Map implements IMap
         $this->modifiers = [];
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         $this->applyModifiers();
 
@@ -135,11 +135,7 @@ class Map implements IMap
         return array_search($value, $this->mapArray, true);
     }
 
-    /**
-     * @param mixed $offset
-     * @return mixed
-     */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         $this->applyModifiers();
 
