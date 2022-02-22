@@ -14,3 +14,4 @@ parameters:
         - '#Parameter \#1 \$exception of method PHPUnit\\Framework\\TestCase::expectException\(\) expects class-string<Throwable>, string given.#'
         - '#You should use assertCount.* instead of assertSame.*#'
         - '#Parameter \#1 \$iterable of class MF\\Collection\\Immutable\\Seq constructor expects \(callable\(\): mixed\)\|iterable, null given#'
+        - '#Call to method PHPUnit\\Framework\\Assert::assertArrayHasKey\(\) with .*? and .* will always evaluate to false.#'

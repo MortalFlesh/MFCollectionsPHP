@@ -66,6 +66,8 @@ class ListCollection implements IList
     protected function applyModifiers(): void
     {
         if (empty($this->modifiers) || empty($this->listArray)) {
+            $this->modifiers = [];
+
             return;
         }
 
