@@ -580,4 +580,17 @@ class ListTest extends AbstractTestCase
 
         $this->assertSame('1, 2, 3', $result);
     }
+
+    public function testShouldApplyModifiersWithEmptyListFirst(): void
+    {
+        $data = []; // array of arrays originally expected, but it is empty ATM
+
+        $list = ListCollection::from($data)
+            ->filter(fn (array $item) => $item['allowed'])  // this would filter out not allowed values, but data are empty, this will just register filter
+            ->map(fn (array $item) => $item['title'])       // this would map array to string, but data are empty, so just mapper is registered
+            ->unshift('First item')                   // this assumes, mapped values (strings) so it add a string, which should go first - but it needs all previous modifers to be applied
+            ->toArray();
+
+        $this->assertSame(['First item'], $list);
+    }
 }

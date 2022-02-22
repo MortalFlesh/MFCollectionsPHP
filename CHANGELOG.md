@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Fix that applying modifiers removes all the current modifiers even, if there are no items or modifiers
 
 ## 6.1.0 - 2022-01-14
 - Allow php 8.1 and update dependencies
