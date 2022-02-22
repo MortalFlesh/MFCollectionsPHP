@@ -114,6 +114,8 @@ class ListCollection extends \MF\Collection\Mutable\ListCollection implements IL
     protected function applyModifiers(): void
     {
         if (empty($this->modifiers) || empty($this->listArray)) {
+            $this->modifiers = [];
+
             return;
         }
 

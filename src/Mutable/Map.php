@@ -64,6 +64,8 @@ class Map implements IMap
     protected function applyModifiers(): void
     {
         if (empty($this->modifiers) || empty($this->mapArray)) {
+            $this->modifiers = [];
+
             return;
         }
 
