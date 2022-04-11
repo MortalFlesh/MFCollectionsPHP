@@ -10,7 +10,7 @@ class Range
     {
         Assertion::true(
             is_string($range) || is_array($range),
-            'Range can only be set by array or by string.'
+            'Range can only be set by array or by string.',
         );
 
         if (is_string($range)) {
@@ -22,7 +22,7 @@ class Range
             $count,
             2,
             3,
-            'Range must have [start, end] or [start, step, end] items. %s values given.'
+            'Range must have [start, end] or [start, step, end] items. %s values given.',
         );
 
         if ($count === 2) {

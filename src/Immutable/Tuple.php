@@ -8,13 +8,21 @@ use MF\Collection\Exception\TupleBadMethodCallException;
 use MF\Collection\Exception\TupleException;
 use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
-use MF\Collection\Helper\Strings;
+use MF\Collection\Immutable\Generic\Seq;
 
 class Tuple implements ITuple
 {
     private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
 
-    private array $values;
+    public static function fst(ITuple $tuple): mixed
+    {
+        return $tuple->first();
+    }
+
+    public static function snd(ITuple $tuple): mixed
+    {
+        return $tuple->second();
+    }
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
@@ -50,7 +58,7 @@ class Tuple implements ITuple
             Assertion::greaterOrEqualThan(
                 $expectedItemsCount,
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                'Expected items count is %d but must not be lower than %d because in that case it would not be a valid Tuple.'
+                'Expected items count is %d but must not be lower than %d because in that case it would not be a valid Tuple.',
             );
         }
 
@@ -60,9 +68,9 @@ class Tuple implements ITuple
         })
             ->reduce(function (array $matches, string $match) use (&$cache) {
                 $trimmedMatch = ltrim($match);
-                $isStart = (Strings::startsWith($trimmedMatch, '"') || Strings::startsWith($trimmedMatch, "'"))
+                $isStart = (str_starts_with($trimmedMatch, '"') || str_starts_with($trimmedMatch, "'"))
                     && empty($cache);
-                $isEnd = (Strings::endsWith($match, '"') || Strings::endsWith($match, "'"))
+                $isEnd = (str_ends_with($match, '"') || str_ends_with($match, "'"))
                     && (mb_strlen($trimmedMatch) > 1 || !empty($cache));
 
                 if (!$isEnd && ($isStart || !empty($cache))) {
@@ -93,7 +101,7 @@ class Tuple implements ITuple
             Assertion::count(
                 $values,
                 $expectedItemsCount,
-                'Invalid tuple given - expected %d items but parsed %d items from "' . $tuple . '".'
+                'Invalid tuple given - expected %d items but parsed %d items from "' . $tuple . '".',
             );
         }
 
@@ -114,11 +122,11 @@ class Tuple implements ITuple
                 return false;
             } elseif ($item === 'null') {
                 return null;
-            } elseif (Strings::startsWith($item, '[') && Strings::endsWith($item, ']')) {
+            } elseif (str_starts_with($item, '[') && str_ends_with($item, ']')) {
                 $arrayContent = trim($item, '[]');
                 Assertion::false(
-                    Strings::contains($arrayContent, '[') || Strings::contains($arrayContent, ']'),
-                    sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item)
+                    str_contains($arrayContent, '[') || str_contains($arrayContent, ']'),
+                    sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item),
                 );
 
                 return array_map(self::mapParsedItem(), explode(';', $arrayContent));
@@ -216,15 +224,14 @@ class Tuple implements ITuple
         return new self($values);
     }
 
-    private function __construct(array $values)
+    private function __construct(private readonly array $values)
     {
         try {
             Assertion::greaterOrEqualThan(
                 count($values),
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                'Tuple must have at least two values.'
+                'Tuple must have at least two values.',
             );
-            $this->values = $values;
         } catch (AssertionFailedException $e) {
             throw TupleException::forFailedAssertion($e);
         }
@@ -233,7 +240,7 @@ class Tuple implements ITuple
     /**
      * @param int $offset
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         self::assertKey($offset);
 
@@ -280,7 +287,7 @@ class Tuple implements ITuple
             '(%s)',
             Seq::from($this->values)
                 ->map($this->mapValueToString($arraySeparator, $formatStringValue))
-                ->implode($separator)
+                ->implode($separator),
         );
     }
 
@@ -298,7 +305,7 @@ class Tuple implements ITuple
                     '[%s]',
                     Seq::from($value)
                         ->map($this->mapValueToString($arraySeparator, $formatStringValue))
-                        ->implode($arraySeparator)
+                        ->implode($arraySeparator),
                 );
             }
 
@@ -422,8 +429,8 @@ class Tuple implements ITuple
             sprintf(
                 'Tuples has always at least %d values. It would always be false by giving less then %d types.',
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                self::MINIMAL_TUPLE_ITEMS_COUNT
-            )
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+            ),
         );
 
         if (count($types) !== $this->count()) {
@@ -470,7 +477,7 @@ class Tuple implements ITuple
     {
         return function (string $type) {
             $types = Seq::create(explode('|', $type), function (string $type): iterable {
-                if (Strings::startsWith($type, '?')) {
+                if (str_starts_with($type, '?')) {
                     yield 'NULL';
                 }
 
@@ -523,8 +530,8 @@ class Tuple implements ITuple
                             yield $item;
                         }
                     }
-                })->toArray()
-            )
+                })->toArray(),
+            ),
         );
     }
 
@@ -566,10 +573,8 @@ class Tuple implements ITuple
 
     /**
      * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->forbiddenMethod();
     }
@@ -581,10 +586,20 @@ class Tuple implements ITuple
 
     /**
      * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->forbiddenMethod();
+    }
+
+    public function isEmpty(): bool
+    {
+        foreach ($this as $v) {
+            if (!empty($v)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

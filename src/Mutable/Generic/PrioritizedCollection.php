@@ -2,57 +2,39 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-use MF\Collection\Exception\InvalidArgumentException;
-use MF\Collection\IEnumerable;
+use MF\Collection\Generic\IEnumerable;
 use MF\Collection\Immutable\ITuple;
 use MF\Collection\Immutable\Tuple;
-use MF\Validator\TypeValidator;
 
+/**
+ * @phpstan-type TIndex int
+ * @phpstan-template TValue
+ *
+ * @phpstan-implements IEnumerable<TIndex, TValue>
+ */
 class PrioritizedCollection implements IEnumerable
 {
-    private const ALLOWED_TYPES = [
-        TypeValidator::TYPE_ANY,
-        TypeValidator::TYPE_MIXED,
-        TypeValidator::TYPE_STRING,
-        TypeValidator::TYPE_INT,
-        TypeValidator::TYPE_FLOAT,
-        TypeValidator::TYPE_BOOL,
-        TypeValidator::TYPE_ARRAY,
-        TypeValidator::TYPE_CALLABLE,
-        TypeValidator::TYPE_OBJECT,
-        TypeValidator::TYPE_INSTANCE_OF,
-    ];
-
-    private TypeValidator $typeValidator;
     /** @var ITuple[] (<TValue>, priority) */
     private array $items;
 
-    public function __construct(string $TValue)
+    public function __construct()
     {
-        $this->typeValidator = new TypeValidator(
-            TypeValidator::TYPE_INT,
-            $TValue,
-            [TypeValidator::TYPE_INT],
-            self::ALLOWED_TYPES,
-            InvalidArgumentException::class
-        );
         $this->items = [];
     }
 
-    /** @param mixed $item T: <TValue> */
+    /** @phpstan-param TValue $item */
     public function add(mixed $item, int $priority): void
     {
-        $this->typeValidator->assertValueType($item);
         $this->items[] = Tuple::of($item, $priority);
     }
 
-    /** @return \Traversable T: <TValue>[] */
+    /** @phpstan-return \Traversable<TIndex, TValue> */
     public function getIterator(): \Traversable
     {
         yield from $this->getItemsByPriority();
     }
 
-    /** @return iterable T: <TValue>[] */
+    /** @phpstan-return iterable<TIndex, TValue> */
     private function getItemsByPriority(): iterable
     {
         $items = $this->items;
@@ -69,5 +51,10 @@ class PrioritizedCollection implements IEnumerable
     public function count(): int
     {
         return count($this->items);
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->items);
     }
 }

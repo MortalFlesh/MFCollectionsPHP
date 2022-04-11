@@ -6,8 +6,6 @@ use Assert\AssertionFailedException;
 
 class InvalidArgumentException extends \InvalidArgumentException implements CollectionExceptionInterface, AssertionFailedException
 {
-    private ?string $propertyPath;
-    private mixed $value;
     private array $constraints;
 
     public static function forFailedAssertion(AssertionFailedException $e): self
@@ -18,21 +16,19 @@ class InvalidArgumentException extends \InvalidArgumentException implements Coll
             $e->getPropertyPath(),
             $e->getValue(),
             $e->getConstraints(),
-            $e
+            $e,
         );
     }
 
     public function __construct(
         string $message,
         int $code = null,
-        ?string $propertyPath = null,
-        mixed $value = null,
+        private ?string $propertyPath = null,
+        private mixed $value = null,
         array $constraints = null,
-        \Throwable $previous = null
+        \Throwable $previous = null,
     ) {
         parent::__construct($message, (int) $code, $previous);
-        $this->propertyPath = $propertyPath;
-        $this->value = $value;
         $this->constraints = $constraints ?? [];
     }
 

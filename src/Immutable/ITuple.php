@@ -4,8 +4,14 @@ namespace MF\Collection\Immutable;
 
 use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
-use MF\Collection\IEnumerable;
+use MF\Collection\Generic\IEnumerable;
 
+/**
+ * @phpstan-type TIndex int
+ * @phpstan-type TValue mixed
+ *
+ * @phpstan-extends IEnumerable<TIndex, TValue>
+ */
 interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 {
     /**
@@ -116,6 +122,10 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 
     public function toArray(): array;
 
+    public static function fst(ITuple $tuple): mixed;
+
+    public static function snd(ITuple $tuple): mixed;
+
     /**
      * Will return first value from tuple
      *
@@ -225,16 +235,9 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      */
     public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple;
 
-    /**
-     * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
-     * @param mixed $value
-     */
-    public function offsetSet($offset, $value): void;
+    /** @deprecated Altering existing tuple is not permitted */
+    public function offsetSet(mixed $offset, mixed $value): void;
 
-    /**
-     * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset): void;
+    /** @deprecated Altering existing tuple is not permitted */
+    public function offsetUnset(mixed $offset): void;
 }

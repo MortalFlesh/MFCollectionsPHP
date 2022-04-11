@@ -10,8 +10,8 @@ class TupleMatchException extends TupleException
             sprintf(
                 'Given tuple does NOT match expected types (%s) - got (%s).',
                 implode(', ', $expectedTypes),
-                implode(', ', $actualTypes)
-            )
+                implode(', ', $actualTypes),
+            ),
         );
     }
 }
