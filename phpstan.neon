@@ -10,8 +10,6 @@ parameters:
 
         # types
         - '#.*PHPDoc tag @return has invalid value.*#'
-        - '#Method .*?::offsetGet\(\) has no return type specified.#'
-        - '#Method .*?::offsetGet\(\) has parameter \$offset with no type specified.#'
         - '#Parameter \#2 \$callback of function usort expects .*? given.#'
 
         # unit tests

@@ -489,7 +489,6 @@ class TupleTest extends AbstractTestCase
 
         $this->assertCount($expectedCount, $tuple);
         $this->assertSame($expectedCount, $tuple->count());
-        $this->assertSame($expectedCount, count($tuple));
     }
 
     public function provideTupleCount(): array
