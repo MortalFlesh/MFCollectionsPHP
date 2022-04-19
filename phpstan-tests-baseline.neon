@@ -36,12 +36,12 @@ parameters:
 			path: tests/Immutable/Generic/ListTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, array\\{0\\: string, 1\\: string, 2\\?\\: string\\}, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\{0\\: string, 1\\: string, 2\\?\\: string\\}\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
 			count: 1
 			path: tests/Immutable/Generic/ListTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
+			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, array\\{0\\: string, 1\\: string, 2\\?\\: string\\}, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\{0\\: string, 1\\: string, 2\\?\\: string\\}\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
 			count: 1
 			path: tests/Immutable/Generic/ListTest.php
 
@@ -66,7 +66,7 @@ parameters:
 			path: tests/Immutable/Generic/SeqTest.php
 
 		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with array\\{11, 12, 13, 14, 15, 6, 7, 8, \\.\\.\\.\\} and array\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<int\\>\\> will always evaluate to false\\.$#"
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with array\\{11, 12, 13, 14, 15, 6, 7, 8, \\.\\.\\.\\} and array\\<int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<int\\>\\> will always evaluate to false\\.$#"
 			count: 1
 			path: tests/Immutable/Generic/SeqTest.php
 

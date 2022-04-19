@@ -15,21 +15,19 @@ interface ICollection extends IEnumerable
     /** @phpstan-param TValue $value */
     public function contains(mixed $value): bool;
 
-    /** @phpstan-param callable(TValue, TKey): bool $callback */
+    /** @phpstan-param callable(TValue, TKey=): bool $callback */
     public function containsBy(callable $callback): bool;
-
-    public function isEmpty(): bool;
 
     /** @phpstan-return array<TKey, TValue> */
     public function toArray(): array;
 
-    /** @param callable(TValue, TKey): void $callback */
+    /** @param callable(TValue, TKey=): void $callback */
     public function each(callable $callback): void;
 
     /**
      * Tests if all elements of the collection satisfy the given predicate.
      *
-     * @phpstan-param callable(TValue, TKey): bool $predicate
+     * @phpstan-param callable(TValue, TKey=): bool $predicate
      */
     public function forAll(callable $predicate): bool;
 

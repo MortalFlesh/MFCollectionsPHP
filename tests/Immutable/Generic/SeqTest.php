@@ -864,11 +864,11 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldConcatIntSequence(): void
     {
-        $result = Seq::from([[1, 2, 3], [4, 5, 6]])
+        $result = Seq::from([[1, 2, 3], [4, 5, 6], 7, 8])
             ->concat()
             ->toArray();
 
-        $this->assertSame([1, 2, 3, 4, 5, 6], $result);
+        $this->assertSame([1, 2, 3, 4, 5, 6, 7, 8], $result);
     }
 
     public function testShouldConcatSequence(): void
@@ -1405,5 +1405,18 @@ class SeqTest extends AbstractTestCase
         $seq = $seq->mapi(fn ($v, $i) => $i * $v);
 
         $this->assertSame([0, 2, 6, 12, 20], $seq->toArray());
+    }
+
+    public function testShouldChangeInfiniteSequenceExampleFromReadme(): void
+    {
+        $result = Seq::infinite()               // 1, 2, ...
+            ->filter(fn ($i) => $i % 2 === 0)   // 2, 4, ...
+            ->skip(2)                     // 6, 8, ...
+            ->map(fn ($i) => $i * $i)           // 36, 64, ...
+            ->takeWhile(fn ($i) => $i < 100)    // 36, 64
+            ->reverse()                         // 64, 36
+            ->take(1);                     // 64
+
+        $this->assertSame([64], $result->toArray());
     }
 }

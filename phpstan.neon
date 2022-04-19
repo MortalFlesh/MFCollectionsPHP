@@ -65,6 +65,11 @@ parameters:
             path: src/Immutable/Generic/Seq.php
 
         -
+            message: '#Generator expects key type int, mixed given.#'
+            count: 2
+            path: src/Immutable/Generic/Seq.php
+
+        -
             message: '#Cannot call method append\(\) on mixed.#'
             count: 1
             path: src/Immutable/Generic/Seq.php

@@ -3,6 +3,7 @@
 namespace MF\Collection\Immutable\Generic;
 
 use MF\Collection\Assertion;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Exception\OutOfRangeException;
 use MF\Collection\Helper\Callback;
@@ -46,12 +47,6 @@ class Seq implements ISeq
         });
     }
 
-    /** @phpstan-param DataSource $iterable */
-    public function __construct(private readonly iterable|\Closure $iterable)
-    {
-        $this->modifiers = [];
-    }
-
     /**
      * Seq::of(1, 2, 3)
      * Seq::of(...$array, ...$array2)
@@ -62,6 +57,93 @@ class Seq implements ISeq
     public static function of(mixed ...$args): ISeq
     {
         return new static($args);
+    }
+
+    /**
+     * @phpstan-param iterable<mixed, TValue> $source
+     * @phpstan-return ISeq<TValue>
+     */
+    public static function from(iterable $source): ISeq
+    {
+        return new static($source);
+    }
+
+    /**
+     * Seq::create([1,2,3], ($i) => $i * 2)
+     * Seq::create(range(1, 10), ($i) => $i * 2)
+     * Seq::create($list, ($i) => $i * 2)
+     *
+     * @phpstan-template T
+     *
+     * @phpstan-param iterable<mixed, T> $iterable
+     * @phpstan-param callable(T): TValue $creator
+     * @phpstan-return ISeq<TValue>
+     */
+    public static function create(iterable $iterable, callable $creator): ISeq
+    {
+        return new static(function () use ($iterable, $creator) {
+            $creator = Callback::curry($creator);
+
+            foreach ($iterable as $value) {
+                $item = $creator($value);
+
+                if (is_iterable($item)) {
+                    yield from $item;
+                } else {
+                    yield $item;
+                }
+            }
+        });
+    }
+
+    /**
+     * Alias for empty sequence
+     * Seq::create([])
+     *
+     * @phpstan-return ISeq<TValue>
+     */
+    public static function createEmpty(): ISeq
+    {
+        return static::from([]);
+    }
+
+    /**
+     * Seq::range([1, 10])
+     * Seq::range([1, 10, 100])
+     * Seq::range('1..10')
+     * Seq::range('1..10..100')
+     *
+     * @phpstan-param RangeDefinition $range
+     * @phpstan-return ISeq<int>
+     */
+    public static function range(string|array $range): ISeq
+    {
+        [$start, $end, $step] = Range::parse($range);
+
+        if ($end === self::INFINITE) {
+            $seq = new static(
+                function () use ($start, $step) {
+                    for ($i = $start; true; $i += $step) {
+                        yield $i;
+                    }
+                },
+            );
+
+            return $seq->setIsInfinite();
+        }
+
+        return new static(range($start, $end, $step));
+    }
+
+    /**
+     * Alias for infinite range 1..Inf
+     * Seq::range('1..Inf')
+     *
+     * @phpstan-return ISeq<int>
+     */
+    public static function infinite(): ISeq
+    {
+        return static::range([1, self::INFINITE]);
     }
 
     /**
@@ -131,6 +213,27 @@ class Seq implements ISeq
     }
 
     /**
+     * Seq::init(function() {
+     *     while($line = readLines($file)){
+     *         yield $line;
+     *     }
+     * })
+     *
+     * Seq::init(function() {
+     *     while($database->hasBatch()){
+     *         yield $database->fetchBatch();
+     *     }
+     * })
+     *
+     * @phpstan-param DataSource $iterable
+     * @phpstan-return ISeq<TValue>
+     */
+    public static function init(iterable|callable $iterable): ISeq
+    {
+        return new static($iterable);
+    }
+
+    /**
      * @phpstan-template State
      *
      * @phpstan-param callable(State): array{0: State, 1: State|null} $callable
@@ -156,91 +259,10 @@ class Seq implements ISeq
         );
     }
 
-    /**
-     * Alias for empty sequence
-     * Seq::create([])
-     *
-     * @phpstan-return ISeq<TValue>
-     */
-    public static function createEmpty(): ISeq
+    /** @phpstan-param DataSource $iterable */
+    public function __construct(private readonly iterable|\Closure $iterable)
     {
-        return static::from([]);
-    }
-
-    /**
-     * Alias for infinite range 1..Inf
-     * Seq::range('1..Inf')
-     *
-     * @phpstan-return ISeq<int>
-     */
-    public static function infinite(): ISeq
-    {
-        return static::range([1, self::INFINITE]);
-    }
-
-    /**
-     * @phpstan-param iterable<mixed, TValue> $source
-     * @phpstan-return ISeq<TValue>
-     */
-    public static function from(iterable $source): ISeq
-    {
-        return new static($source);
-    }
-
-    /**
-     * Seq::create([1,2,3], ($i) => $i * 2)
-     * Seq::create(range(1, 10), ($i) => $i * 2)
-     * Seq::create($list, ($i) => $i * 2)
-     *
-     * @phpstan-template T
-     *
-     * @phpstan-param iterable<mixed, T> $iterable
-     * @phpstan-param callable(T): TValue $creator
-     * @phpstan-return ISeq<TValue>
-     */
-    public static function create(iterable $iterable, callable $creator): ISeq
-    {
-        return new static(function () use ($iterable, $creator) {
-            $creator = Callback::curry($creator);
-
-            foreach ($iterable as $value) {
-                $item = $creator($value);
-
-                if (is_iterable($item)) {
-                    yield from $item;
-                } else {
-                    yield $item;
-                }
-            }
-        });
-    }
-
-    /**
-     * Seq::range([1, 10])
-     * Seq::range([1, 10, 100])
-     * Seq::range('1..10')
-     * Seq::range('1..10..100')
-     *
-     * @phpstan-param RangeDefinition $range
-     * @phpstan-return ISeq<int>
-     */
-    public static function range(string|array $range): ISeq
-    {
-        [$start, $end, $step] = Range::parse($range);
-
-        if ($end === self::INFINITE) {
-            $seq = new static(
-                function () use ($start, $step) {
-                    for ($i = $start; true; $i += $step) {
-                        yield $i;
-                    }
-                },
-            );
-
-            return $seq->setIsInfinite();
-        }
-
-        return new static(range($start, $end, $step));
+        $this->modifiers = [];
     }
 
     /** @phpstan-return ISeq<TValue> */
@@ -251,28 +273,14 @@ class Seq implements ISeq
         return $this;
     }
 
-    /**
-     * Seq::init(function() {
-     *     while($line = readLines($file)){
-     *         yield $line;
-     *     }
-     * })
-     *
-     * Seq::init(function() {
-     *     while($database->hasBatch()){
-     *         yield $database->fetchBatch();
-     *     }
-     * })
-     *
-     * @phpstan-param DataSource $iterable
-     * @phpstan-return ISeq<TValue>
-     */
-    public static function init(iterable|callable $iterable): ISeq
+    public function count(): int
     {
-        return new static($iterable);
+        $this->assertFinite('count');
+
+        return count($this->toArray());
     }
 
-    /** @phpstan-return \Traversable<TValue> */
+    /** @phpstan-return \Traversable<TIndex, TValue> */
     public function getIterator(): \Traversable
     {
         $counter = 0;
@@ -348,13 +356,6 @@ class Seq implements ISeq
         $this->modifiers = [];
     }
 
-    private function createOutOfRange(int $strictLimit, int $count): OutOfRangeException
-    {
-        return new OutOfRangeException(
-            sprintf('Seq does not have %d items to take, it only has %d items.', $strictLimit, $count),
-        );
-    }
-
     private function mapValue(callable $modifier, mixed $value): mixed
     {
         $value = $modifier($value);
@@ -369,6 +370,97 @@ class Seq implements ISeq
         Assertion::notIsInstanceOf($value, \Generator::class, 'Mapping must not generate new values.');
 
         return $value;
+    }
+
+    private function createOutOfRange(int $strictLimit, int $count): OutOfRangeException
+    {
+        return new OutOfRangeException(
+            sprintf('Seq does not have %d items to take, it only has %d items.', $strictLimit, $count),
+        );
+    }
+
+    public function isEmpty(): bool
+    {
+        foreach ($this as $v) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** @phpstan-param TValue $value */
+    public function contains(mixed $value): bool
+    {
+        foreach ($this as $v) {
+            if ($v === $value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
+    public function containsBy(callable $callback): bool
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $value) {
+            if ($callback($value, $i) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @phpstan-return array<TIndex, TValue> */
+    public function toArray(): array
+    {
+        $array = [];
+        foreach ($this as $value) {
+            /** @phpstan-var TValue $normalizedValue */
+            $normalizedValue = $value instanceof \MF\Collection\Mutable\Generic\ICollection || $value instanceof ICollection
+                ? $value->toArray()
+                : $value;
+
+            $array[] = $normalizedValue;
+        }
+
+        return $array;
+    }
+
+    /** @param callable(TValue, TIndex=): void $callback */
+    public function each(callable $callback): void
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $value) {
+            $callback($value, $i);
+        }
+    }
+
+    /**
+     * Tests if all elements of the collection satisfy the given predicate.
+     *
+     * @phpstan-param callable(TValue, TIndex=): bool $predicate
+     */
+    public function forAll(callable $predicate): bool
+    {
+        $predicate = Callback::curry($predicate);
+
+        foreach ($this as $i => $value) {
+            if ($predicate($value, $i) === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->toArray());
     }
 
     /**
@@ -390,6 +482,31 @@ class Seq implements ISeq
         return clone ($this);
     }
 
+    private function addModifier(SeqModifier $type, mixed $modifier): static
+    {
+        $this->modifiers[] = [$type, $modifier];
+
+        return $this;
+    }
+
+    /**
+     * Seq takes items till callable will return false.
+     * Note: Item and Key given to callable will be mapped by given mapping.
+     *
+     * @example
+     * Seq::range('1..Inf')->takeWhile(fn($i) => $i < 100) creates [1, 2, 3, ..., 99]
+     * Seq::infinite()->filter(fn($i) => $i % 2 === 0)->map(fn($i) => $i * $i)->takeWhile(fn($i) => $i < 25)->toArray(); creates [4, 16]
+     *
+     * @phpstan-param callable(TValue, TIndex=): bool $callable
+     * @phpstan-return ISeq<TValue>
+     */
+    public function takeWhile(callable $callable): ISeq
+    {
+        return $this->clone()
+            ->addModifier(SeqModifier::TakeWhile, Callback::curry($callable))
+            ->setIsInfinite(false);
+    }
+
     /**
      * Seq takes up to n items from sequence.
      * Note: If there is not enough items, it will return all items.
@@ -404,26 +521,10 @@ class Seq implements ISeq
     }
 
     /**
-     * Seq takes items till callable will return false.
-     * Note: Item and Key given to callable will be mapped by given mapping.
+     * Returns a sequence that skips N elements of the underlying sequence and then yields the remaining elements of the sequence.
      *
-     * @example
-     * Seq::range('1..Inf')->takeWhile(fn($i) => $i < 100) creates [1, 2, 3, ..., 99]
-     * Seq::infinite()->filter(fn($i) => $i % 2 === 0)->map(fn($i) => $i * $i)->takeWhile(fn($i) => $i < 25)->toArray(); creates [4, 16]
-     *
-     * @phpstan-template Key
-     * @phpstan-template Item
-     *
-     * @phpstan-param callable(Item, Key): bool $callable
      * @phpstan-return ISeq<TValue>
      */
-    public function takeWhile(callable $callable): ISeq
-    {
-        return $this->clone()
-            ->addModifier(SeqModifier::TakeWhile, Callback::curry($callable))
-            ->setIsInfinite(false);
-    }
-
     public function skip(int $limit): ISeq
     {
         $seq = $this->clone();
@@ -440,6 +541,12 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * Returns a sequence that, when iterated, skips elements of the underlying sequence while the given predicate returns True, and then yields the remaining elements of the sequence.
+     *
+     * @phpstan-param callable(TValue, TIndex=): bool $callable
+     * @phpstan-return ISeq<TValue>
+     */
     public function skipWhile(callable $callable): ISeq
     {
         $seq = $this->clone();
@@ -459,20 +566,39 @@ class Seq implements ISeq
         });
     }
 
-    /** @phpstan-return TValue[] */
-    public function toArray(): array
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return ISeq<T>
+     */
+    public function map(callable $callback): ISeq
     {
-        $array = [];
-        foreach ($this as $value) {
-            /** @var TValue $normalizedValue */
-            $normalizedValue = $value instanceof \MF\Collection\Mutable\Generic\ICollection || $value instanceof ICollection
-                ? $value->toArray()
-                : $value;
+        return $this->clone()
+            ->addModifier(SeqModifier::Map, Callback::curry($callback));
+    }
 
-            $array[] = $normalizedValue;
-        }
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return ISeq<T>
+     */
+    public function mapi(callable $callback): ISeq
+    {
+        return $this->clone()
+            ->addModifier(SeqModifier::Mapi, Callback::curry($callback));
+    }
 
-        return $array;
+    /**
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
+     * @phpstan-return ISeq<TValue>
+     */
+    public function filter(callable $callback): ISeq
+    {
+        return $this->clone()
+            ->addModifier(SeqModifier::Filter, Callback::curry($callback))
+            ->setIsInfinite(false);
     }
 
     /**
@@ -506,163 +632,10 @@ class Seq implements ISeq
     }
 
     /**
-     * @phpstan-param callable(TValue, int): bool $callback
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
-    public function filter(callable $callback): ISeq
-    {
-        return $this->clone()
-            ->addModifier(SeqModifier::Filter, Callback::curry($callback))
-            ->setIsInfinite(false);
-    }
-
-    private function addModifier(SeqModifier $type, mixed $modifier): static
-    {
-        $this->modifiers[] = [$type, $modifier];
-
-        return $this;
-    }
-
-    /** @phpstan-param TValue $value */
-    public function contains(mixed $value): bool
-    {
-        foreach ($this as $v) {
-            if ($v === $value) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /** @phpstan-param callable(TValue, int): bool $callback */
-    public function containsBy(callable $callback): bool
-    {
-        $callback = Callback::curry($callback);
-
-        foreach ($this as $i => $value) {
-            if ($callback($value, $i) === true) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function isEmpty(): bool
-    {
-        foreach ($this as $v) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /** @phpstan-return ISeq<TValue> */
-    public function clear(): ISeq
-    {
-        return static::createEmpty();
-    }
-
-    public function count(): int
-    {
-        $this->assertFinite('count');
-
-        return count($this->toArray());
-    }
-
-    /**
-     * @phpstan-template T
-     *
-     * @phpstan-param callable(TValue, int): T $callback
-     * @phpstan-return ISeq<T>
-     */
-    public function map(callable $callback): ISeq
-    {
-        return $this->clone()
-            ->addModifier(SeqModifier::Map, Callback::curry($callback));
-    }
-
-    public function mapi(callable $callback): ISeq
-    {
-        return $this->clone()
-            ->addModifier(SeqModifier::Mapi, Callback::curry($callback));
-    }
-
-    /** @phpstan-param callable(TValue, int): void $callback */
-    public function each(callable $callback): void
-    {
-        $callback = Callback::curry($callback);
-
-        foreach ($this as $i => $value) {
-            $callback($value, $i);
-        }
-    }
-
-    /**
-     * Applies the given function to each element of the sequence and concatenates all the results
-     *
-     * Note: if mapping is not necessary, you can use just concat instead
-     * @see ISeq::concat()
-     *
-     * @phpstan-template T
-     *
-     * @phpstan-param callable(TValue): iterable<T> $callback
-     * @phpstan-return ISeq<T>
-     */
-    public function collect(callable $callback): ISeq
-    {
-        /** @phsptan-var ISeq<iterable<T>> $collected */
-        $collected = $this->map($callback);
-        /** @phpstan-var ISeq<T> $concatenated */
-        $concatenated = $collected->concat();
-
-        return $concatenated;
-    }
-
-    /**
-     * Combines the given iterable-of-iterables as a single concatenated iterable
-     *
-     * Note: map->concat could be replaced by collect
-     * @see ISeq::collect()
-     *
-     * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
-     *
-     * @phpstan-return ISeq<TValue>  // todo - fix type
-     */
-    public function concat(): ISeq
-    {
-        return static::concatSeq($this);
-    }
-
-    public function implode(string $glue): string
-    {
-        return implode($glue, $this->toArray());
-    }
-
-    public function toList(): IList
-    {
-        $this->assertFinite('toList');
-
-        /** @phpstan-var IList<TValue> $list */
-        $list = ListCollection::from($this->toArray());
-
-        return $list;
-    }
-
-    public function forAll(callable $predicate): bool
-    {
-        $predicate = Callback::curry($predicate);
-
-        foreach ($this as $i => $value) {
-            if ($predicate($value, $i) === false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function sort(): ISeq
     {
         $this->assertFinite('sort');
@@ -677,6 +650,11 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function sortDescending(): ISeq
     {
         $this->assertFinite('sortDescending');
@@ -691,6 +669,12 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function sortBy(callable $callback): ISeq
     {
         $this->assertFinite('sortBy');
@@ -710,6 +694,12 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * @phpstan-param callable(TValue): int<-1, 1> $callback
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function sortByDescending(callable $callback): ISeq
     {
         $this->assertFinite('sortByDescending');
@@ -729,6 +719,13 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * Keeps only unique values inside the list.
+     *
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function unique(): ISeq
     {
         $this->assertFinite('unique');
@@ -740,6 +737,16 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * Keeps only unique values by a given callback inside the list.
+     *
+     * @phpstan-template Unique
+     *
+     * @phpstan-param callable(TValue): Unique $callback
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function uniqueBy(callable $callback): ISeq
     {
         $this->assertFinite('uniqueBy');
@@ -762,6 +769,13 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * Sort all items in a reverse order.
+     *
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function reverse(): ISeq
     {
         $this->assertFinite('reverse');
@@ -786,6 +800,7 @@ class Seq implements ISeq
         );
     }
 
+    /** @phpstan-param callable(TValue): (int|float) $callback */
     public function sumBy(callable $callback): int|float
     {
         $callback = Callback::curry($callback);
@@ -796,6 +811,16 @@ class Seq implements ISeq
         );
     }
 
+    /** @phpstan-return ISeq<TValue> */
+    public function clear(): ISeq
+    {
+        return static::createEmpty();
+    }
+
+    /**
+     * @phpstan-param ISeq<TValue> $seq
+     * @phpstan-return ISeq<TValue>
+     */
     public function append(ISeq $seq): ISeq
     {
         $seqA = $this->clone();
@@ -815,6 +840,13 @@ class Seq implements ISeq
             : $appended;
     }
 
+    /**
+     * Divides the seq into chunks of size at most chunkSize.
+     *
+     * @phpstan-return ISeq<ISeq<TValue>>
+     *
+     * @throws InvalidArgumentException
+     */
     public function chunkBySize(int $size): ISeq
     {
         Assertion::greaterThan($size, 0);
@@ -845,6 +877,15 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * Splits the seq into at most count chunks.
+     *
+     * @phpstan-param int<1, max> $count
+     * @phpstan-return ISeq<ISeq<TValue>>
+     *
+     * @throws InvalidArgumentException
+     * @throws OutOfBoundsException
+     */
     public function splitInto(int $count): ISeq
     {
         Assertion::greaterThan($count, 0);
@@ -892,6 +933,42 @@ class Seq implements ISeq
     }
 
     /**
+     * Applies the given function to each element of the sequence and concatenates all the results
+     *
+     * Note: if mapping is not necessary, you can use just concat instead
+     * @see ISeq::concat()
+     *
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): iterable<T> $callback
+     * @phpstan-return ISeq<T>
+     */
+    public function collect(callable $callback): ISeq
+    {
+        /** @phsptan-var ISeq<iterable<T>> $collected */
+        $collected = $this->map($callback);
+        /** @phpstan-var ISeq<T> $concatenated */
+        $concatenated = $collected->concat();
+
+        return $concatenated;
+    }
+
+    /**
+     * Combines the given iterable-of-iterables as a single concatenated iterable
+     *
+     * Note: map->concat could be replaced by collect
+     * @see ISeq::collect()
+     *
+     * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
+     *
+     * @phpstan-return ISeq<TValue>  // todo - fix type
+     */
+    public function concat(): ISeq
+    {
+        return static::concatSeq($this);
+    }
+
+    /**
      * @phpstan-template TKey of int|string
      *
      * @phpstan-param callable(TValue): TKey $callback
@@ -904,7 +981,7 @@ class Seq implements ISeq
         return static::init(function () use ($callback, $seq) {
             $callback = Callback::curry($callback);
 
-            /** @var IMap<TKey, int> $counts */
+            /** @phpstan-var IMap<TKey, int> $counts */
             $counts = $seq->reduce(
                 function (IMap $counts, mixed $value) use ($callback) {
                     $key = $callback($value);
@@ -933,7 +1010,7 @@ class Seq implements ISeq
         return static::init(function () use ($callback, $seq) {
             $callback = Callback::curry($callback);
 
-            /** @var IMap<TGroup, IList<TValue>> $groups */
+            /** @phpstan-var IMap<TGroup, IList<TValue>> $groups */
             $groups = $seq->reduce(
                 function (IMap $groups, mixed $value) use ($callback) {
                     $groupKey = $callback($value);
@@ -952,6 +1029,11 @@ class Seq implements ISeq
         });
     }
 
+    /**
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function min(): mixed
     {
         $this->assertFinite('min');
@@ -963,6 +1045,14 @@ class Seq implements ISeq
         return $min;
     }
 
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function minBy(callable $callback): mixed
     {
         $this->assertFinite('minBy');
@@ -983,6 +1073,11 @@ class Seq implements ISeq
         return $min;
     }
 
+    /**
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function max(): mixed
     {
         $this->assertFinite('max');
@@ -994,6 +1089,14 @@ class Seq implements ISeq
         return $max;
     }
 
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function maxBy(callable $callback): mixed
     {
         $this->assertFinite('maxBy');
@@ -1012,5 +1115,20 @@ class Seq implements ISeq
         }
 
         return $max;
+    }
+
+    /**
+     * @phpstan-return IList<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
+    public function toList(): IList
+    {
+        $this->assertFinite('toList');
+
+        /** @phpstan-var IList<TValue> $list */
+        $list = ListCollection::from($this->toArray());
+
+        return $list;
     }
 }

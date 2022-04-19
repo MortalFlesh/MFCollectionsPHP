@@ -103,11 +103,11 @@ interface IMap extends ICollection, \ArrayAccess
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, TKey=, IMap<TKey, TValue>=): State $callback
+     * @phpstan-param callable(State, TValue, TKey=, IMap<TKey, TValue>=): State $reducer
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
-    public function reduce(callable $callback, mixed $initialValue = null): mixed;
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 
     /** @phpstan-return \MF\Collection\Mutable\Generic\IMap<TKey, TValue> */
     public function asMutable(): \MF\Collection\Mutable\Generic\IMap;

@@ -135,9 +135,6 @@ interface ISeq extends ICollection
      */
     public static function unfold(callable $callable, mixed $initialValue): ISeq;
 
-    /** @phpstan-return TValue[] */
-    public function toArray(): array;
-
     /**
      * Seq takes exactly n items from sequence.
      * Note: If there is not enough items, it will throw an exception.
@@ -184,13 +181,20 @@ interface ISeq extends ICollection
     public function skipWhile(callable $callable): ISeq;
 
     /**
-     * @phpstan-template State
+     * @phpstan-template T
      *
-     * @phpstan-param callable(State, TValue, TIndex=, ISeq<TValue>=): State $reducer
-     * @phpstan-param State $initialValue
-     * @phpstan-return State
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return ISeq<T>
      */
-    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
+    public function map(callable $callback): ISeq;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return ISeq<T>
+     */
+    public function mapi(callable $callback): ISeq;
 
     /**
      * @phpstan-param callable(TValue, TIndex=): bool $callback
@@ -198,13 +202,14 @@ interface ISeq extends ICollection
      */
     public function filter(callable $callback): ISeq;
 
-    /** @phpstan-param TValue $value */
-    public function contains(mixed $value): bool;
-
-    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
-    public function containsBy(callable $callback): bool;
-
-    public function isEmpty(): bool;
+    /**
+     * @phpstan-template State
+     *
+     * @phpstan-param callable(State, TValue, TIndex=, ISeq<TValue>=): State $reducer
+     * @phpstan-param State $initialValue
+     * @phpstan-return State
+     */
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 
     /**
      * @phpstan-return ISeq<TValue>
@@ -295,29 +300,10 @@ interface ISeq extends ICollection
      * @phpstan-param int<1, max> $count
      * @phpstan-return ISeq<ISeq<TValue>>
      *
-     * @throws OutOfBoundsException
      * @throws InvalidArgumentException
+     * @throws OutOfBoundsException
      */
     public function splitInto(int $count): ISeq;
-
-    /**
-     * @phpstan-template T
-     *
-     * @phpstan-param callable(TValue): T $callback
-     * @phpstan-return ISeq<T>
-     */
-    public function map(callable $callback): ISeq;
-
-    /**
-     * @phpstan-template T
-     *
-     * @phpstan-param callable(TValue, TIndex): T $callback
-     * @phpstan-return ISeq<T>
-     */
-    public function mapi(callable $callback): ISeq;
-
-    /** @phpstan-param callable(TValue, TIndex=): void $callback */
-    public function each(callable $callback): void;
 
     /**
      * Applies the given function to each element of the sequence and concatenates all the results
@@ -393,8 +379,6 @@ interface ISeq extends ICollection
      * @throws OutOfBoundsException
      */
     public function maxBy(callable $callback): mixed;
-
-    public function implode(string $glue): string;
 
     /**
      * @phpstan-return IList<TValue>

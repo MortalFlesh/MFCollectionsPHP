@@ -19,7 +19,7 @@ class Collection
         $array = [];
 
         foreach ($collection as $key => $value) {
-            /** @var TValue $normalizedValue */
+            /** @phpstan-var TValue $normalizedValue */
             $normalizedValue = $value instanceof ICollection || $value instanceof \MF\Collection\Immutable\Generic\ICollection
                 ? $value->toArray()
                 : $value;
@@ -42,7 +42,7 @@ class Collection
         $array = [];
 
         foreach ($collection as $key => $value) {
-            /** @var TValue $normalizedValue */
+            /** @phpstan-var TValue $normalizedValue */
             $normalizedValue = $value instanceof ICollection || $value instanceof \MF\Collection\Immutable\Generic\ICollection
                 ? $value->toArray()
                 : $value;

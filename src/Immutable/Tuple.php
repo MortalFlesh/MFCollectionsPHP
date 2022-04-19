@@ -187,6 +187,8 @@ class Tuple implements ITuple
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
+     * @phpstan-param string[] $types
+     *
      * @throws TupleMatchException
      * @throws TupleParseException
      */
@@ -215,10 +217,82 @@ class Tuple implements ITuple
     /**
      * @example
      * Tuple::from([1, 2, 3])->toArray() -> [1, 2, 3]
+     *
+     * @phpstan-param mixed[] $values
      */
     public static function from(array $values): ITuple
     {
         return new self($values);
+    }
+
+    /**
+     * Merge base tuple with additional items
+     * @see ITuple::mergeMatch()
+     *
+     * You can merge base tuple with other values or with other tuples
+     * Note: result of merging tuples will be flatten
+     *
+     * @example
+     * Tuple::merge(Tuple::of(1, 2), 3)                                -> (1, 2, 3)
+     * Tuple::merge(Tuple::of(1, 2), 3, 4)                             -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
+     */
+    public static function merge(ITuple $base, mixed ...$additional): ITuple
+    {
+        return self::from(
+            array_merge(
+                $base->toArray(),
+                Seq::init(function () use ($additional) {
+                    foreach ($additional as $item) {
+                        if ($item instanceof ITuple) {
+                            yield from $item;
+                        } else {
+                            yield $item;
+                        }
+                    }
+                })->toArray(),
+            ),
+        );
+    }
+
+    /**
+     * Merge base tuple with additional items and checks whether result matches given types
+     * @see ITuple::merge()
+     * @see ITuple::matchTypes()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::mergeMatch(['string', 'string', 'string'], Tuple::parse('(foo, bar)'), 'boo')->toArray()  -> ['foo', 'bar', 'boo']
+     * Tuple::mergeMatch(['int', 'int', 'int', 'string'], Tuple::parse('(1, 2, 3)'), 'four')->toArray() -> [1, 2, 3, 'four']
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
+     * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
+     *
+     * @phpstan-param string[] $types
+     *
+     * @throws TupleMatchException
+     */
+    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple
+    {
+        /** @var self $mergedTuple */
+        $mergedTuple = self::merge($base, ...$additional);
+
+        if (!$mergedTuple->matchTypes($types)) {
+            throw TupleMatchException::forTypes(...$mergedTuple->getTypes($types));
+        }
+
+        return $mergedTuple;
     }
 
     /** @phpstan-param mixed[] $values */
@@ -235,29 +309,26 @@ class Tuple implements ITuple
         }
     }
 
-    /**
-     * @param int $offset
-     */
-    public function offsetExists(mixed $offset): bool
+    public function count(): int
     {
-        self::assertKey($offset);
-
-        return array_key_exists($offset, $this->values);
+        return count($this->values);
     }
 
-    private static function assertKey(mixed $key): void
+    /** @phpstan-return \Traversable<int, mixed> */
+    public function getIterator(): \Traversable
     {
-        Assertion::integer($key, 'Tuples can only have integer indexes.');
+        yield from $this->toArray();
     }
 
-    /**
-     * @param int $offset
-     */
-    public function offsetGet(mixed $offset): mixed
+    public function isEmpty(): bool
     {
-        self::assertKey($offset);
+        foreach ($this as $v) {
+            if (!empty($v)) {
+                return false;
+            }
+        }
 
-        return $this->values[$offset];
+        return true;
     }
 
     /**
@@ -291,6 +362,22 @@ class Tuple implements ITuple
         );
     }
 
+    public function toStringForUrl(): string
+    {
+        return $this->formatToString(
+            ',',
+            ';',
+            fn (string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
+                ? $value
+                : sprintf('"%s"', $value)
+        );
+    }
+
+    private function isMatching(string $pattern, string $value): bool
+    {
+        return preg_match($pattern, $value) === 1;
+    }
+
     private function mapValueToString(string $arraySeparator, callable $formatStringValue): callable
     {
         return function ($value) use ($arraySeparator, $formatStringValue) {
@@ -315,32 +402,7 @@ class Tuple implements ITuple
         };
     }
 
-    public function toStringForUrl(): string
-    {
-        return $this->formatToString(
-            ',',
-            ';',
-            fn (string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
-                ? $value
-                : sprintf('"%s"', $value)
-        );
-    }
-
-    private function isMatching(string $pattern, string $value): bool
-    {
-        return preg_match($pattern, $value) === 1;
-    }
-
-    public function count(): int
-    {
-        return count($this->values);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        yield from $this->toArray();
-    }
-
+    /** @phpstan-return mixed[] */
     public function toArray(): array
     {
         return array_values($this->values);
@@ -422,6 +484,8 @@ class Tuple implements ITuple
      * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
      * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
      * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
+     *
+     * @phpstan-param string[] $types
      */
     public function matchTypes(array $types): bool
     {
@@ -505,74 +569,6 @@ class Tuple implements ITuple
     }
 
     /**
-     * Merge base tuple with additional items
-     * @see ITuple::mergeMatch()
-     *
-     * You can merge base tuple with other values or with other tuples
-     * Note: result of merging tuples will be flatten
-     *
-     * @example
-     * Tuple::merge(Tuple::of(1, 2), 3)                                -> (1, 2, 3)
-     * Tuple::merge(Tuple::of(1, 2), 3, 4)                             -> (1, 2, 3, 4)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
-     */
-    public static function merge(ITuple $base, mixed ...$additional): ITuple
-    {
-        return self::from(
-            array_merge(
-                $base->toArray(),
-                Seq::init(function () use ($additional) {
-                    foreach ($additional as $item) {
-                        if ($item instanceof ITuple) {
-                            yield from $item;
-                        } else {
-                            yield $item;
-                        }
-                    }
-                })->toArray(),
-            ),
-        );
-    }
-
-    /**
-     * Merge base tuple with additional items
-     * @see ITuple::merge()
-     * @see ITuple::matchTypes()
-     *
-     * Types to match:
-     * - string
-     * - bool, boolean
-     * - int, integer
-     * - float, double
-     * - array
-     * - any, mixed, * (any is nullable by default)
-     * - ?type (nullable type is any of the above with ? prefix)
-     *
-     * @example
-     * Tuple::mergeMatch(['string', 'string', 'string'], Tuple::parse('(foo, bar)'), 'boo')->toArray()  -> ['foo', 'bar', 'boo']
-     * Tuple::mergeMatch(['int', 'int', 'int', 'string'], Tuple::parse('(1, 2, 3)'), 'four')->toArray() -> [1, 2, 3, 'four']
-     *
-     * Invalid (throws an \InvalidArgumentException):
-     * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
-     * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
-     *
-     * @throws TupleMatchException
-     */
-    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple
-    {
-        /** @var self $mergedTuple */
-        $mergedTuple = self::merge($base, ...$additional);
-
-        if (!$mergedTuple->matchTypes($types)) {
-            throw TupleMatchException::forTypes(...$mergedTuple->getTypes($types));
-        }
-
-        return $mergedTuple;
-    }
-
-    /**
      * @deprecated Altering existing tuple is not permitted
      */
     public function offsetSet(mixed $offset, mixed $value): void
@@ -593,14 +589,28 @@ class Tuple implements ITuple
         $this->forbiddenMethod();
     }
 
-    public function isEmpty(): bool
+    /**
+     * @param int $offset
+     */
+    public function offsetExists(mixed $offset): bool
     {
-        foreach ($this as $v) {
-            if (!empty($v)) {
-                return false;
-            }
-        }
+        self::assertKey($offset);
 
-        return true;
+        return array_key_exists($offset, $this->values);
+    }
+
+    private static function assertKey(mixed $key): void
+    {
+        Assertion::integer($key, 'Tuples can only have integer indexes.');
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        self::assertKey($offset);
+
+        return $this->values[$offset];
     }
 }

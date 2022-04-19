@@ -101,11 +101,11 @@ interface IList extends ICollection
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $callback
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
-    public function reduce(callable $callback, mixed $initialValue = null): mixed;
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 
     /** @phpstan-return IList<TValue> */
     public function sort(): IList;

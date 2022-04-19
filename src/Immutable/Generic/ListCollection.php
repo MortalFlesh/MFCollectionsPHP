@@ -3,6 +3,7 @@
 namespace MF\Collection\Immutable\Generic;
 
 use MF\Collection\Assertion;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Helper\Callback;
 use MF\Collection\Helper\Collection;
 
@@ -35,11 +36,19 @@ class ListCollection implements IList
         return new static($values);
     }
 
+    /**
+     * @phpstan-param TValue $values
+     * @phpstan-return IList<TValue>
+     */
     public static function of(mixed ...$values): IList
     {
         return static::from($values);
     }
 
+    /**
+     * @phpstan-param iterable<mixed, TValue> $source
+     * @phpstan-return IList<TValue>
+     */
     public static function from(iterable $source): IList
     {
         $listArray = [];
@@ -75,111 +84,34 @@ class ListCollection implements IList
     {
     }
 
-    public function toArray(): array
-    {
-        return Collection::immutableToArray($this);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        yield from $this->listArray;
-    }
-
-    public function add(mixed $value): IList
-    {
-        $listArray = $this->listArray;
-        $listArray[] = $value;
-
-        return new static($listArray);
-    }
-
-    public function unshift(mixed $value): IList
-    {
-        $listArray = $this->listArray;
-        array_unshift($listArray, $value);
-
-        return new static($listArray);
-    }
-
-    public function first(): mixed
-    {
-        return empty($listArray = $this->listArray)
-            ? null
-            : reset($listArray);
-    }
-
-    public function firstBy(callable $callback): mixed
-    {
-        $callback = Callback::curry($callback);
-
-        foreach ($this as $i => $v) {
-            if ($callback($v, $i)) {
-                return $v;
-            }
-        }
-
-        return null;
-    }
-
-    public function last(): mixed
-    {
-        $list = $this->listArray;
-
-        return array_pop($list);
-    }
-
-    public function sort(): IList
-    {
-        $sorted = $this->listArray;
-        sort($sorted);
-
-        return static::from($sorted);
-    }
-
-    public function sortDescending(): IList
-    {
-        $sorted = $this->listArray;
-        rsort($sorted);
-
-        return static::from($sorted);
-    }
-
-    public function sortBy(callable $callback): IList
-    {
-        $callback = Callback::curry($callback);
-        $sorted = $this->listArray;
-
-        usort(
-            $sorted,
-            fn (mixed $a, mixed $b): int => $callback($a) <=> $callback($b)
-        );
-
-        return static::from($sorted);
-    }
-
-    public function sortByDescending(callable $callback): IList
-    {
-        $callback = Callback::curry($callback);
-        $sorted = $this->listArray;
-
-        usort(
-            $sorted,
-            fn (mixed $a, mixed $b): int => $callback($b) <=> $callback($a)
-        );
-
-        return static::from($sorted);
-    }
-
     public function count(): int
     {
         return count($this->listArray);
     }
 
+    /** @phpstan-return \Traversable<TIndex, TValue> */
+    public function getIterator(): \Traversable
+    {
+        yield from $this->listArray;
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->listArray);
+    }
+
+    /** @phpstan-param TValue $value */
     public function contains(mixed $value): bool
     {
         return $this->find($value) !== false;
     }
 
+    protected function find(mixed $value): int|false
+    {
+        return array_search($value, $this->listArray, true);
+    }
+
+    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
     public function containsBy(callable $callback): bool
     {
         $callback = Callback::curry($callback);
@@ -193,11 +125,106 @@ class ListCollection implements IList
         return false;
     }
 
-    protected function find(mixed $value): int|false
+    /** @phpstan-return array<TIndex, TValue> */
+    public function toArray(): array
     {
-        return array_search($value, $this->listArray, true);
+        return Collection::immutableToArray($this);
     }
 
+    /** @param callable(TValue, TIndex=): void $callback */
+    public function each(callable $callback): void
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $value) {
+            $callback($value, $i);
+        }
+    }
+
+    /**
+     * Tests if all elements of the collection satisfy the given predicate.
+     *
+     * @phpstan-param callable(TValue, TIndex=): bool $predicate
+     */
+    public function forAll(callable $predicate): bool
+    {
+        $predicate = Callback::curry($predicate);
+
+        foreach ($this as $i => $v) {
+            if ($predicate($v, $i) !== true) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->listArray);
+    }
+
+    /** @phpstan-return TValue|null */
+    public function first(): mixed
+    {
+        return empty($listArray = $this->listArray)
+            ? null
+            : reset($listArray);
+    }
+
+    /**
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
+     * @phpstan-return TValue|null
+     */
+    public function firstBy(callable $callback): mixed
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $v) {
+            if ($callback($v, $i)) {
+                return $v;
+            }
+        }
+
+        return null;
+    }
+
+    /** @phpstan-return TValue|null */
+    public function last(): mixed
+    {
+        $list = $this->listArray;
+
+        return array_pop($list);
+    }
+
+    /**
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
+     */
+    public function add(mixed $value): IList
+    {
+        $listArray = $this->listArray;
+        $listArray[] = $value;
+
+        return new static($listArray);
+    }
+
+    /**
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
+     */
+    public function unshift(mixed $value): IList
+    {
+        $listArray = $this->listArray;
+        array_unshift($listArray, $value);
+
+        return new static($listArray);
+    }
+
+    /**
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
+     */
     public function removeFirst(mixed $value): IList
     {
         $index = $this->find($value);
@@ -216,20 +243,21 @@ class ListCollection implements IList
         return new static($listArray);
     }
 
+    /**
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
+     */
     public function removeAll(mixed $value): IList
     {
         return $this->filter(fn (mixed $val): bool => $value !== $val);
     }
 
-    public function each(callable $callback): void
-    {
-        $callback = Callback::curry($callback);
-
-        foreach ($this as $i => $value) {
-            $callback($value, $i);
-        }
-    }
-
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return IList<T>
+     */
     public function map(callable $callback): IList
     {
         $listArray = [];
@@ -242,6 +270,12 @@ class ListCollection implements IList
         return new static($listArray);
     }
 
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return IList<T>
+     */
     public function mapi(callable $callback): IList
     {
         $listArray = [];
@@ -254,6 +288,10 @@ class ListCollection implements IList
         return new static($listArray);
     }
 
+    /**
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
+     * @phpstan-return IList<TValue>
+     */
     public function filter(callable $callback): IList
     {
         $listArray = [];
@@ -268,6 +306,13 @@ class ListCollection implements IList
         return new static($listArray);
     }
 
+    /**
+     * @phpstan-template State
+     *
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
+     * @phpstan-param State $initialValue
+     * @phpstan-return State
+     */
     public function reduce(callable $reducer, mixed $initialValue = null): mixed
     {
         $reducer = Callback::curry($reducer);
@@ -280,34 +325,76 @@ class ListCollection implements IList
         return $state;
     }
 
-    public function clear(): IList
+    /** @phpstan-return IList<TValue> */
+    public function sort(): IList
     {
-        return new static();
+        $sorted = $this->listArray;
+        sort($sorted);
+
+        return static::from($sorted);
     }
 
-    public function isEmpty(): bool
+    /** @phpstan-return IList<TValue> */
+    public function sortDescending(): IList
     {
-        return empty($this->listArray);
+        $sorted = $this->listArray;
+        rsort($sorted);
+
+        return static::from($sorted);
     }
 
-    public function asMutable(): \MF\Collection\Mutable\Generic\IList
+    /**
+     * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function sortBy(callable $callback): IList
     {
-        /** @phpstan-var \MF\Collection\Mutable\Generic\IList<TValue> $mutableList */
-        $mutableList = \MF\Collection\Mutable\Generic\ListCollection::from($this);
+        $callback = Callback::curry($callback);
+        $sorted = $this->listArray;
 
-        return $mutableList;
+        usort(
+            $sorted,
+            fn (mixed $a, mixed $b): int => $callback($a) <=> $callback($b)
+        );
+
+        return static::from($sorted);
     }
 
-    public function implode(string $glue): string
+    /**
+     * @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function sortByDescending(callable $callback): IList
     {
-        return implode($glue, $this->listArray);
+        $callback = Callback::curry($callback);
+        $sorted = $this->listArray;
+
+        usort(
+            $sorted,
+            fn (mixed $a, mixed $b): int => $callback($b) <=> $callback($a)
+        );
+
+        return static::from($sorted);
     }
 
+    /**
+     * Keeps only unique values inside the list.
+     *
+     * @phpstan-return IList<TValue>
+     */
     public function unique(): IList
     {
         return static::from(array_unique($this->listArray));
     }
 
+    /**
+     * Keeps only unique values by a given callback inside the list.
+     *
+     * @phpstan-template Unique
+     *
+     * @phpstan-param callable(TValue, TIndex=): Unique $callback
+     * @phpstan-return IList<TValue>
+     */
     public function uniqueBy(callable $callback): IList
     {
         $callback = Callback::curry($callback);
@@ -327,6 +414,11 @@ class ListCollection implements IList
         return static::from($list);
     }
 
+    /**
+     * Sort all items in a reverse order.
+     *
+     * @phpstan-return IList<TValue>
+     */
     public function reverse(): IList
     {
         return static::from(array_reverse($this->listArray));
@@ -337,6 +429,7 @@ class ListCollection implements IList
         return array_sum($this->listArray);
     }
 
+    /** @phpstan-param callable(TValue, TIndex=): (int|float) $callback */
     public function sumBy(callable $callback): int|float
     {
         $callback = Callback::curry($callback);
@@ -347,32 +440,29 @@ class ListCollection implements IList
         );
     }
 
-    public function toSeq(): ISeq
+    /** @phpstan-return IList<TValue> */
+    public function clear(): IList
     {
-        /** @phpstan-var ISeq<TValue> $seq */
-        $seq = Seq::from($this->listArray);
-
-        return $seq;
+        return new static();
     }
 
-    public function forAll(callable $predicate): bool
-    {
-        $predicate = Callback::curry($predicate);
-
-        foreach ($this as $i => $v) {
-            if ($predicate($v, $i) !== true) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
+    /**
+     * @phpstan-param IList<TValue> $list
+     * @phpstan-return IList<TValue>
+     */
     public function append(IList $list): IList
     {
         return static::of(...$this, ...$list);
     }
 
+    /**
+     * Divides the list into chunks of size at most chunkSize.
+     *
+     * @phpstan-param int<1, max> $size
+     * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
+     */
     public function chunkBySize(int $size): IList
     {
         Assertion::greaterThan($size, 0);
@@ -405,7 +495,10 @@ class ListCollection implements IList
     /**
      * Splits the list into at most count chunks.
      *
+     * @phpstan-param int<1, max> $count
      * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
      */
     public function splitInto(int $count): IList
     {
@@ -453,7 +546,7 @@ class ListCollection implements IList
      *
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, TIndex): iterable<T> $callback
+     * @phpstan-param callable(TValue): iterable<T> $callback
      * @phpstan-return IList<T>
      */
     public function collect(callable $callback): IList
@@ -481,14 +574,14 @@ class ListCollection implements IList
     /**
      * @phpstan-template TKey of int|string
      *
-     * @phpstan-param callable(TValue, TIndex): TKey $callback
+     * @phpstan-param callable(TValue, TIndex=): TKey $callback
      * @phpstan-return IList<KVPair<TKey, int>>
      */
     public function countBy(callable $callback): IList
     {
         $callback = Callback::curry($callback);
 
-        /** @var IMap<TKey, int> $counts */
+        /** @phpstan-var IMap<TKey, int> $counts */
         $counts = $this->reduce(
             function (IMap $counts, mixed $value, int $i) use ($callback) {
                 $key = $callback($value, $i);
@@ -513,7 +606,7 @@ class ListCollection implements IList
     {
         $callback = Callback::curry($callback);
 
-        /** @var IMap<TGroup, IList<TValue>> $groups */
+        /** @phpstan-var IMap<TGroup, IList<TValue>> $groups */
         $groups = $this->reduce(
             function (IMap $groups, mixed $value) use ($callback) {
                 $groupKey = $callback($value);
@@ -531,7 +624,7 @@ class ListCollection implements IList
         return $groups->pairs();
     }
 
-    /** @phpstan-return TValue */
+    /** @phpstan-return TValue|null */
     public function min(): mixed
     {
         /** @phpstan-var TValue $min */
@@ -540,6 +633,12 @@ class ListCollection implements IList
         return $min;
     }
 
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
     public function minBy(callable $callback): mixed
     {
         $min = null;
@@ -558,7 +657,7 @@ class ListCollection implements IList
         return $min;
     }
 
-    /** @phpstan-return TValue */
+    /** @phpstan-return TValue|null */
     public function max(): mixed
     {
         /** @phpstan-var TValue $max */
@@ -567,6 +666,12 @@ class ListCollection implements IList
         return $max;
     }
 
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
     public function maxBy(callable $callback): mixed
     {
         $max = null;
@@ -583,5 +688,23 @@ class ListCollection implements IList
         }
 
         return $max;
+    }
+
+    /** @phpstan-return \MF\Collection\Mutable\Generic\IList<TValue> */
+    public function asMutable(): \MF\Collection\Mutable\Generic\IList
+    {
+        /** @phpstan-var \MF\Collection\Mutable\Generic\IList<TValue> $mutableList */
+        $mutableList = \MF\Collection\Mutable\Generic\ListCollection::from($this);
+
+        return $mutableList;
+    }
+
+    /** @phpstan-return ISeq<TValue> */
+    public function toSeq(): ISeq
+    {
+        /** @phpstan-var ISeq<TValue> $seq */
+        $seq = Seq::from($this->listArray);
+
+        return $seq;
     }
 }

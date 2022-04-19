@@ -722,11 +722,11 @@ class ListTest extends AbstractTestCase
 
     public function testShouldConcatIntList(): void
     {
-        $result = ListCollection::from([[1, 2, 3], [4, 5, 6]])
+        $result = ListCollection::from([[1, 2, 3], [4, 5, 6], 7, 8])
             ->concat()
             ->toArray();
 
-        $this->assertSame([1, 2, 3, 4, 5, 6], $result);
+        $this->assertSame([1, 2, 3, 4, 5, 6, 7, 8], $result);
     }
 
     public function testShouldConcatList(): void

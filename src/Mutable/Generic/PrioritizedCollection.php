@@ -28,12 +28,6 @@ class PrioritizedCollection implements IEnumerable
         $this->items[] = Tuple::of($item, $priority);
     }
 
-    /** @phpstan-return \Traversable<TIndex, TValue> */
-    public function getIterator(): \Traversable
-    {
-        yield from $this->getItemsByPriority();
-    }
-
     /** @phpstan-return iterable<TIndex, TValue> */
     private function getItemsByPriority(): iterable
     {
@@ -51,6 +45,12 @@ class PrioritizedCollection implements IEnumerable
     public function count(): int
     {
         return count($this->items);
+    }
+
+    /** @phpstan-return \Traversable<TIndex, TValue> */
+    public function getIterator(): \Traversable
+    {
+        yield from $this->getItemsByPriority();
     }
 
     public function isEmpty(): bool
