@@ -1,0 +1,102 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method class@anonymous/Helper/CallbackTest\\.php\\:69\\:\\:__invoke\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: tests/Helper/CallbackTest.php
+
+		-
+			message: "#^Method class@anonymous/Helper/CallbackTest\\.php\\:69\\:\\:__invoke\\(\\) has parameter \\$four with no type specified\\.$#"
+			count: 1
+			path: tests/Helper/CallbackTest.php
+
+		-
+			message: "#^Method class@anonymous/Helper/CallbackTest\\.php\\:69\\:\\:__invoke\\(\\) has parameter \\$one with no type specified\\.$#"
+			count: 1
+			path: tests/Helper/CallbackTest.php
+
+		-
+			message: "#^Method class@anonymous/Helper/CallbackTest\\.php\\:69\\:\\:__invoke\\(\\) has parameter \\$three with no type specified\\.$#"
+			count: 1
+			path: tests/Helper/CallbackTest.php
+
+		-
+			message: "#^Method class@anonymous/Helper/CallbackTest\\.php\\:69\\:\\:__invoke\\(\\) has parameter \\$two with no type specified\\.$#"
+			count: 1
+			path: tests/Helper/CallbackTest.php
+
+		-
+			message: "#^Binary operation \"\\.\" between array\\{0\\: string, 1\\: string, 2\\?\\: string\\} and ' ' results in an error\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<string, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\>\\>\\:\\:map\\(\\) expects callable\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<string, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\>\\)\\: mixed, Closure\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<int\\|string, mixed\\>\\)\\: mixed given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, array\\{0\\: string, 1\\: string, 2\\?\\: string\\}, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\{0\\: string, 1\\: string, 2\\?\\: string\\}\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:collect\\(\\)$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Expression \"\\$this\\-\\>map\\['not there'\\]\" on a separate line does not do anything\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/MapTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$pairs of static method MF\\\\Collection\\\\Immutable\\\\Generic\\\\Map\\<int\\|string,mixed\\>\\:\\:fromPairs\\(\\) expects iterable\\<array\\{int\\|string, mixed\\}\\|MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<int\\|string, mixed\\>\\|MF\\\\Collection\\\\Immutable\\\\ITuple\\>, array\\{'invalid'\\} given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/MapTest.php
+
+		-
+			message: "#^Binary operation \"\\.\" between iterable\\<int, string\\> and ' ' results in an error\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with array\\{11, 12, 13, 14, 15, 6, 7, 8, \\.\\.\\.\\} and array\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<int\\>\\> will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Comparison operation \"\\<\" between \\(array\\|float\\|int\\) and 500 results in an error\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, iterable\\<int, string\\>, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\:\\:collect\\(\\)$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
+			count: 1
+			path: tests/Mutable/Generic/ListTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with array\\{'one', 'two'\\} and array\\<int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<int\\|string, mixed\\>\\> will always evaluate to false\\.$#"
+			count: 1
+			path: tests/Mutable/Generic/MapTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$pairs of static method MF\\\\Collection\\\\Mutable\\\\Generic\\\\Map\\<int\\|string,mixed\\>\\:\\:fromPairs\\(\\) expects iterable\\<array\\{int\\|string, mixed\\}\\|MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<int\\|string, mixed\\>\\|MF\\\\Collection\\\\Immutable\\\\ITuple\\>, array\\{'invalid'\\} given\\.$#"
+			count: 1
+			path: tests/Mutable/Generic/MapTest.php
+

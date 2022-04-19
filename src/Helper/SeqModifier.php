@@ -15,6 +15,7 @@ namespace MF\Collection\Helper;
 enum SeqModifier
 {
     case Map;
+    case Mapi;
     case Filter;
     case Take;
     case TakeUpTo;

@@ -63,9 +63,9 @@ class Tuple implements ITuple
         }
 
         $cache = [];
-        $parts = Seq::init(function () use ($tuple) {
-            return explode(',', trim($tuple, '()'));
-        })
+
+        /** @var string[] $parts */
+        $parts = Seq::init(fn () => explode(',', trim($tuple, '()')))
             ->reduce(function (array $matches, string $match) use (&$cache) {
                 $trimmedMatch = ltrim($match);
                 $isStart = (str_starts_with($trimmedMatch, '"') || str_starts_with($trimmedMatch, "'"))
@@ -88,13 +88,12 @@ class Tuple implements ITuple
 
                 return $matches;
             }, []);
+        unset($cache);
 
         $values = Seq::from($parts)
-            ->map(function (string $match) {
-                return trim($match);
-            })
+            ->map(fn (string $value) => trim($value))
             ->filter(fn ($match) => $match !== '')
-            ->map(self::mapParsedItem())
+            ->map(self::mapParsedItem(...))
             ->toArray();
 
         if ($expectedItemsCount !== null) {
@@ -108,32 +107,30 @@ class Tuple implements ITuple
         return new self($values);
     }
 
-    private static function mapParsedItem(): callable
+    private static function mapParsedItem(string $item): mixed
     {
-        return function (string $item) {
-            $item = trim($item);
-            if (is_numeric($item) && mb_strpos($item, '.') === false) {
-                return (int) $item;
-            } elseif (is_numeric($item)) {
-                return (float) $item;
-            } elseif ($item === 'true') {
-                return true;
-            } elseif ($item === 'false') {
-                return false;
-            } elseif ($item === 'null') {
-                return null;
-            } elseif (str_starts_with($item, '[') && str_ends_with($item, ']')) {
-                $arrayContent = trim($item, '[]');
-                Assertion::false(
-                    str_contains($arrayContent, '[') || str_contains($arrayContent, ']'),
-                    sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item),
-                );
+        $item = trim($item);
+        if (is_numeric($item) && mb_strpos($item, '.') === false) {
+            return (int) $item;
+        } elseif (is_numeric($item)) {
+            return (float) $item;
+        } elseif ($item === 'true') {
+            return true;
+        } elseif ($item === 'false') {
+            return false;
+        } elseif ($item === 'null') {
+            return null;
+        } elseif (str_starts_with($item, '[') && str_ends_with($item, ']')) {
+            $arrayContent = trim($item, '[]');
+            Assertion::false(
+                str_contains($arrayContent, '[') || str_contains($arrayContent, ']'),
+                sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item),
+            );
 
-                return array_map(self::mapParsedItem(), explode(';', $arrayContent));
-            }
+            return array_map(self::mapParsedItem(...), explode(';', $arrayContent));
+        }
 
-            return preg_replace('/^[\'\"]?/', '', (string) preg_replace('/[\'\"]?$/', '', $item));
-        };
+        return preg_replace('/^[\'\"]?/', '', (string) preg_replace('/[\'\"]?$/', '', $item));
     }
 
     /**
@@ -224,6 +221,7 @@ class Tuple implements ITuple
         return new self($values);
     }
 
+    /** @phpstan-param mixed[] $values */
     private function __construct(private readonly array $values)
     {
         try {
@@ -276,9 +274,11 @@ class Tuple implements ITuple
      */
     public function toString(): string
     {
-        return $this->formatToString(', ', '; ', function (string $value): string {
-            return sprintf('"%s"', $value);
-        });
+        return $this->formatToString(
+            ', ',
+            '; ',
+            fn (string $value): string => sprintf('"%s"', $value)
+        );
     }
 
     private function formatToString(string $separator, string $arraySeparator, callable $formatStringValue): string
@@ -317,11 +317,13 @@ class Tuple implements ITuple
 
     public function toStringForUrl(): string
     {
-        return $this->formatToString(',', ';', function (string $value): string {
-            return $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
+        return $this->formatToString(
+            ',',
+            ';',
+            fn (string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
                 ? $value
-                : sprintf('"%s"', $value);
-        });
+                : sprintf('"%s"', $value)
+        );
     }
 
     private function isMatching(string $pattern, string $value): bool
@@ -460,47 +462,46 @@ class Tuple implements ITuple
         return true;
     }
 
+    /**
+     * @phpstan-param string[] $types
+     * @phpstan-return array{0: string[], 1: string[]}
+     */
     private function getTypes(array $types): array
     {
         $normalizeType = $this->normalizeType();
 
+        /** @phpstan-var string[] $expectedTypes */
         $expectedTypes = Seq::create($types, $normalizeType)
             ->toArray();
-        $actualTypes = Seq::create($this->toArray(), 'gettype')
+        $actualTypes = Seq::create($this->toArray(), gettype(...))
             ->map($normalizeType)
             ->toArray();
 
         return [$expectedTypes, $actualTypes];
     }
 
+    /** @phpstan-return \Closure(string): string */
     private function normalizeType(): \Closure
     {
-        return function (string $type) {
-            $types = Seq::create(explode('|', $type), function (string $type): iterable {
+        return fn (string $type): string => Seq::create(
+            explode('|', $type),
+            function (string $type): iterable {
                 if (str_starts_with($type, '?')) {
                     yield 'NULL';
                 }
 
                 yield ltrim($type, '?');
+            },
+        )
+            ->map(fn (string $type) => match ($type) {
+                'integer' => 'int',
+                'boolean' => 'bool',
+                'double' => 'float',
+                'any', 'mixed' => '*',
+                default => $type,
             })
-                ->map(function ($type) {
-                    switch ($type) {
-                        case 'integer':
-                            return 'int';
-                        case 'boolean':
-                            return 'bool';
-                        case 'double':
-                            return 'float';
-                        case 'any':
-                        case 'mixed':
-                            return '*';
-                        default:
-                            return $type;
-                    }
-                });
-
-            return implode('|', array_unique($types->toArray()));
-        };
+            ->unique()
+            ->implode('|');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Immutable\Generic\ISeq;
 use MF\Collection\Immutable\Generic\KVPair;
 use MF\Collection\Immutable\ITuple;
@@ -11,6 +12,7 @@ use MF\Collection\Immutable\ITuple;
  * @phpstan-template TValue
  *
  * @phpstan-extends ICollection<TKey, TValue>
+ * @phpstan-extends \ArrayAccess<TKey, TValue>
  */
 interface IMap extends ICollection, \ArrayAccess
 {
@@ -23,6 +25,8 @@ interface IMap extends ICollection, \ArrayAccess
     /**
      * @phpstan-param iterable<ITuple|KVPair<TKey, TValue>|array{0: TKey, 1: TValue}> $pairs
      * @phpstan-return IMap<TKey, TValue>
+     *
+     * @throws InvalidArgumentException
      */
     public static function fromPairs(iterable $pairs): IMap;
 
@@ -50,7 +54,11 @@ interface IMap extends ICollection, \ArrayAccess
      */
     public function findKey(mixed $value): mixed;
 
-    /** @phpstan-return TValue */
+    /**
+     * @phpstan-return TValue
+     *
+     * @throws InvalidArgumentException
+     */
     public function get(int|string $key): mixed;
 
     /**
@@ -59,7 +67,11 @@ interface IMap extends ICollection, \ArrayAccess
      */
     public function set(int|string $key, mixed $value): void;
 
-    /** @phpstan-param TKey $key */
+    /**
+     * @phpstan-param TKey $key
+     *
+     * @throws InvalidArgumentException
+     */
     public function remove(int|string $key): void;
 
     public function clear(): void;
@@ -86,7 +98,7 @@ interface IMap extends ICollection, \ArrayAccess
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, TKey, IMap<TKey, TValue>): State $callback
+     * @phpstan-param callable(State, TValue, TKey=, IMap<TKey, TValue>=): State $callback
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
@@ -100,4 +112,42 @@ interface IMap extends ICollection, \ArrayAccess
 
     /** @phpstan-return ISeq<ITuple> */
     public function toSeq(): ISeq;
+
+    /**
+     * @see IMap::containsKey()
+     *
+     * @phpstan-param TKey $offset
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetExists(mixed $offset): bool;
+
+    /**
+     * @see IMap::get()
+     *
+     * @phpstan-param TKey $offset
+     * @phpstan-return TValue
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetGet(mixed $offset): mixed;
+
+    /**
+     * @see IMap::set()
+     *
+     * @phpstan-param TKey $offset
+     * @phpstan-param TValue $value
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetSet(mixed $offset, mixed $value): void;
+
+    /**
+     * @see IMap::remove()
+     *
+     * @phpstan-param TKey $offset
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetUnset(mixed $offset): void;
 }

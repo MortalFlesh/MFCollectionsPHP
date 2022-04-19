@@ -883,13 +883,9 @@ class SeqTest extends AbstractTestCase
         $word = Seq::init(function () use ($data): iterable {
             yield from $data;
         })
-            ->map(function (int $item) use ($subData): iterable {
-                return $subData[$item];
-            })
+            ->map(fn (int $item): iterable => $subData[$item])
             ->concat()
-            ->reduce(function (string $word, string $subItem): string {
-                return $word . $subItem;
-            }, 'Word: ');
+            ->reduce(fn (string $word, string $subItem): string => $word . $subItem, 'Word: ');
 
         $this->assertSame('Word: abcdefg', $word);
     }
@@ -907,15 +903,11 @@ class SeqTest extends AbstractTestCase
             yield from $data;
         })
             ->map(fn ($i) => (int) $i)
-            ->map(function (int $item) use ($subData): iterable {
-                return $subData[$item];
-            })
+            ->map(fn (int $item): iterable => $subData[$item])
             ->concat()
             ->filter(fn ($l) => $l < 'f')
             ->map(fn ($l) => $l . ' ')
-            ->reduce(function (string $word, string $subItem): string {
-                return $word . $subItem;
-            }, 'Word: ');
+            ->reduce(fn (string $word, string $subItem): string => $word . $subItem, 'Word: ');
 
         $this->assertSame('Word: a b c d e ', $word);
     }
@@ -1112,6 +1104,19 @@ class SeqTest extends AbstractTestCase
             '2' => [2, [1, 2, 3], [[1, 2], [3]]],
             '3' => [3, [1, 2, 3], [[1, 2, 3]]],
         ];
+    }
+
+    public function testShouldChunkInfiniteSeq(): void
+    {
+        $result = Seq::infinite()
+            ->chunkBySize(5)
+            ->skip(1)
+            ->take(2)
+            ->reverse()
+            ->concat()
+            ->toArray();
+
+        $this->assertSame([11, 12, 13, 14, 15, 6, 7, 8, 9, 10], $result);
     }
 
     /** @dataProvider provideSplitData */
@@ -1378,5 +1383,27 @@ class SeqTest extends AbstractTestCase
         $this->assertFalse($isGenerated);
         $this->assertSame([2, 4, 6], $seq2->toArray());
         $this->assertTrue($isGenerated);
+    }
+
+    public function testShouldMapSeqAndUseIndexInMapping(): void
+    {
+        $seq = Seq::from([1, 2, 3, 4, 5]);
+
+        $seq = $seq->mapi(fn ($v, $i) => $i * $v);
+
+        $this->assertSame([0, 2, 6, 12, 20], $seq->toArray());
+    }
+
+    public function testShouldMapGeneratedSeqAndUseIndexInMapping(): void
+    {
+        $seq = Seq::init(function () {
+            for ($i = 1; $i < 6; $i++) {
+                yield $i;
+            }
+        });
+
+        $seq = $seq->mapi(fn ($v, $i) => $i * $v);
+
+        $this->assertSame([0, 2, 6, 12, 20], $seq->toArray());
     }
 }

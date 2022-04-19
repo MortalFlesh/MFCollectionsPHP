@@ -186,6 +186,11 @@ class DummySeq implements ISeq
         throw new \Exception(sprintf('Method %s is not implemented yet.', __METHOD__));
     }
 
+    public function mapi(callable $callback): ISeq
+    {
+        throw new \Exception(sprintf('Method %s is not implemented yet.', __METHOD__));
+    }
+
     public function each(callable $callback): void
     {
         throw new \Exception(sprintf('Method %s is not implemented yet.', __METHOD__));
@@ -247,6 +252,11 @@ class DummySeq implements ISeq
     }
 
     public function skipWhile(callable $callable): ISeq
+    {
+        throw new \Exception(sprintf('Method %s is not implemented yet.', __METHOD__));
+    }
+
+    public static function concatSeq(ISeq $seq): ISeq
     {
         throw new \Exception(sprintf('Method %s is not implemented yet.', __METHOD__));
     }

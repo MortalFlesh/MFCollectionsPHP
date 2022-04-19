@@ -2,32 +2,11 @@
 
 namespace MF\Collection\Helper;
 
+use MF\Collection\Exception\InvalidArgumentException;
+
 /** @internal */
 class Callback
 {
-    /**
-     * @phpstan-template TOne
-     * @phpstan-template TTwo
-     * @phpstan-template TThree
-     * @phpstan-template TFour
-     * @phpstan-template TReturn
-     *
-     * @phpstan-param callable(): TReturn|callable(TOne): TReturn|callable(TOne, TTwo): TReturn|callable(TOne, TTwo, TThree): TReturn|callable(TOne, TTwo, TThree, TFour): TReturn $callback
-     * @phpstan-param array{0: TOne, 1: TTwo, 2: TThree, 3: TFour} $args
-     * @phpstan-return TReturn
-     */
-    public static function execute(callable $callback, array $args): mixed
-    {
-        $ref = self::reflectionOf($callback);
-        $preparedArgs = self::prepareArgs(
-            $ref->getNumberOfParameters(),
-            $ref->getNumberOfRequiredParameters(),
-            $args,
-        );
-
-        return $callback(...$preparedArgs);
-    }
-
     /**
      * @phpstan-template TOne
      * @phpstan-template TTwo
@@ -69,7 +48,11 @@ class Callback
         return new \ReflectionMethod($callable[0], $callable[1]);
     }
 
-    private static function prepareArgs(int $allArgs, int $requiredArgs, array $args): mixed
+    /**
+     * @phpstan-param mixed[] $args
+     * @phpstan-return iterable<mixed>
+     */
+    private static function prepareArgs(int $allArgs, int $requiredArgs, array $args): iterable
     {
         if ($allArgs <= 0) {
             return [];
@@ -78,7 +61,7 @@ class Callback
         $given = count($args);
 
         if ($requiredArgs > $given) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Given callback needs %d args but only %d given.',
                     $requiredArgs,

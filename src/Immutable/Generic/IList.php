@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use MF\Collection\Exception\InvalidArgumentException;
+
 /**
  * @phpstan-type TIndex int
  * @phpstan-template TValue
@@ -10,6 +12,13 @@ namespace MF\Collection\Immutable\Generic;
  */
 interface IList extends ICollection
 {
+    /**
+     * @phpstan-template T
+     * @phpstan-param IList<T|iterable<T>> $list
+     * @phpstan-return IList<T>
+     */
+    public static function concatList(IList $list): IList;
+
     /**
      * @phpstan-param TValue $values
      * @phpstan-return IList<TValue>
@@ -35,7 +44,7 @@ interface IList extends ICollection
     public function first(): mixed;
 
     /**
-     * @phpstan-param callable(TValue, TIndex): bool $callback
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
      * @phpstan-return TValue|null
      */
     public function firstBy(callable $callback): mixed;
@@ -70,13 +79,21 @@ interface IList extends ICollection
     /**
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-param callable(TValue): T $callback
      * @phpstan-return IList<T>
      */
     public function map(callable $callback): IList;
 
     /**
-     * @phpstan-param callable(TValue, TIndex): bool $callback
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return IList<T>
+     */
+    public function mapi(callable $callback): IList;
+
+    /**
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
      * @phpstan-return IList<TValue>
      */
     public function filter(callable $callback): IList;
@@ -84,7 +101,7 @@ interface IList extends ICollection
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, TIndex, IList<TValue>): State $callback
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $callback
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
@@ -103,7 +120,7 @@ interface IList extends ICollection
     public function sortBy(callable $callback): IList;
 
     /**
-     * @phpstan-param callable(TValue, TIndex): int<-1, 1> $callback
+     * @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback
      * @phpstan-return IList<TValue>
      */
     public function sortByDescending(callable $callback): IList;
@@ -120,7 +137,7 @@ interface IList extends ICollection
      *
      * @phpstan-template Unique
      *
-     * @phpstan-param callable(TValue, TIndex): Unique $callback
+     * @phpstan-param callable(TValue, TIndex=): Unique $callback
      * @phpstan-return IList<TValue>
      */
     public function uniqueBy(callable $callback): IList;
@@ -134,7 +151,7 @@ interface IList extends ICollection
 
     public function sum(): int|float;
 
-    /** @phpstan-param callable(TValue, TIndex): (int|float) $callback */
+    /** @phpstan-param callable(TValue, TIndex=): (int|float) $callback */
     public function sumBy(callable $callback): int|float;
 
     /** @phpstan-return IList<TValue> */
@@ -149,14 +166,20 @@ interface IList extends ICollection
     /**
      * Divides the list into chunks of size at most chunkSize.
      *
+     * @phpstan-param int<1, max> $size
      * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
      */
     public function chunkBySize(int $size): IList;
 
     /**
      * Splits the list into at most count chunks.
      *
+     * @phpstan-param int<1, max> $count
      * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
      */
     public function splitInto(int $count): IList;
 
@@ -166,15 +189,13 @@ interface IList extends ICollection
      *
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, TIndex): iterable<T> $callback
+     * @phpstan-param callable(TValue): iterable<T> $callback
      * @phpstan-return IList<T>
      */
     public function collect(callable $callback): IList;
 
     /**
      * Returns a new list that contains the elements of each the lists in order.
-     *
-     * Requires the list to be a list of iterables.
      *
      * @phpstan-return IList<TValue>
      */
@@ -183,7 +204,7 @@ interface IList extends ICollection
     /**
      * @phpstan-template TKey of int|string
      *
-     * @phpstan-param callable(TValue, TIndex): TKey $callback
+     * @phpstan-param callable(TValue, TIndex=): TKey $callback
      * @phpstan-return IList<KVPair<TKey, int>>
      */
     public function countBy(callable $callback): IList;

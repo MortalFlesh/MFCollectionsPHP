@@ -14,6 +14,27 @@ use MF\Collection\Helper\Collection;
  */
 class ListCollection implements IList
 {
+    /**
+     * @phpstan-template T
+     * @phpstan-param IList<T|iterable<T>> $list
+     * @phpstan-return IList<T>
+     */
+    public static function concatList(IList $list): IList
+    {
+        $values = [];
+        foreach ($list as $items) {
+            if (is_iterable($items)) {
+                foreach ($items as $item) {
+                    $values[] = $item;
+                }
+            } else {
+                $values[] = $items;
+            }
+        }
+
+        return new static($values);
+    }
+
     public static function of(mixed ...$values): IList
     {
         return static::from($values);
@@ -186,6 +207,7 @@ class ListCollection implements IList
             : $this;
     }
 
+    /** @phpstan-return IList<TValue> */
     private function removeIndex(int $index): IList
     {
         $listArray = $this->listArray;
@@ -209,6 +231,18 @@ class ListCollection implements IList
     }
 
     public function map(callable $callback): IList
+    {
+        $listArray = [];
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $v) {
+            $listArray[$i] = $callback($v);
+        }
+
+        return new static($listArray);
+    }
+
+    public function mapi(callable $callback): IList
     {
         $listArray = [];
         $callback = Callback::curry($callback);
@@ -258,7 +292,10 @@ class ListCollection implements IList
 
     public function asMutable(): \MF\Collection\Mutable\Generic\IList
     {
-        return \MF\Collection\Mutable\Generic\ListCollection::from($this);
+        /** @phpstan-var \MF\Collection\Mutable\Generic\IList<TValue> $mutableList */
+        $mutableList = \MF\Collection\Mutable\Generic\ListCollection::from($this);
+
+        return $mutableList;
     }
 
     public function implode(string $glue): string
@@ -312,7 +349,10 @@ class ListCollection implements IList
 
     public function toSeq(): ISeq
     {
-        return Seq::from($this->listArray);
+        /** @phpstan-var ISeq<TValue> $seq */
+        $seq = Seq::from($this->listArray);
+
+        return $seq;
     }
 
     public function forAll(callable $predicate): bool
@@ -378,6 +418,7 @@ class ListCollection implements IList
         $itemsCount = $this->count();
 
         $mediumSize = $itemsCount / $count;
+        /** @phpstan-var int<1, max> $idealSize */
         $idealSize = (int) ceil($mediumSize);
         $minimalSize = (int) floor($mediumSize);
 
@@ -420,19 +461,21 @@ class ListCollection implements IList
         $callback = Callback::curry($callback);
 
         /** @phsptan-var IList<iterable<T>> $collected */
-        $collected = $this->map(fn (mixed $v, int $i): iterable => $callback($v, $i));
+        $collected = $this->map(fn (mixed $v): iterable => $callback($v));
         /** @phpstan-var IList<T> $concatenated */
         $concatenated = $collected->concat();
 
         return $concatenated;
     }
 
+    /**
+     * Returns a new list that contains the elements of each the lists in order.
+     *
+     * @phpstan-return IList<TValue>
+     */
     public function concat(): IList
     {
-        return $this->reduce(
-            fn (IList $acc, iterable $v) => $acc->append(static::from($v)),
-            new static(),
-        );
+        return static::concatList($this);
     }
 
     /**

@@ -497,4 +497,14 @@ class MapTest extends AbstractTestCase
 
         $this->assertEquals($expected, $list->toArray());
     }
+
+    public function testShouldTransformMapToPairsAndUseKeysOnly(): void
+    {
+        $pairs = Map::from(['one' => 1, 'two' => 2])
+            ->pairs();
+
+        $pairs->map(KVPair::key(...));
+
+        $this->assertSame(['one', 'two'], $pairs->toArray());
+    }
 }

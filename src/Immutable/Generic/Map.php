@@ -2,7 +2,9 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use MF\Collection\Assertion;
 use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Helper\Callback;
 use MF\Collection\Helper\Collection;
 use MF\Collection\Immutable\ITuple;
@@ -55,7 +57,7 @@ class Map implements IMap
             } elseif (is_array($pair)) {
                 [$key, $value] = $pair;
             } else {
-                throw new \InvalidArgumentException('Value is not a pair');
+                throw new InvalidArgumentException('Value is not a pair');
             }
 
             /**
@@ -85,6 +87,8 @@ class Map implements IMap
 
     public function offsetExists(mixed $offset): bool
     {
+        Assertion::isKey($offset);
+
         return $this->containsKey($offset);
     }
 
@@ -118,21 +122,16 @@ class Map implements IMap
 
     public function offsetGet(mixed $offset): mixed
     {
+        Assertion::isKey($offset);
+
         return $this->get($offset);
     }
 
     public function get(int|string $key): mixed
     {
-        if (!array_key_exists($key, $this->mapArray)) {
-            $this->undefinedKey($key);
-        }
+        Assertion::keyExists($this->mapArray, $key);
 
         return $this->mapArray[$key];
-    }
-
-    private function undefinedKey(int|string $key): void
-    {
-        throw new \InvalidArgumentException(sprintf('Key %s is not defined.', $key));
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
@@ -159,6 +158,8 @@ class Map implements IMap
 
     public function remove(int|string $key): IMap
     {
+        Assertion::keyExists($this->mapArray, $key);
+
         $mapArray = $this->mapArray;
         unset($mapArray[$key]);
 
@@ -188,6 +189,7 @@ class Map implements IMap
             $map[$key] = $callback($v, $key);
         }
 
+        /** @phpstan-var array<TKey, TValue> $map */
         return static::from($map);
     }
 
@@ -210,12 +212,18 @@ class Map implements IMap
 
     public function keys(): IList
     {
-        return ListCollection::from(array_keys($this->mapArray));
+        /** @phpstan-var IList<TKey> $keys */
+        $keys = ListCollection::from(array_keys($this->mapArray));
+
+        return $keys;
     }
 
     public function values(): IList
     {
-        return ListCollection::from(array_values($this->mapArray));
+        /** @phpstan-var IList<TValue> $values */
+        $values = ListCollection::from($this->mapArray);
+
+        return $values;
     }
 
     public function reduce(callable $reducer, mixed $initialValue = null): mixed
@@ -273,12 +281,18 @@ class Map implements IMap
 
     public function pairs(): IList
     {
-        return ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+        /** @phpstan-var IList<KVPair<TKey, TValue>> $pairs */
+        $pairs = ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+
+        return $pairs;
     }
 
     public function toList(): IList
     {
-        return ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+        /** @phpstan-var IList<ITuple> $list */
+        $list = ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+
+        return $list;
     }
 
     /** @phpstan-return ISeq<ITuple> */

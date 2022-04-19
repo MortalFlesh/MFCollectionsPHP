@@ -4,6 +4,10 @@ namespace MF\Collection\Exception;
 
 class TupleMatchException extends TupleException
 {
+    /**
+     * @phpstan-param string[] $expectedTypes
+     * @phpstan-param string[] $actualTypes
+     */
     public static function forTypes(array $expectedTypes, array $actualTypes): self
     {
         return new static(

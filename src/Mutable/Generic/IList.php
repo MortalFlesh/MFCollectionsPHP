@@ -67,17 +67,24 @@ interface IList extends ICollection
     /**
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-param callable(TValue): T $callback
      */
     public function map(callable $callback): void;
 
-    /** @phpstan-param callable(TValue, TIndex): bool $callback */
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     */
+    public function mapi(callable $callback): void;
+
+    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
     public function filter(callable $callback): void;
 
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, TIndex, IList<TValue>): State $callback
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $callback
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
@@ -90,7 +97,7 @@ interface IList extends ICollection
     /** @phpstan-param callable(TValue, TValue): int<-1, 1> $callback */
     public function sortBy(callable $callback): void;
 
-    /** @phpstan-param callable(TValue, TIndex): int<-1, 1> $callback */
+    /** @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback */
     public function sortByDescending(callable $callback): void;
 
     /** Keeps only unique values inside the list. */
@@ -101,7 +108,7 @@ interface IList extends ICollection
      *
      * @phpstan-template Unique
      *
-     * @phpstan-param callable(TValue, TIndex): Unique $callback
+     * @phpstan-param callable(TValue, TIndex=): Unique $callback
      */
     public function uniqueBy(callable $callback): void;
 
@@ -110,7 +117,7 @@ interface IList extends ICollection
 
     public function sum(): int|float;
 
-    /** @phpstan-param callable(TValue, TIndex): (int|float) $callback */
+    /** @phpstan-param callable(TValue, TIndex=): (int|float) $callback */
     public function sumBy(callable $callback): int|float;
 
     public function clear(): void;
@@ -121,7 +128,7 @@ interface IList extends ICollection
     /**
      * @phpstan-template TKey of int|string
      *
-     * @phpstan-param callable(TValue, TIndex): TKey $callback
+     * @phpstan-param callable(TValue, TIndex=): TKey $callback
      * @phpstan-return IList<KVPair<TKey, int>>
      */
     public function countBy(callable $callback): IList;

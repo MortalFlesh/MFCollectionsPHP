@@ -10,8 +10,11 @@ use MF\Collection\Helper\SeqModifier;
 use MF\Collection\Range;
 
 /**
+ * @phpstan-import-type TIndex from ISeq
  * @phpstan-template TValue
  * @phpstan-type DataSource iterable<TValue>|\Closure(): iterable<TValue>
+ *
+ * @phpstan-import-type RangeDefinition from Range
  *
  * @phpstan-implements ISeq<TValue>
  */
@@ -24,6 +27,24 @@ class Seq implements ISeq
     protected array $modifiers;
 
     private bool $isInfinite = false;
+
+    /**
+     * @phpstan-template T
+     * @phpstan-param ISeq<T|iterable<T>> $seq
+     * @phpstan-return ISeq<T>
+     */
+    public static function concatSeq(ISeq $seq): ISeq
+    {
+        return static::init(function () use ($seq) {
+            foreach ($seq as $v) {
+                if (is_iterable($v)) {
+                    yield from $v;
+                } else {
+                    yield $v;
+                }
+            }
+        });
+    }
 
     /** @phpstan-param DataSource $iterable */
     public function __construct(private readonly iterable|\Closure $iterable)
@@ -64,6 +85,7 @@ class Seq implements ISeq
      * }
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
+     * @phpstan-param RangeDefinition $range
      * @phpstan-param callable(int): TValue $callable
      * @phpstan-return ISeq<TValue>
      */
@@ -199,6 +221,7 @@ class Seq implements ISeq
      * Seq::range('1..10')
      * Seq::range('1..10..100')
      *
+     * @phpstan-param RangeDefinition $range
      * @phpstan-return ISeq<int>
      */
     public static function range(string|array $range): ISeq
@@ -220,6 +243,7 @@ class Seq implements ISeq
         return new static(range($start, $end, $step));
     }
 
+    /** @phpstan-return ISeq<TValue> */
     private function setIsInfinite(bool $isInfinite = true): ISeq
     {
         $this->isInfinite = $isInfinite;
@@ -259,7 +283,9 @@ class Seq implements ISeq
             foreach (call_user_func($this->iterable) as $index => $value) {
                 foreach ($this->modifiers as $modifierKey => [$type, $modifier]) {
                     if ($type === SeqModifier::Map) {
-                        $value = $this->mapValue($modifier, $value, $index);
+                        $value = $this->mapValue($modifier, $value);
+                    } elseif ($type === SeqModifier::Mapi) {
+                        $value = $this->mapiValue($modifier, $value, $index);
                     } elseif ($type === SeqModifier::Filter && !$modifier($value, $index)) {
                         continue 2;
                     } elseif ($type === SeqModifier::Take) {
@@ -287,7 +313,9 @@ class Seq implements ISeq
             foreach ($this->iterable as $index => $value) {
                 foreach ($this->modifiers as [$type, $modifier]) {
                     if ($type === SeqModifier::Map) {
-                        $value = $this->mapValue($modifier, $value, $index);
+                        $value = $this->mapValue($modifier, $value);
+                    } elseif ($type === SeqModifier::Mapi) {
+                        $value = $this->mapiValue($modifier, $value, $index);
                     } elseif ($type === SeqModifier::Filter && !$modifier($value, $index)) {
                         continue 2;
                     } elseif ($type === SeqModifier::Take) {
@@ -327,7 +355,15 @@ class Seq implements ISeq
         );
     }
 
-    private function mapValue(callable $modifier, mixed $value, int $index): mixed
+    private function mapValue(callable $modifier, mixed $value): mixed
+    {
+        $value = $modifier($value);
+        Assertion::notIsInstanceOf($value, \Generator::class, 'Mapping must not generate new values.');
+
+        return $value;
+    }
+
+    private function mapiValue(callable $modifier, mixed $value, int $index): mixed
     {
         $value = $modifier($value, $index);
         Assertion::notIsInstanceOf($value, \Generator::class, 'Mapping must not generate new values.');
@@ -442,7 +478,7 @@ class Seq implements ISeq
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, int, ISeq<TValue>): State $reducer
+     * @phpstan-param callable(State, TValue, TIndex=, ISeq<TValue>=): State $reducer
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
@@ -547,6 +583,12 @@ class Seq implements ISeq
             ->addModifier(SeqModifier::Map, Callback::curry($callback));
     }
 
+    public function mapi(callable $callback): ISeq
+    {
+        return $this->clone()
+            ->addModifier(SeqModifier::Mapi, Callback::curry($callback));
+    }
+
     /** @phpstan-param callable(TValue, int): void $callback */
     public function each(callable $callback): void
     {
@@ -565,34 +607,32 @@ class Seq implements ISeq
      *
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, int): iterable<T> $callback
+     * @phpstan-param callable(TValue): iterable<T> $callback
      * @phpstan-return ISeq<T>
      */
     public function collect(callable $callback): ISeq
     {
-        return $this
-            ->map($callback)
-            ->concat();
+        /** @phsptan-var ISeq<iterable<T>> $collected */
+        $collected = $this->map($callback);
+        /** @phpstan-var ISeq<T> $concatenated */
+        $concatenated = $collected->concat();
+
+        return $concatenated;
     }
 
     /**
-     * ISeq<iterable<T>> -> ISeq<T>
-     * Requires TValue to be iterable<T> and returns ISeq<T>
-     *
      * Combines the given iterable-of-iterables as a single concatenated iterable
      *
      * Note: map->concat could be replaced by collect
      * @see ISeq::collect()
      *
      * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
+     *
+     * @phpstan-return ISeq<TValue>  // todo - fix type
      */
     public function concat(): ISeq
     {
-        return self::init(function (): iterable {
-            foreach ($this as $v) {
-                yield from $v;
-            }
-        });
+        return static::concatSeq($this);
     }
 
     public function implode(string $glue): string
@@ -604,7 +644,10 @@ class Seq implements ISeq
     {
         $this->assertFinite('toList');
 
-        return ListCollection::from($this->toArray());
+        /** @phpstan-var IList<TValue> $list */
+        $list = ListCollection::from($this->toArray());
+
+        return $list;
     }
 
     public function forAll(callable $predicate): bool

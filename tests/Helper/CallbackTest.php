@@ -7,12 +7,12 @@ use MF\Collection\AbstractTestCase;
 class CallbackTest extends AbstractTestCase
 {
     /** @dataProvider provideCallbacks */
-    public function testShouldExecuteGivenCallbackWithRightNumberOfArgs(
+    public function testShouldCurryCallbackAndExecuteItWithRightNumberOfArgs(
         callable $callback,
         array $args,
         mixed $expected,
     ): void {
-        $result = Callback::execute($callback, $args);
+        $result = Callback::curry($callback)(...$args);
 
         $this->assertSame($expected, $result);
     }
@@ -92,14 +92,6 @@ class CallbackTest extends AbstractTestCase
         return $one . $two;
     }
 
-    public function testShouldNotExecuteCallbackWithInsufficientArgs(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $callback = fn ($a, $b) => $a . $b;
-
-        Callback::execute($callback, ['one']);
-    }
-
     public function testShouldCurryTheGivenCallback(): void
     {
         $data = ['1_', '2_', '3_', '4_'];
@@ -112,16 +104,5 @@ class CallbackTest extends AbstractTestCase
         }
 
         $this->assertSame(['1_0', '2_1', '3_2', '4_3'], $result);
-    }
-
-    /** @dataProvider provideCallbacks */
-    public function testShouldCurryCallbackAndExecuteItWithRightNumberOfArgs(
-        callable $callback,
-        array $args,
-        mixed $expected,
-    ): void {
-        $result = Callback::curry($callback)(...$args);
-
-        $this->assertSame($expected, $result);
     }
 }

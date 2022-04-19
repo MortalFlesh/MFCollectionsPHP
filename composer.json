@@ -87,7 +87,8 @@
             "@phpstan-src",
             "@phpstan-tests"
         ],
-        "phpstan-src": "vendor/bin/phpstan analyze src -c phpstan.neon --ansi --level 8 --memory-limit=-1",
+        "phpstan-src": "vendor/bin/phpstan analyze src -c phpstan.neon --ansi --level 9 --memory-limit=-1",
+        "phpstan-test": "vendor/bin/phpstan analyze src/test.php -c phpstan.neon --ansi --level 9 --memory-limit=-1",
         "phpstan-tests": "vendor/bin/phpstan analyze tests -c phpstan-tests.neon --ansi --level 6 --memory-limit=-1",
         "tests": "vendor/bin/phpunit",
         "tests-ci": "php -dxdebug.coverage_enable=1 vendor/bin/phpunit -c phpunit.xml.dist --exclude-group local"

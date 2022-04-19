@@ -11,6 +11,7 @@ use MF\Collection\Generic\IEnumerable;
  * @phpstan-type TValue mixed
  *
  * @phpstan-extends IEnumerable<TIndex, TValue>
+ * @phpstan-extends \ArrayAccess<TIndex, TValue>
  */
 interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 {
@@ -82,6 +83,8 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
+     * @phpstan-param string[] $types
+     *
      * @throws TupleParseException
      * @throws TupleMatchException
      */
@@ -97,6 +100,8 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
     /**
      * @example
      * Tuple::from([1, 2, 3])->toArray() -> [1, 2, 3]
+     *
+     * @phpstan-param mixed[] $values
      */
     public static function from(array $values): self;
 
@@ -120,6 +125,7 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      */
     public function toStringForUrl(): string;
 
+    /** @phpstan-return mixed[] */
     public function toArray(): array;
 
     public static function fst(ITuple $tuple): mixed;
@@ -190,6 +196,8 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
      * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
      * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
+     *
+     * @phpstan-param string[] $types
      */
     public function matchTypes(array $types): bool;
 
@@ -230,6 +238,8 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Invalid (throws an \InvalidArgumentException):
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
+     *
+     * @phpstan-param string[] $types
      *
      * @throws TupleMatchException
      */

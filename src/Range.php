@@ -2,10 +2,15 @@
 
 namespace MF\Collection;
 
+/** @phpstan-type RangeDefinition string|array<float|int|string> */
 class Range
 {
     public const INFINITE = 'Inf';
 
+    /**
+     * @phpstan-param RangeDefinition $range
+     * @phpstan-return array{0: int|float, 1: 'Inf'|int|float, 2: int|float}
+     */
     public static function parse(string|array $range): array
     {
         Assertion::true(

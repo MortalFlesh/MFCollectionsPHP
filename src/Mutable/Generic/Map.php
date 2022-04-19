@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Mutable\Generic;
 
+use MF\Collection\Assertion;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Helper\Callback;
 use MF\Collection\Helper\Collection;
 use MF\Collection\Immutable\Generic\ISeq;
@@ -18,9 +20,6 @@ use MF\Collection\Immutable\Tuple;
  */
 class Map implements IMap
 {
-    /** @phpstan-var array<TKey, TValue> */
-    protected array $mapArray;
-
     public static function from(iterable $source): IMap
     {
         $map = new static();
@@ -61,7 +60,7 @@ class Map implements IMap
             } elseif (is_array($pair)) {
                 [$key, $value] = $pair;
             } else {
-                throw new \InvalidArgumentException('Value is not a pair');
+                throw new InvalidArgumentException('Value is not a pair');
             }
 
             /**
@@ -74,9 +73,9 @@ class Map implements IMap
         return $map;
     }
 
-    public function __construct()
+    /** @phpstan-param array<TKey, TValue> $mapArray */
+    public function __construct(private array $mapArray = [])
     {
-        $this->mapArray = [];
     }
 
     public function toArray(): array
@@ -91,6 +90,8 @@ class Map implements IMap
 
     public function offsetExists(mixed $offset): bool
     {
+        Assertion::isKey($offset);
+
         return $this->containsKey($offset);
     }
 
@@ -124,25 +125,22 @@ class Map implements IMap
 
     public function offsetGet(mixed $offset): mixed
     {
+        Assertion::isKey($offset);
+
         return $this->get($offset);
     }
 
     public function get(int|string $key): mixed
     {
-        if (!array_key_exists($key, $this->mapArray)) {
-            $this->undefinedKey($key);
-        }
+        Assertion::keyExists($this->mapArray, $key);
 
         return $this->mapArray[$key];
     }
 
-    private function undefinedKey(int|string $key): \Throwable
-    {
-        return throw new \InvalidArgumentException(sprintf('Key %s is not defined.', $key));
-    }
-
     public function offsetSet(mixed $offset, mixed $value): void
     {
+        Assertion::isKey($offset);
+
         $this->set($offset, $value);
     }
 
@@ -153,11 +151,15 @@ class Map implements IMap
 
     public function offsetUnset(mixed $offset): void
     {
+        Assertion::isKey($offset);
+
         $this->remove($offset);
     }
 
     public function remove(int|string $key): void
     {
+        Assertion::keyExists($this->mapArray, $key);
+
         unset($this->mapArray[$key]);
     }
 
@@ -184,6 +186,7 @@ class Map implements IMap
             $map[$key] = $callback($v, $key);
         }
 
+        /** @phpstan-var array<TKey, TValue> $map */
         $this->mapArray = $map;
     }
 
@@ -203,12 +206,18 @@ class Map implements IMap
 
     public function keys(): IList
     {
-        return ListCollection::from(array_keys($this->mapArray));
+        /** @phpstan-var IList<TKey> $list */
+        $list = ListCollection::from(array_keys($this->mapArray));
+
+        return $list;
     }
 
     public function values(): IList
     {
-        return ListCollection::from(array_values($this->mapArray));
+        /** @var IList<TValue> $values */
+        $values = ListCollection::from($this->mapArray);
+
+        return $values;
     }
 
     public function reduce(callable $callback, mixed $initialValue = null): mixed
@@ -266,12 +275,18 @@ class Map implements IMap
 
     public function pairs(): IList
     {
-        return ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+        /** @phpstan-var IList<KVPair<TKey, TValue>> $pairs */
+        $pairs = ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+
+        return $pairs;
     }
 
     public function toList(): IList
     {
-        return ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+        /** @phpstan-var IList<ITuple> $list */
+        $list = ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+
+        return $list;
     }
 
     /** @phpstan-return ISeq<ITuple> */

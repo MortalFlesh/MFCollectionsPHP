@@ -18,6 +18,7 @@ return static function (ContainerConfigurator $containerConfigurator): void {
             'SlevomatCodingStandard\Sniffs\Exceptions\ReferenceThrowableOnlySniff.ReferencedGeneralException' => ['tests/Exception/*.php'],
             'PHP_CodeSniffer\Standards\Generic\Sniffs\Commenting\DocCommentSniff.TagsNotGrouped' => [
                 'src/Immutable/Generic/ISeq.php',   // skip fixing the order of phpstan annotations
+                'src/Immutable/Generic/Seq.php',   // skip fixing the order of phpstan annotations
             ],
             InterfaceNameSniff::class => null,
             'SlevomatCodingStandard\Sniffs\TypeHints\PropertyTypeHintSniff.MissingAnyTypeHint' => null,

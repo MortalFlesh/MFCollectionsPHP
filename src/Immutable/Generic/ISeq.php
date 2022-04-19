@@ -2,6 +2,8 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use MF\Collection\Exception\InvalidArgumentException;
+use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Range;
 
 /**
@@ -9,11 +11,20 @@ use MF\Collection\Range;
  * @phpstan-template TValue
  * @phpstan-type DataSource iterable<TValue>|callable(): iterable<TValue>
  *
+ * @phpstan-import-type RangeDefinition from Range
+ *
  * @phpstan-extends ICollection<TIndex, TValue>
  */
 interface ISeq extends ICollection
 {
     public const INFINITE = Range::INFINITE;
+
+    /**
+     * @phpstan-template T
+     * @phpstan-param ISeq<T|iterable<T>> $seq
+     * @phpstan-return ISeq<T>
+     */
+    public static function concatSeq(ISeq $seq): ISeq;
 
     /**
      * Seq::of(1, 2, 3)
@@ -57,6 +68,7 @@ interface ISeq extends ICollection
      * Seq::range('1..10')
      * Seq::range('1..10..100')
      *
+     * @phpstan-param RangeDefinition $range
      * @phpstan-return ISeq<int>
      */
     public static function range(string|array $range): ISeq;
@@ -90,6 +102,7 @@ interface ISeq extends ICollection
      * }
      * If you need more complex for loops for generating, use ISeq::init() instead
      *
+     * @phpstan-param RangeDefinition $range
      * @phpstan-param callable(int): TValue $callable
      * @phpstan-return ISeq<TValue>
      */
@@ -142,7 +155,7 @@ interface ISeq extends ICollection
      * Seq::range('1..Inf')->takeWhile(fn($i) => $i < 100) creates [1, 2, 3, ..., 99]
      * Seq::infinite()->filter(fn($i) => $i % 2 === 0)->map(fn($i) => $i * $i)->takeWhile(fn($i) => $i < 25)->toArray(); creates [4, 16]
      *
-     * @phpstan-param callable(TValue, TIndex): bool $callable
+     * @phpstan-param callable(TValue, TIndex=): bool $callable
      * @phpstan-return ISeq<TValue>
      */
     public function takeWhile(callable $callable): ISeq;
@@ -165,7 +178,7 @@ interface ISeq extends ICollection
     /**
      * Returns a sequence that, when iterated, skips elements of the underlying sequence while the given predicate returns True, and then yields the remaining elements of the sequence.
      *
-     * @phpstan-param callable(TValue, TIndex): bool $callable
+     * @phpstan-param callable(TValue, TIndex=): bool $callable
      * @phpstan-return ISeq<TValue>
      */
     public function skipWhile(callable $callable): ISeq;
@@ -173,14 +186,14 @@ interface ISeq extends ICollection
     /**
      * @phpstan-template State
      *
-     * @phpstan-param callable(State, TValue, int, ISeq<TValue>): State $reducer
+     * @phpstan-param callable(State, TValue, TIndex=, ISeq<TValue>=): State $reducer
      * @phpstan-param State $initialValue
      * @phpstan-return State
      */
     public function reduce(callable $reducer, mixed $initialValue = null): mixed;
 
     /**
-     * @phpstan-param callable(TValue, int): bool $callback
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
      * @phpstan-return ISeq<TValue>
      */
     public function filter(callable $callback): ISeq;
@@ -188,26 +201,38 @@ interface ISeq extends ICollection
     /** @phpstan-param TValue $value */
     public function contains(mixed $value): bool;
 
-    /** @phpstan-param callable(TValue, int): bool $callback */
+    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
     public function containsBy(callable $callback): bool;
 
     public function isEmpty(): bool;
 
-    /** @phpstan-return ISeq<TValue> */
+    /**
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function sort(): ISeq;
 
-    /** @phpstan-return ISeq<TValue> */
+    /**
+     * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function sortDescending(): ISeq;
 
     /**
      * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
     public function sortBy(callable $callback): ISeq;
 
     /**
      * @phpstan-param callable(TValue): int<-1, 1> $callback
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
     public function sortByDescending(callable $callback): ISeq;
 
@@ -215,6 +240,8 @@ interface ISeq extends ICollection
      * Keeps only unique values inside the list.
      *
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
     public function unique(): ISeq;
 
@@ -225,6 +252,8 @@ interface ISeq extends ICollection
      *
      * @phpstan-param callable(TValue): Unique $callback
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
     public function uniqueBy(callable $callback): ISeq;
 
@@ -232,6 +261,8 @@ interface ISeq extends ICollection
      * Sort all items in a reverse order.
      *
      * @phpstan-return ISeq<TValue>
+     *
+     * @throws OutOfBoundsException
      */
     public function reverse(): ISeq;
 
@@ -253,25 +284,39 @@ interface ISeq extends ICollection
      * Divides the seq into chunks of size at most chunkSize.
      *
      * @phpstan-return ISeq<ISeq<TValue>>
+     *
+     * @throws InvalidArgumentException
      */
     public function chunkBySize(int $size): ISeq;
 
     /**
      * Splits the seq into at most count chunks.
      *
+     * @phpstan-param int<1, max> $count
      * @phpstan-return ISeq<ISeq<TValue>>
+     *
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
      */
     public function splitInto(int $count): ISeq;
 
     /**
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, int): T $callback
+     * @phpstan-param callable(TValue): T $callback
      * @phpstan-return ISeq<T>
      */
     public function map(callable $callback): ISeq;
 
-    /** @phpstan-param callable(TValue, int): void $callback */
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return ISeq<T>
+     */
+    public function mapi(callable $callback): ISeq;
+
+    /** @phpstan-param callable(TValue, TIndex=): void $callback */
     public function each(callable $callback): void;
 
     /**
@@ -282,21 +327,20 @@ interface ISeq extends ICollection
      *
      * @phpstan-template T
      *
-     * @phpstan-param callable(TValue, int): iterable<T> $callback
+     * @phpstan-param callable(TValue): iterable<T> $callback
      * @phpstan-return ISeq<T>
      */
     public function collect(callable $callback): ISeq;
 
     /**
-     * ISeq<iterable<T>> -> ISeq<T>
-     * Requires TValue to be iterable<T> and returns ISeq<T>
-     *
      * Combines the given iterable-of-iterables as a single concatenated iterable
      *
      * Note: map->concat could be replaced by collect
      * @see ISeq::collect()
      *
      * @example Seq::from([ [1,2,3], [4,5,6] ])->concat()->toArray() // [1,2,3,4,5,6]
+     *
+     * @phpstan-return ISeq<TValue>  // todo - fix type
      */
     public function concat(): ISeq;
 
@@ -316,7 +360,11 @@ interface ISeq extends ICollection
      */
     public function groupBy(callable $callback): ISeq;
 
-    /** @phpstan-return TValue|null */
+    /**
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function min(): mixed;
 
     /**
@@ -324,10 +372,16 @@ interface ISeq extends ICollection
      *
      * @phpstan-param callable(TValue): T $callback
      * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
      */
     public function minBy(callable $callback): mixed;
 
-    /** @phpstan-return TValue|null */
+    /**
+     * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
+     */
     public function max(): mixed;
 
     /**
@@ -335,11 +389,17 @@ interface ISeq extends ICollection
      *
      * @phpstan-param callable(TValue): T $callback
      * @phpstan-return TValue|null
+     *
+     * @throws OutOfBoundsException
      */
     public function maxBy(callable $callback): mixed;
 
     public function implode(string $glue): string;
 
-    /** @phpstan-return IList<TValue> */
+    /**
+     * @phpstan-return IList<TValue>
+     *
+     * @throws OutOfBoundsException
+     */
     public function toList(): IList;
 }

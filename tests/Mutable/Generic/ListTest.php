@@ -3,6 +3,7 @@
 namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\AbstractTestCase;
+use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Fixtures\ComplexEntity;
 use MF\Collection\Fixtures\SimpleEntity;
 use MF\Collection\Immutable\Generic\KVPair;
@@ -197,7 +198,7 @@ class ListTest extends AbstractTestCase
         $this->list->add('key2');
         $this->list->add('key3');
 
-        $this->list->map(fn ($v, $i) => $v . '_');
+        $this->list->map(fn ($v) => $v . '_');
 
         $this->assertEquals(['key_', 'key2_', 'key3_'], $this->list->toArray());
     }
@@ -219,9 +220,18 @@ class ListTest extends AbstractTestCase
         $this->list->add('key2');
 
         $this->list->filter(fn ($v, $i) => $v === 'key');
-        $this->list->map(fn ($v, $i) => $v . '_');
+        $this->list->map(fn ($v) => $v . '_');
 
         $this->assertEquals(['key_'], $this->list->toArray());
+    }
+
+    public function testShouldNotMapListWithRequiredIndex(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->list->add('key');
+
+        $this->list->map(fn ($v, $i) => $v . '_');
     }
 
     public function testShouldIterateValues(): void
@@ -289,7 +299,7 @@ class ListTest extends AbstractTestCase
         $list->add(new SimpleEntity(3));
 
         $list->filter(fn (SimpleEntity $v, $i) => $v->getId() > 1);
-        $list->map(fn (SimpleEntity $v, $i) => $v->getId());
+        $list->map(fn (SimpleEntity $v) => $v->getId());
         $sum = $list->sum();
 
         $this->assertSame(5, $sum);
@@ -304,7 +314,7 @@ class ListTest extends AbstractTestCase
         $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $list->filter(fn (ComplexEntity $v, $i) => $v->getSimpleEntity()->getId() > 1);
-        $list->map(fn (ComplexEntity $v, $i) => $v->getSimpleEntity());
+        $list->map(fn (ComplexEntity $v) => $v->getSimpleEntity());
         $sum = $list->sumBy(fn (SimpleEntity $e) => $e->getId());
 
         $this->assertEquals(5, $sum);
@@ -352,11 +362,11 @@ class ListTest extends AbstractTestCase
     {
         $this->list = ListCollection::from([1, 2, 3]);
 
-        $this->list->map(fn ($v, $i) => $v + 1);            // 2, 3, 4
-        $this->list->map(fn ($v, $i) => $v * 2);            // 4, 6, 8
+        $this->list->map(fn ($v) => $v + 1);            // 2, 3, 4
+        $this->list->map(fn ($v) => $v * 2);            // 4, 6, 8
         $this->list->filter(fn ($v, $i) => $v % 3 === 0);   // 6
-        $this->list->map(fn ($v, $i) => $v - 1);            // 5
-        $this->list->map(fn ($v, $i) => (string) $v);       // '5'
+        $this->list->map(fn ($v) => $v - 1);            // 5
+        $this->list->map(fn ($v) => (string) $v);       // '5'
 
         $this->list->add('6');   // '5', '6'
 
@@ -602,5 +612,14 @@ class ListTest extends AbstractTestCase
         ]);
 
         $this->assertEquals(new SimpleEntity(3), $list->maxBy(fn (SimpleEntity $e) => $e->getId()));
+    }
+
+    public function testShouldMapListAndUseIndexInMapping(): void
+    {
+        $list = ListCollection::from([1, 2, 3, 4, 5]);
+
+        $list->mapi(fn ($v, $i) => $i * $v);
+
+        $this->assertSame([0, 2, 6, 12, 20], $list->toArray());
     }
 }

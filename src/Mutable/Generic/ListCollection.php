@@ -18,9 +18,6 @@ use MF\Collection\Immutable\Generic\Seq;
  */
 class ListCollection implements IList
 {
-    /** @phpstan-var array<TIndex, TValue> */
-    protected array $listArray;
-
     public static function of(mixed ...$values): IList
     {
         return static::from($values);
@@ -56,9 +53,10 @@ class ListCollection implements IList
         return $list;
     }
 
-    public function __construct()
+    /** @phpstan-param array<TIndex, TValue> $listArray */
+    public function __construct(private array $listArray = [])
     {
-        $this->listArray = [];
+        $this->listArray = array_values($this->listArray);
     }
 
     public function toArray(): array
@@ -222,9 +220,23 @@ class ListCollection implements IList
         $callback = Callback::curry($callback);
 
         foreach ($this as $i => $v) {
+            $list[$i] = $callback($v);
+        }
+
+        /** @phpstan-var array<TIndex, TValue> $list */
+        $this->listArray = $list;
+    }
+
+    public function mapi(callable $callback): void
+    {
+        $list = [];
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $v) {
             $list[$i] = $callback($v, $i);
         }
 
+        /** @phpstan-var array<TIndex, TValue> $list */
         $this->listArray = $list;
     }
 
@@ -266,7 +278,10 @@ class ListCollection implements IList
 
     public function asImmutable(): \MF\Collection\Immutable\Generic\IList
     {
-        return \MF\Collection\Immutable\Generic\ListCollection::from($this);
+        /** @phpstan-var \MF\Collection\Immutable\Generic\IList<TValue> $immutableList */
+        $immutableList = \MF\Collection\Immutable\Generic\ListCollection::from($this);
+
+        return $immutableList;
     }
 
     public function implode(string $glue): string
@@ -320,7 +335,10 @@ class ListCollection implements IList
 
     public function toSeq(): ISeq
     {
-        return Seq::from($this->listArray);
+        /** @phpstan-var ISeq<TValue> $seq */
+        $seq = Seq::from($this->listArray);
+
+        return $seq;
     }
 
     public function forAll(callable $predicate): bool
