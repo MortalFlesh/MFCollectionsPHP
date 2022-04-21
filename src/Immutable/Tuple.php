@@ -8,13 +8,21 @@ use MF\Collection\Exception\TupleBadMethodCallException;
 use MF\Collection\Exception\TupleException;
 use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
-use MF\Collection\Helper\Strings;
+use MF\Collection\Immutable\Generic\Seq;
 
 class Tuple implements ITuple
 {
     private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
 
-    private array $values;
+    public static function fst(ITuple $tuple): mixed
+    {
+        return $tuple->first();
+    }
+
+    public static function snd(ITuple $tuple): mixed
+    {
+        return $tuple->second();
+    }
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
@@ -50,19 +58,19 @@ class Tuple implements ITuple
             Assertion::greaterOrEqualThan(
                 $expectedItemsCount,
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                'Expected items count is %d but must not be lower than %d because in that case it would not be a valid Tuple.'
+                'Expected items count is %d but must not be lower than %d because in that case it would not be a valid Tuple.',
             );
         }
 
         $cache = [];
-        $parts = Seq::init(function () use ($tuple) {
-            return explode(',', trim($tuple, '()'));
-        })
+
+        /** @var string[] $parts */
+        $parts = Seq::init(fn () => explode(',', trim($tuple, '()')))
             ->reduce(function (array $matches, string $match) use (&$cache) {
                 $trimmedMatch = ltrim($match);
-                $isStart = (Strings::startsWith($trimmedMatch, '"') || Strings::startsWith($trimmedMatch, "'"))
+                $isStart = (str_starts_with($trimmedMatch, '"') || str_starts_with($trimmedMatch, "'"))
                     && empty($cache);
-                $isEnd = (Strings::endsWith($match, '"') || Strings::endsWith($match, "'"))
+                $isEnd = (str_ends_with($match, '"') || str_ends_with($match, "'"))
                     && (mb_strlen($trimmedMatch) > 1 || !empty($cache));
 
                 if (!$isEnd && ($isStart || !empty($cache))) {
@@ -80,52 +88,49 @@ class Tuple implements ITuple
 
                 return $matches;
             }, []);
+        unset($cache);
 
         $values = Seq::from($parts)
-            ->map(function (string $match) {
-                return trim($match);
-            })
+            ->map(fn (string $value) => trim($value))
             ->filter(fn ($match) => $match !== '')
-            ->map(self::mapParsedItem())
+            ->map(self::mapParsedItem(...))
             ->toArray();
 
         if ($expectedItemsCount !== null) {
             Assertion::count(
                 $values,
                 $expectedItemsCount,
-                'Invalid tuple given - expected %d items but parsed %d items from "' . $tuple . '".'
+                'Invalid tuple given - expected %d items but parsed %d items from "' . $tuple . '".',
             );
         }
 
         return new self($values);
     }
 
-    private static function mapParsedItem(): callable
+    private static function mapParsedItem(string $item): mixed
     {
-        return function (string $item) {
-            $item = trim($item);
-            if (is_numeric($item) && mb_strpos($item, '.') === false) {
-                return (int) $item;
-            } elseif (is_numeric($item)) {
-                return (float) $item;
-            } elseif ($item === 'true') {
-                return true;
-            } elseif ($item === 'false') {
-                return false;
-            } elseif ($item === 'null') {
-                return null;
-            } elseif (Strings::startsWith($item, '[') && Strings::endsWith($item, ']')) {
-                $arrayContent = trim($item, '[]');
-                Assertion::false(
-                    Strings::contains($arrayContent, '[') || Strings::contains($arrayContent, ']'),
-                    sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item)
-                );
+        $item = trim($item);
+        if (is_numeric($item) && mb_strpos($item, '.') === false) {
+            return (int) $item;
+        } elseif (is_numeric($item)) {
+            return (float) $item;
+        } elseif ($item === 'true') {
+            return true;
+        } elseif ($item === 'false') {
+            return false;
+        } elseif ($item === 'null') {
+            return null;
+        } elseif (str_starts_with($item, '[') && str_ends_with($item, ']')) {
+            $arrayContent = trim($item, '[]');
+            Assertion::false(
+                str_contains($arrayContent, '[') || str_contains($arrayContent, ']'),
+                sprintf('Tuple must NOT contain multi-dimensional arrays. Invalid item: "%s"', $item),
+            );
 
-                return array_map(self::mapParsedItem(), explode(';', $arrayContent));
-            }
+            return array_map(self::mapParsedItem(...), explode(';', $arrayContent));
+        }
 
-            return preg_replace('/^[\'\"]?/', '', (string) preg_replace('/[\'\"]?$/', '', $item));
-        };
+        return preg_replace('/^[\'\"]?/', '', (string) preg_replace('/[\'\"]?$/', '', $item));
     }
 
     /**
@@ -182,6 +187,8 @@ class Tuple implements ITuple
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
+     * @phpstan-param string[] $types
+     *
      * @throws TupleMatchException
      * @throws TupleParseException
      */
@@ -210,49 +217,118 @@ class Tuple implements ITuple
     /**
      * @example
      * Tuple::from([1, 2, 3])->toArray() -> [1, 2, 3]
+     *
+     * @phpstan-param mixed[] $values
      */
     public static function from(array $values): ITuple
     {
         return new self($values);
     }
 
-    private function __construct(array $values)
+    /**
+     * Merge base tuple with additional items
+     * @see ITuple::mergeMatch()
+     *
+     * You can merge base tuple with other values or with other tuples
+     * Note: result of merging tuples will be flatten
+     *
+     * @example
+     * Tuple::merge(Tuple::of(1, 2), 3)                                -> (1, 2, 3)
+     * Tuple::merge(Tuple::of(1, 2), 3, 4)                             -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
+     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
+     */
+    public static function merge(ITuple $base, mixed ...$additional): ITuple
+    {
+        return self::from(
+            array_merge(
+                $base->toArray(),
+                Seq::init(function () use ($additional) {
+                    foreach ($additional as $item) {
+                        if ($item instanceof ITuple) {
+                            yield from $item;
+                        } else {
+                            yield $item;
+                        }
+                    }
+                })->toArray(),
+            ),
+        );
+    }
+
+    /**
+     * Merge base tuple with additional items and checks whether result matches given types
+     * @see ITuple::merge()
+     * @see ITuple::matchTypes()
+     *
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::mergeMatch(['string', 'string', 'string'], Tuple::parse('(foo, bar)'), 'boo')->toArray()  -> ['foo', 'bar', 'boo']
+     * Tuple::mergeMatch(['int', 'int', 'int', 'string'], Tuple::parse('(1, 2, 3)'), 'four')->toArray() -> [1, 2, 3, 'four']
+     *
+     * Invalid (throws an \InvalidArgumentException):
+     * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
+     * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
+     *
+     * @phpstan-param string[] $types
+     *
+     * @throws TupleMatchException
+     */
+    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple
+    {
+        /** @var self $mergedTuple */
+        $mergedTuple = self::merge($base, ...$additional);
+
+        if (!$mergedTuple->matchTypes($types)) {
+            throw TupleMatchException::forTypes(...$mergedTuple->getTypes($types));
+        }
+
+        return $mergedTuple;
+    }
+
+    /** @phpstan-param mixed[] $values */
+    private function __construct(private readonly array $values)
     {
         try {
             Assertion::greaterOrEqualThan(
                 count($values),
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                'Tuple must have at least two values.'
+                'Tuple must have at least two values.',
             );
-            $this->values = $values;
         } catch (AssertionFailedException $e) {
             throw TupleException::forFailedAssertion($e);
         }
     }
 
-    /**
-     * @param int $offset
-     */
-    public function offsetExists($offset): bool
+    public function count(): int
     {
-        self::assertKey($offset);
-
-        return array_key_exists($offset, $this->values);
+        return count($this->values);
     }
 
-    private static function assertKey(mixed $key): void
+    /** @phpstan-return \Traversable<int, mixed> */
+    public function getIterator(): \Traversable
     {
-        Assertion::integer($key, 'Tuples can only have integer indexes.');
+        yield from $this->toArray();
     }
 
-    /**
-     * @param int $offset
-     */
-    public function offsetGet(mixed $offset): mixed
+    public function isEmpty(): bool
     {
-        self::assertKey($offset);
+        foreach ($this as $v) {
+            if (!empty($v)) {
+                return false;
+            }
+        }
 
-        return $this->values[$offset];
+        return true;
     }
 
     /**
@@ -269,9 +345,11 @@ class Tuple implements ITuple
      */
     public function toString(): string
     {
-        return $this->formatToString(', ', '; ', function (string $value): string {
-            return sprintf('"%s"', $value);
-        });
+        return $this->formatToString(
+            ', ',
+            '; ',
+            fn (string $value): string => sprintf('"%s"', $value)
+        );
     }
 
     private function formatToString(string $separator, string $arraySeparator, callable $formatStringValue): string
@@ -280,8 +358,24 @@ class Tuple implements ITuple
             '(%s)',
             Seq::from($this->values)
                 ->map($this->mapValueToString($arraySeparator, $formatStringValue))
-                ->implode($separator)
+                ->implode($separator),
         );
+    }
+
+    public function toStringForUrl(): string
+    {
+        return $this->formatToString(
+            ',',
+            ';',
+            fn (string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
+                ? $value
+                : sprintf('"%s"', $value)
+        );
+    }
+
+    private function isMatching(string $pattern, string $value): bool
+    {
+        return preg_match($pattern, $value) === 1;
     }
 
     private function mapValueToString(string $arraySeparator, callable $formatStringValue): callable
@@ -298,7 +392,7 @@ class Tuple implements ITuple
                     '[%s]',
                     Seq::from($value)
                         ->map($this->mapValueToString($arraySeparator, $formatStringValue))
-                        ->implode($arraySeparator)
+                        ->implode($arraySeparator),
                 );
             }
 
@@ -308,30 +402,7 @@ class Tuple implements ITuple
         };
     }
 
-    public function toStringForUrl(): string
-    {
-        return $this->formatToString(',', ';', function (string $value): string {
-            return $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
-                ? $value
-                : sprintf('"%s"', $value);
-        });
-    }
-
-    private function isMatching(string $pattern, string $value): bool
-    {
-        return preg_match($pattern, $value) === 1;
-    }
-
-    public function count(): int
-    {
-        return count($this->values);
-    }
-
-    public function getIterator(): \Traversable
-    {
-        yield from $this->toArray();
-    }
-
+    /** @phpstan-return mixed[] */
     public function toArray(): array
     {
         return array_values($this->values);
@@ -413,6 +484,8 @@ class Tuple implements ITuple
      * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
      * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
      * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
+     *
+     * @phpstan-param string[] $types
      */
     public function matchTypes(array $types): bool
     {
@@ -422,8 +495,8 @@ class Tuple implements ITuple
             sprintf(
                 'Tuples has always at least %d values. It would always be false by giving less then %d types.',
                 self::MINIMAL_TUPLE_ITEMS_COUNT,
-                self::MINIMAL_TUPLE_ITEMS_COUNT
-            )
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+            ),
         );
 
         if (count($types) !== $this->count()) {
@@ -453,123 +526,52 @@ class Tuple implements ITuple
         return true;
     }
 
+    /**
+     * @phpstan-param string[] $types
+     * @phpstan-return array{0: string[], 1: string[]}
+     */
     private function getTypes(array $types): array
     {
         $normalizeType = $this->normalizeType();
 
+        /** @phpstan-var string[] $expectedTypes */
         $expectedTypes = Seq::create($types, $normalizeType)
             ->toArray();
-        $actualTypes = Seq::create($this->toArray(), 'gettype')
+        $actualTypes = Seq::create($this->toArray(), gettype(...))
             ->map($normalizeType)
             ->toArray();
 
         return [$expectedTypes, $actualTypes];
     }
 
+    /** @phpstan-return \Closure(string): string */
     private function normalizeType(): \Closure
     {
-        return function (string $type) {
-            $types = Seq::create(explode('|', $type), function (string $type): iterable {
-                if (Strings::startsWith($type, '?')) {
+        return fn (string $type): string => Seq::create(
+            explode('|', $type),
+            function (string $type): iterable {
+                if (str_starts_with($type, '?')) {
                     yield 'NULL';
                 }
 
                 yield ltrim($type, '?');
+            },
+        )
+            ->map(fn (string $type) => match ($type) {
+                'integer' => 'int',
+                'boolean' => 'bool',
+                'double' => 'float',
+                'any', 'mixed' => '*',
+                default => $type,
             })
-                ->map(function ($type) {
-                    switch ($type) {
-                        case 'integer':
-                            return 'int';
-                        case 'boolean':
-                            return 'bool';
-                        case 'double':
-                            return 'float';
-                        case 'any':
-                        case 'mixed':
-                            return '*';
-                        default:
-                            return $type;
-                    }
-                });
-
-            return implode('|', array_unique($types->toArray()));
-        };
-    }
-
-    /**
-     * Merge base tuple with additional items
-     * @see ITuple::mergeMatch()
-     *
-     * You can merge base tuple with other values or with other tuples
-     * Note: result of merging tuples will be flatten
-     *
-     * @example
-     * Tuple::merge(Tuple::of(1, 2), 3)                                -> (1, 2, 3)
-     * Tuple::merge(Tuple::of(1, 2), 3, 4)                             -> (1, 2, 3, 4)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4))                  -> (1, 2, 3, 4)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), 5)               -> (1, 2, 3, 4, 5)
-     * Tuple::merge(Tuple::of(1, 2), Tuple::of(3, 4), Tuple::of(5, 6)) -> (1, 2, 3, 4, 5, 6)
-     */
-    public static function merge(ITuple $base, mixed ...$additional): ITuple
-    {
-        return self::from(
-            array_merge(
-                $base->toArray(),
-                Seq::init(function () use ($additional) {
-                    foreach ($additional as $item) {
-                        if ($item instanceof ITuple) {
-                            yield from $item;
-                        } else {
-                            yield $item;
-                        }
-                    }
-                })->toArray()
-            )
-        );
-    }
-
-    /**
-     * Merge base tuple with additional items
-     * @see ITuple::merge()
-     * @see ITuple::matchTypes()
-     *
-     * Types to match:
-     * - string
-     * - bool, boolean
-     * - int, integer
-     * - float, double
-     * - array
-     * - any, mixed, * (any is nullable by default)
-     * - ?type (nullable type is any of the above with ? prefix)
-     *
-     * @example
-     * Tuple::mergeMatch(['string', 'string', 'string'], Tuple::parse('(foo, bar)'), 'boo')->toArray()  -> ['foo', 'bar', 'boo']
-     * Tuple::mergeMatch(['int', 'int', 'int', 'string'], Tuple::parse('(1, 2, 3)'), 'four')->toArray() -> [1, 2, 3, 'four']
-     *
-     * Invalid (throws an \InvalidArgumentException):
-     * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
-     * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
-     *
-     * @throws TupleMatchException
-     */
-    public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple
-    {
-        /** @var self $mergedTuple */
-        $mergedTuple = self::merge($base, ...$additional);
-
-        if (!$mergedTuple->matchTypes($types)) {
-            throw TupleMatchException::forTypes(...$mergedTuple->getTypes($types));
-        }
-
-        return $mergedTuple;
+            ->unique()
+            ->implode('|');
     }
 
     /**
      * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->forbiddenMethod();
     }
@@ -581,10 +583,34 @@ class Tuple implements ITuple
 
     /**
      * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         $this->forbiddenMethod();
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        self::assertKey($offset);
+
+        return array_key_exists($offset, $this->values);
+    }
+
+    private static function assertKey(mixed $key): void
+    {
+        Assertion::integer($key, 'Tuples can only have integer indexes.');
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        self::assertKey($offset);
+
+        return $this->values[$offset];
     }
 }

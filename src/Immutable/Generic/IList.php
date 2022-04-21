@@ -2,99 +2,246 @@
 
 namespace MF\Collection\Immutable\Generic;
 
-interface IList extends \MF\Collection\Immutable\IList, \MF\Collection\Generic\IList
+use MF\Collection\Exception\InvalidArgumentException;
+
+/**
+ * @phpstan-type TIndex int
+ * @phpstan-template TValue
+ *
+ * @phpstan-extends ICollection<TIndex, TValue>
+ */
+interface IList extends ICollection
 {
     /**
-     * @param mixed $values T: <TValue>
-     * @return IList
+     * @phpstan-template T
+     * @phpstan-param IList<T|iterable<T>> $list
+     * @phpstan-return IList<T>
      */
-    public static function ofT(string $TValue, mixed ...$values);
+    public static function concatList(IList $list): IList;
 
     /**
-     * @param array $array T: <TValue>
-     * @return IList T: <TValue>
+     * @phpstan-param TValue $values
+     * @phpstan-return IList<TValue>
      */
-    public static function fromT(string $TValue, array $array);
+    public static function of(mixed ...$values): IList;
 
     /**
-     * @param iterable $source T: <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
-     * @return IList T: <TValue>
+     * @phpstan-param iterable<mixed, TValue> $source
+     * @phpstan-return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, callable $creator);
+    public static function from(iterable $source): IList;
 
     /**
-     * @deprecated
-     * @see IList::ofT()
+     * @phpstan-template T
+     *
+     * @phpstan-param iterable<int|string, T> $source
+     * @phpstan-param callable(T, int|string): TValue $creator
+     * @phpstan-return IList<TValue>
      */
-    public static function of(mixed ...$values);
+    public static function create(iterable $source, callable $creator): IList;
 
-    /**
-     * @deprecated
-     * @see IList::fromT()
-     */
-    public static function from(array $array, bool $recursive = false);
-
-    /**
-     * @deprecated
-     * @see IList::createT()
-     */
-    public static function create(iterable $source, callable $creator);
-
-    /**
-     * @return IList
-     */
-    public function add(mixed $value);
-
-    /**
-     * @return IList
-     */
-    public function unshift(mixed $value);
-
-    /**
-     * @return mixed T: <TValue>
-     */
+    /** @phpstan-return TValue|null */
     public function first(): mixed;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return mixed T: <TValue>
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
+     * @phpstan-return TValue|null
      */
     public function firstBy(callable $callback): mixed;
 
-    /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     */
-    public function containsBy(callable $callback): bool;
+    /** @phpstan-return TValue|null */
+    public function last(): mixed;
 
     /**
-     * @return IList
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
      */
-    public function removeFirst(mixed $value);
+    public function add(mixed $value): IList;
 
     /**
-     * @return IList
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
      */
-    public function removeAll(mixed $value);
-
-    /** @return IList */
-    public function clear();
-
-    /** @return IList */
-    public function sort();
+    public function unshift(mixed $value): IList;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
-     * @return IList T: <TValue>
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
      */
-    public function map(callable $callback, string $TValue = null);
+    public function removeFirst(mixed $value): IList;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return IList T: <TValue>
+     * @phpstan-param TValue $value
+     * @phpstan-return IList<TValue>
      */
-    public function filter(callable $callback);
+    public function removeAll(mixed $value): IList;
 
-    /** @return \MF\Collection\Mutable\Generic\IList */
-    public function asMutable();
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return IList<T>
+     */
+    public function map(callable $callback): IList;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
+     * @phpstan-return IList<T>
+     */
+    public function mapi(callable $callback): IList;
+
+    /**
+     * @phpstan-param callable(TValue, TIndex=): bool $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function filter(callable $callback): IList;
+
+    /**
+     * @phpstan-template State
+     *
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
+     * @phpstan-param State $initialValue
+     * @phpstan-return State
+     */
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
+
+    /** @phpstan-return IList<TValue> */
+    public function sort(): IList;
+
+    /** @phpstan-return IList<TValue> */
+    public function sortDescending(): IList;
+
+    /**
+     * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function sortBy(callable $callback): IList;
+
+    /**
+     * @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function sortByDescending(callable $callback): IList;
+
+    /**
+     * Keeps only unique values inside the list.
+     *
+     * @phpstan-return IList<TValue>
+     */
+    public function unique(): IList;
+
+    /**
+     * Keeps only unique values by a given callback inside the list.
+     *
+     * @phpstan-template Unique
+     *
+     * @phpstan-param callable(TValue, TIndex=): Unique $callback
+     * @phpstan-return IList<TValue>
+     */
+    public function uniqueBy(callable $callback): IList;
+
+    /**
+     * Sort all items in a reverse order.
+     *
+     * @phpstan-return IList<TValue>
+     */
+    public function reverse(): IList;
+
+    public function sum(): int|float;
+
+    /** @phpstan-param callable(TValue, TIndex=): (int|float) $callback */
+    public function sumBy(callable $callback): int|float;
+
+    /** @phpstan-return IList<TValue> */
+    public function clear(): IList;
+
+    /**
+     * @phpstan-param IList<TValue> $list
+     * @phpstan-return IList<TValue>
+     */
+    public function append(IList $list): IList;
+
+    /**
+     * Divides the list into chunks of size at most chunkSize.
+     *
+     * @phpstan-param int<1, max> $size
+     * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
+     */
+    public function chunkBySize(int $size): IList;
+
+    /**
+     * Splits the list into at most count chunks.
+     *
+     * @phpstan-param int<1, max> $count
+     * @phpstan-return IList<IList<TValue>>
+     *
+     * @throws InvalidArgumentException
+     */
+    public function splitInto(int $count): IList;
+
+    /**
+     * For each element of the list, applies the given function.
+     * Concatenates all the results and return the combined list.
+     *
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): iterable<T> $callback
+     * @phpstan-return IList<T>
+     */
+    public function collect(callable $callback): IList;
+
+    /**
+     * Returns a new list that contains the elements of each the lists in order.
+     *
+     * @phpstan-return IList<TValue>
+     */
+    public function concat(): IList;
+
+    /**
+     * @phpstan-template TKey of int|string
+     *
+     * @phpstan-param callable(TValue, TIndex=): TKey $callback
+     * @phpstan-return IList<KVPair<TKey, int>>
+     */
+    public function countBy(callable $callback): IList;
+
+    /**
+     * @phpstan-template TGroup of int|string
+     *
+     * @phpstan-param callable(TValue): TGroup $callback
+     * @phpstan-return IList<KVPair<TGroup, IList<TValue>>>
+     */
+    public function groupBy(callable $callback): IList;
+
+    /** @phpstan-return TValue|null */
+    public function min(): mixed;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
+    public function minBy(callable $callback): mixed;
+
+    /** @phpstan-return TValue|null */
+    public function max(): mixed;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
+    public function maxBy(callable $callback): mixed;
+
+    /** @phpstan-return \MF\Collection\Mutable\Generic\IList<TValue> */
+    public function asMutable(): \MF\Collection\Mutable\Generic\IList;
+
+    /** @phpstan-return ISeq<TValue> */
+    public function toSeq(): ISeq;
 }

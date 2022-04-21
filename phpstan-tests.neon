@@ -1,0 +1,14 @@
+includes:
+    - phpstan-tests-baseline.neon
+
+parameters:
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+
+    # reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        # unit tests
+        - '#You should use assertCount.* instead of assertSame.*#'
+        - '#Call to method PHPUnit\\Framework\\Assert::assertArrayHasKey\(\) with .*? will always evaluate to false.#'
+        - '#Parameter \#1 \$callback of function array_map expects .*? given.#'

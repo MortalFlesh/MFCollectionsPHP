@@ -2,286 +2,396 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-use MF\Collection\Exception\BadMethodCallException;
+use MF\Collection\Assertion;
 use MF\Collection\Exception\InvalidArgumentException;
+use MF\Collection\Helper\Callback;
+use MF\Collection\Helper\Collection;
+use MF\Collection\Immutable\Generic\ISeq;
+use MF\Collection\Immutable\Generic\KVPair;
+use MF\Collection\Immutable\Generic\Seq;
+use MF\Collection\Immutable\ITuple;
 use MF\Collection\Immutable\Tuple;
-use MF\Validator\TypeValidator;
 
-class Map extends \MF\Collection\Mutable\Map implements IMap
+/**
+ * @phpstan-template TKey of int|string
+ * @phpstan-template TValue
+ *
+ * @phpstan-implements IMap<TKey, TValue>
+ */
+class Map implements IMap
 {
-    private const ALLOWED_KEY_TYPES = [
-        TypeValidator::TYPE_ANY,
-        TypeValidator::TYPE_MIXED,
-        TypeValidator::TYPE_STRING,
-        TypeValidator::TYPE_INT,
-        TypeValidator::TYPE_FLOAT,
-    ];
-
-    private const ALLOWED_VALUE_TYPES = [
-        TypeValidator::TYPE_ANY,
-        TypeValidator::TYPE_MIXED,
-        TypeValidator::TYPE_STRING,
-        TypeValidator::TYPE_INT,
-        TypeValidator::TYPE_FLOAT,
-        TypeValidator::TYPE_BOOL,
-        TypeValidator::TYPE_ARRAY,
-        TypeValidator::TYPE_CALLABLE,
-        TypeValidator::TYPE_OBJECT,
-        TypeValidator::TYPE_INSTANCE_OF,
-    ];
-
-    private TypeValidator $typeValidator;
-
     /**
-     * @return static|IMap T: <TKey,TValue>
+     * @phpstan-param iterable<TKey, TValue> $source
+     * @phpstan-return IMap<TKey, TValue>
      */
-    public static function fromKT(string $TKey, string $TValue, array $array)
+    public static function from(iterable $source): IMap
     {
-        $map = new static($TKey, $TValue);
-
-        foreach ($array as $key => $value) {
-            $map->set($key, $value);
-        }
-
-        return $map;
-    }
-
-    /**
-     * @param iterable $source T: <TKey,mixed>
-     * @param callable $creator (value:mixed,key:TKey):TValue
-     * @return static|IMap T: <TKey,TValue>
-     */
-    public static function createKT(string $TKey, string $TValue, iterable $source, callable $creator)
-    {
-        $map = new static($TKey, $TValue);
+        $map = new static();
 
         foreach ($source as $key => $value) {
-            $map->set($key, $creator($value, $key));
+            $map->mapArray[$key] = $value;
         }
 
         return $map;
     }
 
     /**
-     * @deprecated
-     * @see IMap::fromKT()
-     * @return IMap
+     * @phpstan-param iterable<ITuple|KVPair<TKey, TValue>|array{0: TKey, 1: TValue}> $pairs
+     * @phpstan-return IMap<TKey, TValue>
+     *
+     * @throws InvalidArgumentException
      */
-    public static function from(array $array, bool $recursive = false)
+    public static function fromPairs(iterable $pairs): IMap
     {
-        throw new BadMethodCallException(
-            'This method should not be used with Generic Map. Use fromKT instead.'
-        );
-    }
+        $map = new static();
 
-    /**
-     * @deprecated
-     * @see IMap::createKT()
-     * @return IMap
-     */
-    public static function create(iterable $source, callable $creator)
-    {
-        throw new BadMethodCallException(
-            'This method should not be used with Generic Map. Use createKT instead.'
-        );
-    }
-
-    public function __construct(string $TKey, string $TValue)
-    {
-        $this->typeValidator = new TypeValidator(
-            $TKey,
-            $TValue,
-            self::ALLOWED_KEY_TYPES,
-            self::ALLOWED_VALUE_TYPES,
-            InvalidArgumentException::class
-        );
-
-        parent::__construct();
-    }
-
-    protected function applyModifiers(): void
-    {
-        if (empty($this->modifiers) || empty($this->mapArray)) {
-            $this->modifiers = [];
-
-            return;
-        }
-
-        $mapArray = [];
-        foreach ($this->mapArray as $key => $value) {
-            foreach ($this->modifiers as $item) {
-                [$type, $callback] = $item;
-
-                $TValue = $item[self::INDEX_TVALUE] ?? null;
-                if ($TValue && $this->typeValidator->getValueType() !== $TValue) {
-                    $this->typeValidator->changeValueType($TValue);
-                }
-
-                if ($type === self::MAP) {
-                    $value = $callback($key, $value);
-                } elseif ($type === self::FILTER && !$callback($key, $value)) {
-                    continue 2;
-                }
+        foreach ($pairs as $pair) {
+            if ($pair instanceof KVPair) {
+                $key = $pair->getKey();
+                $value = $pair->getValue();
+            } elseif ($pair instanceof ITuple) {
+                [$key, $value] = $pair;
+            } elseif (is_array($pair)) {
+                [$key, $value] = $pair;
+            } else {
+                throw new InvalidArgumentException('Value is not a pair');
             }
 
-            $this->typeValidator->assertValueType($value);
-            $mapArray[$key] = $value;
+            /**
+             * @phpstan-var TKey $key
+             * @phpstan-var TValue $value
+             */
+            $map->mapArray[$key] = $value;
         }
-
-        $this->mapArray = $mapArray;
-        $this->modifiers = [];
-    }
-
-    /**
-     * @param mixed $key T: <TKey>
-     */
-    public function containsKey(mixed $key): bool
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertKeyType($key);
-
-        return parent::containsKey($key);
-    }
-
-    /**
-     * @param mixed $value T: <TValue>
-     */
-    public function contains(mixed $value): bool
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertValueType($value);
-
-        return parent::contains($value);
-    }
-
-    /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):bool
-     */
-    public function containsBy(callable $callback): bool
-    {
-        return parent::containsBy($callback);
-    }
-
-    /**
-     * @param mixed $value T: <TValue>
-     */
-    public function find(mixed $value): mixed
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertValueType($value);
-
-        return parent::find($value);
-    }
-
-    /**
-     * @param mixed $key T: <TKey>
-     * @return mixed T: <TValue>
-     */
-    public function get(mixed $key): mixed
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertKeyType($key);
-
-        return parent::get($key);
-    }
-
-    /**
-     * @param mixed $key T: <TKey>
-     * @param mixed $value T: <TValue>
-     */
-    public function set(mixed $key, mixed $value): void
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertKeyType($key);
-        $this->typeValidator->assertValueType($value);
-
-        parent::set($key, $value);
-    }
-
-    /**
-     * @param mixed $key T: <TKey>
-     */
-    public function remove(mixed $key): void
-    {
-        $this->applyModifiers();
-        $this->typeValidator->assertKeyType($key);
-
-        parent::remove($key);
-    }
-
-    /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):<TValue>
-     * @return static
-     */
-    public function map(callable $callback, ?string $TValue = null)
-    {
-        $map = clone $this;
-        $map->modifiers[] = Tuple::of(self::MAP, $callback, $TValue);
 
         return $map;
     }
 
     /**
-     * @param callable $callback (key:<TKey>,value:<TValue>):bool
-     * @return static
+     * @phpstan-template T
+     *
+     * @phpstan-param iterable<TKey, T> $source
+     * @phpstan-param callable(T, TKey): TValue $creator
+     * @phpstan-return IMap<TKey, TValue>
      */
-    public function filter(callable $callback)
+    public static function create(iterable $source, callable $creator): IMap
     {
-        $list = clone $this;
-        $list->modifiers[] = Tuple::of(self::FILTER, $callback);
+        $map = new static();
+        $creator = Callback::curry($creator);
+
+        foreach ($source as $key => $value) {
+            $map->mapArray[$key] = $creator($value, $key);
+        }
+
+        return $map;
+    }
+
+    /** @phpstan-param array<TKey, TValue> $mapArray */
+    public function __construct(private array $mapArray = [])
+    {
+    }
+
+    public function count(): int
+    {
+        return count($this->mapArray);
+    }
+
+    /** @phpstan-return \Traversable<TKey, TValue> */
+    public function getIterator(): \Traversable
+    {
+        yield from $this->mapArray;
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->mapArray);
+    }
+
+    /** @phpstan-param TValue $value */
+    public function contains(mixed $value): bool
+    {
+        return in_array($value, $this->mapArray, true);
+    }
+
+    /** @phpstan-param callable(TValue, TKey=): bool $callback */
+    public function containsBy(callable $callback): bool
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $k => $v) {
+            if ($callback($v, $k) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @phpstan-return array<TKey, TValue> */
+    public function toArray(): array
+    {
+        return Collection::mutableToArray($this);
+    }
+
+    /** @param callable(TValue, TKey=): void $callback */
+    public function each(callable $callback): void
+    {
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $key => $value) {
+            $callback($value, $key);
+        }
+    }
+
+    /**
+     * Tests if all elements of the collection satisfy the given predicate.
+     *
+     * @phpstan-param callable(TValue, TKey=): bool $predicate
+     */
+    public function forAll(callable $predicate): bool
+    {
+        $predicate = Callback::curry($predicate);
+
+        foreach ($this as $key => $v) {
+            if ($predicate($v, $key) !== true) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function implode(string $glue): string
+    {
+        return implode($glue, $this->mapArray);
+    }
+
+    /** @phpstan-param TKey $key */
+    public function containsKey(int|string $key): bool
+    {
+        return array_key_exists($key, $this->mapArray);
+    }
+
+    /**
+     * @phpstan-param TKey $key
+     * @phpstan-return TValue|null
+     */
+    public function find(int|string $key): mixed
+    {
+        return $this->mapArray[$key] ?? null;
+    }
+
+    /**
+     * @phpstan-param TValue $value
+     * @phpstan-return TKey|null
+     */
+    public function findKey(mixed $value): mixed
+    {
+        return array_search($value, $this->mapArray, true) ?: null;
+    }
+
+    /**
+     * @phpstan-return TValue
+     *
+     * @throws InvalidArgumentException
+     */
+    public function get(int|string $key): mixed
+    {
+        Assertion::keyExists($this->mapArray, $key);
+
+        return $this->mapArray[$key];
+    }
+
+    /**
+     * @phpstan-param TKey $key
+     * @phpstan-param TValue $value
+     */
+    public function set(int|string $key, mixed $value): void
+    {
+        $this->mapArray[$key] = $value;
+    }
+
+    /**
+     * @phpstan-param TKey $key
+     *
+     * @throws InvalidArgumentException
+     */
+    public function remove(int|string $key): void
+    {
+        Assertion::keyExists($this->mapArray, $key);
+
+        unset($this->mapArray[$key]);
+    }
+
+    public function clear(): void
+    {
+        $this->mapArray = [];
+    }
+
+    /** @phpstan-return IList<TKey> */
+    public function keys(): IList
+    {
+        /** @phpstan-var IList<TKey> $list */
+        $list = ListCollection::from(array_keys($this->mapArray));
 
         return $list;
     }
 
-    /**
-     * @return IList T: <TKey>
-     */
-    public function keys()
+    /** @phpstan-return IList<TValue> */
+    public function values(): IList
     {
-        $this->applyModifiers();
+        /** @phpstan-var IList<TValue> $values */
+        $values = ListCollection::from($this->mapArray);
 
-        return ListCollection::fromT(
-            $this->typeValidator->getKeyType(),
-            array_keys($this->mapArray)
-        );
+        return $values;
+    }
+
+    /** @phpstan-return IList<KVPair<TKey, TValue>> */
+    public function pairs(): IList
+    {
+        /** @phpstan-var IList<KVPair<TKey, TValue>> $pairs */
+        $pairs = ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+
+        return $pairs;
     }
 
     /**
-     * @return IList T: <TValue>
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TKey): T $callback
      */
-    public function values()
+    public function map(callable $callback): void
     {
-        $this->applyModifiers();
+        $callback = Callback::curry($callback);
+        $map = [];
 
-        return ListCollection::fromT(
-            $this->typeValidator->getValueType(),
-            array_values($this->mapArray)
-        );
+        foreach ($this as $key => $v) {
+            $map[$key] = $callback($v, $key);
+        }
+
+        /** @phpstan-var array<TKey, TValue> $map */
+        $this->mapArray = $map;
+    }
+
+    /** @phpstan-param callable(TValue, TKey): bool $callback */
+    public function filter(callable $callback): void
+    {
+        $map = [];
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $key => $v) {
+            if ($callback($v, $key) === true) {
+                $map[$key] = $v;
+            }
+        }
+
+        $this->mapArray = $map;
     }
 
     /**
-     * @param callable $reducer (total:<RValue>|<TValue>,value:<TValue>,index:<TKey>,map:Map):<RValue>|<TValue>
-     * @param null|mixed $initialValue null|<RValue>
-     * @return mixed <RValue>|<TValue>
+     * @phpstan-template State
+     *
+     * @phpstan-param callable(State, TValue, TKey=, IMap<TKey, TValue>=): State $callback
+     * @phpstan-param State $initialValue
+     * @phpstan-return State
      */
-    public function reduce(callable $reducer, mixed $initialValue = null): mixed
+    public function reduce(callable $callback, mixed $initialValue = null): mixed
     {
-        $this->applyModifiers();
+        $callback = Callback::curry($callback);
+        $state = $initialValue;
 
-        return parent::reduce($reducer, $initialValue);
+        foreach ($this as $key => $value) {
+            $state = $callback($state, $value, $key, $this);
+        }
+
+        return $state;
+    }
+
+    /** @phpstan-return \MF\Collection\Immutable\Generic\IMap<TKey, TValue> */
+    public function asImmutable(): \MF\Collection\Immutable\Generic\IMap
+    {
+        /** @phpstan-var \MF\Collection\Immutable\Generic\IMap<TKey, TValue> $map */
+        $map = \MF\Collection\Immutable\Generic\Map::from($this);
+
+        return $map;
+    }
+
+    /** @phpstan-return IList<ITuple> */
+    public function toList(): IList
+    {
+        /** @phpstan-var IList<ITuple> $list */
+        $list = ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+
+        return $list;
+    }
+
+    /** @phpstan-return ISeq<ITuple> */
+    public function toSeq(): ISeq
+    {
+        $map = clone $this;
+
+        return Seq::init(function () use ($map) {
+            foreach ($map as $key => $value) {
+                yield Tuple::of($key, $value);
+            }
+        });
     }
 
     /**
-     * @return \MF\Collection\Immutable\Generic\IMap
+     * @see IMap::containsKey()
+     *
+     * @phpstan-param TKey $offset
+     *
+     * @throws InvalidArgumentException
      */
-    public function asImmutable()
+    public function offsetExists(mixed $offset): bool
     {
-        $this->applyModifiers();
+        Assertion::isKey($offset);
 
-        return \MF\Collection\Immutable\Generic\Map::fromKT(
-            $this->typeValidator->getKeyType(),
-            $this->typeValidator->getValueType(),
-            $this->toArray()
-        );
+        return $this->containsKey($offset);
+    }
+
+    /**
+     * @see IMap::get()
+     *
+     * @phpstan-param TKey $offset
+     * @phpstan-return TValue
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetGet(mixed $offset): mixed
+    {
+        Assertion::isKey($offset);
+
+        return $this->get($offset);
+    }
+
+    /**
+     * @see IMap::set()
+     *
+     * @phpstan-param TKey $offset
+     * @phpstan-param TValue $value
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        Assertion::isKey($offset);
+
+        $this->set($offset, $value);
+    }
+
+    /**
+     * @see IMap::remove()
+     *
+     * @phpstan-param TKey $offset
+     *
+     * @throws InvalidArgumentException
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        Assertion::isKey($offset);
+
+        $this->remove($offset);
     }
 }

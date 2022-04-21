@@ -3,7 +3,6 @@
 namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\AbstractTestCase;
-use MF\Collection\Exception\InvalidArgumentException;
 use MF\Collection\Fixtures\SimpleEntity;
 
 class PrioritizedCollectionTest extends AbstractTestCase
@@ -11,7 +10,7 @@ class PrioritizedCollectionTest extends AbstractTestCase
     /** @dataProvider provideItemsByPriority */
     public function testShouldAddItemsAndIterateThemByPriority(array $items, array $expectedItems): void
     {
-        $prioritizedCollection = new PrioritizedCollection('any');
+        $prioritizedCollection = new PrioritizedCollection();
 
         foreach ($items as [$item, $priority]) {
             $prioritizedCollection->add($item, $priority);
@@ -73,46 +72,13 @@ class PrioritizedCollectionTest extends AbstractTestCase
 
     public function testShouldCountItems(): void
     {
-        $prioritizedCollection = new PrioritizedCollection('int');
+        $prioritizedCollection = new PrioritizedCollection();
 
         $prioritizedCollection->add(1, 1);
         $this->assertCount(1, $prioritizedCollection);
 
         $prioritizedCollection->add(5, 5);
         $this->assertCount(2, $prioritizedCollection);
-    }
-
-    /** @dataProvider provideInvalidItems */
-    public function testShouldNotAddValuesOfDifferentType(string $type, mixed $item, string $expectedMessage): void
-    {
-        $prioritizedCollection = new PrioritizedCollection($type);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage($expectedMessage);
-
-        $prioritizedCollection->add($item, 10);
-    }
-
-    public function provideInvalidItems(): array
-    {
-        return [
-            // type, item, expectedMessage
-            'string -> int[]' => [
-                'int',
-                'foo',
-                'Invalid value type argument "foo"<string> given - <int> expected',
-            ],
-            'int -> string[]' => [
-                'string',
-                10,
-                'Invalid value type argument "10"<integer> given - <string> expected',
-            ],
-            'bool -> SimpleEntity[]' => [
-                SimpleEntity::class,
-                true,
-                'Invalid value type argument "true"<boolean> given - <instance of (MF\Collection\Fixtures\SimpleEntity)> expected',
-            ],
-        ];
     }
 
     public function testShouldIterateFunctionsByPriority(): void
@@ -129,7 +95,7 @@ class PrioritizedCollectionTest extends AbstractTestCase
             };
         };
 
-        $functionsByPriority = new PrioritizedCollection('callable');
+        $functionsByPriority = new PrioritizedCollection();
         $functionsByPriority->add($add(1), 2);
         $functionsByPriority->add($times(2), 1);
         $functionsByPriority->add($times(3), 5);
@@ -146,5 +112,15 @@ class PrioritizedCollectionTest extends AbstractTestCase
         }
 
         $this->assertSame($expected, $n);
+    }
+
+    public function testShouldCheckIfCollectionIsEmpty(): void
+    {
+        $collection = new PrioritizedCollection();
+
+        $this->assertTrue($collection->isEmpty());
+
+        $collection->add('item', 10);
+        $this->assertFalse($collection->isEmpty());
     }
 }

@@ -2,6 +2,74 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Require php 8.1
+- [**BC**] Drop `recursive` option in `from` creators
+- [**BC**] Drop non-generic variants of the collections
+- Use phpstan generics only
+  - Add phpstan annotations 
+  - [**BC**] Remove explicit types in the generic collections
+  - Drop dependency on `MF/TypeValidator`
+- Use readonly properties in Immutable collections to ensure immutability
+- Add `KVPair` class
+- Add more methods
+  - Immutable/Generic/ICollection
+    - Add `forAll`
+    - Add `implode`
+  - Immutable/Generic/IList, Immutable/Generic/ISeq
+    - Add `concat` (`concatList`, `concatSeq`)
+    - Add `mapi`
+    - Add `sort`
+    - Add `sortDescending`
+    - Add `sortBy`
+    - Add `sortDescendingBy`
+    - Add `unique`
+    - Add `uniqueBy`
+    - Add `reverse`
+    - Add `sum`
+    - Add `sumBy`
+    - Add `min`
+    - Add `minBy`
+    - Add `max`
+    - Add `maxBy`
+    - Add `append`
+    - Add `chunkBySize`
+    - Add `splitInto`
+    - Add `collect`
+    - Add `countBy`
+    - Add `groupBy`
+    - Add `toSeq`
+  - Immutable/Generic/ISeq (only)
+    - Add `skip`
+    - Add `skipWhile`
+    - Add `toList`
+  - Immutable/Generic/IMap, Mutable/Generic/IMap
+    - Add `fromPairs`
+    - Add `pairs`
+    - Add `toList`
+    - Add `totoSeq`
+  - Immutable/ITuple
+    - Add `fst` static methods
+    - Add `snd` static methods
+  - Mutable/Generic/IList
+    - Add `concat`
+    - Add `concatList`
+    - Add `mapi`
+    - Add `sort`
+    - Add `sortDescending`
+    - Add `sortBy`
+    - Add `sortDescendingBy`
+    - Add `unique`
+    - Add `uniqueBy`
+    - Add `reverse`
+    - Add `sum`
+    - Add `sumBy`
+    - Add `min`
+    - Add `minBy`
+    - Add `max`
+    - Add `maxBy`
+    - Add `append`
+    - Add `toSeq`
+- Optimize callbacks and their execution with real number of arguments
 
 ## 6.1.1 - 2022-02-22
 - Fix that applying modifiers removes all the current modifiers even, if there are no items or modifiers

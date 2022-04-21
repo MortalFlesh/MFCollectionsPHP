@@ -9,9 +9,11 @@ class Assertion extends BaseAssertion
 {
     protected static $exceptionClass = InvalidArgumentException::class;
 
-    public static function isValidKey(mixed $key): void
+    public static function isKey(mixed $offset): void
     {
-        static::false(is_object($key), 'Key cannot be an Object');
-        static::false(is_array($key), 'Key cannot be an Array');
+        static::true(
+            is_string($offset) || is_int($offset),
+            'Offset "%s" is not a key. Key must be a int|string.',
+        );
     }
 }

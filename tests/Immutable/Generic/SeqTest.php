@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace MF\Collection\Immutable;
+namespace MF\Collection\Immutable\Generic;
 
 use MF\Collection\AbstractTestCase;
 use MF\Collection\Exception\OutOfBoundsException;
 use MF\Collection\Exception\OutOfRangeException;
+use MF\Collection\Fixtures\DummySeq;
+use MF\Collection\Fixtures\SimpleEntity;
 
 /**
  * @group sequence
@@ -27,7 +29,7 @@ class SeqTest extends AbstractTestCase
     /** @dataProvider seqProvider */
     public function testShouldCreateSeqFrom(iterable $input, array $expectedKeys, array $expectedValues): void
     {
-        $seq = Seq::create($input);
+        $seq = Seq::from($input);
 
         $keys = [];
         $values = [];
@@ -42,8 +44,8 @@ class SeqTest extends AbstractTestCase
             sprintf(
                 'Keys [%s] are not same as expected [%s].',
                 implode(', ', $keys),
-                implode(', ', $expectedKeys)
-            )
+                implode(', ', $expectedKeys),
+            ),
         );
         $this->assertSame(
             $expectedValues,
@@ -51,8 +53,8 @@ class SeqTest extends AbstractTestCase
             sprintf(
                 'Values [%s] are not same as expected [%s].',
                 implode(', ', $values),
-                implode(', ', $expectedValues)
-            )
+                implode(', ', $expectedValues),
+            ),
         );
     }
 
@@ -66,13 +68,12 @@ class SeqTest extends AbstractTestCase
         ];
     }
 
-    public function testShouldMakeSeqForRangeAndDoSquare(): void
+    public function testShouldMakeSeqForRangeAndDoSquareOnInfiniteSeq(): void
     {
         $expectedValues = [1, 4, 9];
 
-        $seq = Seq::forDo([1, 3], function ($i) {
-            return $i * $i;
-        });
+        $seq = Seq::forDo('1..Inf', fn ($i) => $i * $i)
+            ->take(3);
 
         $values = [];
         foreach ($seq as $i) {
@@ -80,6 +81,48 @@ class SeqTest extends AbstractTestCase
         }
 
         $this->assertSame($expectedValues, $values);
+    }
+
+    public function testShouldMakeSeqForRangeAndDoSquareOnInfiniteSeqSkippingFirstItems(): void
+    {
+        $inf = Seq::forDo('1..7', fn ($i) => $i * $i); // 1, 4, 9, ...
+        $skip2 = $inf->skip(2);
+        $take3 = $skip2->take(3);
+
+        $this->assertSame([9, 16, 25, 36, 49], $skip2->toArray());
+        $this->assertSame([9, 16, 25], $take3->toArray());
+    }
+
+    public function testShouldTakeItemsFromInfiniteSeqAndSkipThemToReturnEmptySeq(): void
+    {
+        $array = Seq::range('1..Inf')
+            ->take(3)
+            ->skip(3)
+            ->toArray();
+
+        $this->assertSame([], $array);
+    }
+
+    public function testShouldSkipItemsAndThenTakeSome(): void
+    {
+        $array = Seq::range('1..Inf')
+            ->skip(3)
+            ->take(3)
+            ->toArray();
+
+        $this->assertSame([4, 5, 6], $array);
+    }
+
+    public function testShouldSkipMultipleTimesAndThenTakeSome(): void
+    {
+        $array = Seq::range('1..Inf')
+            ->skip(5)
+            ->skip(5)
+            ->skipWhile(fn ($i) => $i % 2 === 0)
+            ->take(5)
+            ->toArray();
+
+        $this->assertSame([11, 12, 13, 14, 15], $array);
     }
 
     public function testShouldGenerateSeqForRangeAndDoSquare(): void
@@ -237,15 +280,27 @@ class SeqTest extends AbstractTestCase
         $this->assertSame([4, 16], $result);
     }
 
+    public function testShouldSquareInfiniteWhileSkippingWhile(): void
+    {
+        $result = Seq::infinite()               // 1, 2, 3, ...
+            ->filter(fn ($i) => $i % 2 === 0)   // 2, 4, 6, ...
+            ->skipWhile(fn ($i) => $i < 10)     // 10, 12, 14, ...
+            ->map(fn ($i) => $i * $i)           // 100, 144, 169, ...
+            ->takeWhile(fn ($i) => $i < 150)    // 100, 144
+            ->toArray();
+
+        $this->assertSame([100, 144], $result);
+    }
+
     public function testShouldSquareInfiniteWhileAndThenMapIt(): void
     {
         $result = Seq::infinite()
-            ->filter(fn ($i) => $i % 2 === 0)// 2, 4, 6, ... Inf
-            ->map(fn ($i) => $i * $i)// 4, 16, 36 ... Inf
-            ->takeWhile(fn ($i) => $i < 25)// 4, 16
-            ->map(fn ($i) => sqrt($i))// 2.0, 4.0
-            ->map(fn ($i) => (int) $i)// 2, 4
-            ->filter(fn ($i) => $i > 2)// 4
+            ->filter(fn ($i) => $i % 2 === 0)   // 2, 4, 6, ... Inf
+            ->map(fn ($i) => $i * $i)           // 4, 16, 36 ... Inf
+            ->takeWhile(fn ($i) => $i < 25)     // 4, 16
+            ->map(fn ($i) => sqrt($i))          // 2.0, 4.0
+            ->map(fn ($i) => (int) $i)          // 2, 4
+            ->filter(fn ($i) => $i > 2)         // 4
             ->toArray();
 
         $this->assertSame([4], $result);
@@ -262,6 +317,34 @@ class SeqTest extends AbstractTestCase
 
             yield $i;
         });
+
+        $values = [];
+        foreach ($seq as $i) {
+            $values[] = $i;
+        }
+
+        $this->assertSame($expectedValues, $values);
+    }
+
+    public function testShouldGenerateSeqForRange(): void
+    {
+        $expectedValues = [1, 2, 3];
+
+        $seq = Seq::forDo([1, 3], fn ($i) => $i);
+
+        $values = [];
+        foreach ($seq as $i) {
+            $values[] = $i;
+        }
+
+        $this->assertSame($expectedValues, $values);
+    }
+
+    public function testShouldCreateSeq(): void
+    {
+        $expectedValues = [1, 2, 3];
+
+        $seq = Seq::create([1, 2, 3], fn ($i) => $i);
 
         $values = [];
         foreach ($seq as $i) {
@@ -347,7 +430,7 @@ class SeqTest extends AbstractTestCase
                     ? null
                     : [$first + $second, [$second, $first + $second]];
             },
-            [1, 1]
+            [1, 1],
         )->toArray();
 
         $this->assertSame([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597], $computedFib);
@@ -361,7 +444,7 @@ class SeqTest extends AbstractTestCase
 
                 return [$first + $second, [$second, $first + $second]];
             },
-            [1, 1]
+            [1, 1],
         )
             ->takeWhile(function ($i) {
                 return $i < 500;
@@ -369,6 +452,15 @@ class SeqTest extends AbstractTestCase
             ->toArray();
 
         $this->assertSame([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377], $computedFib);
+    }
+
+    public function testShouldGenerateSeqWithLimit(): void
+    {
+        $values = Seq::from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+            ->takeWhile(fn ($i) => $i < 5)
+            ->toArray();
+
+        $this->assertSame([1, 2, 3, 4], $values);
     }
 
     public function testShouldUnfoldNumbers(): void
@@ -379,7 +471,7 @@ class SeqTest extends AbstractTestCase
                     ? null
                     : [$state, $state + 1];
             },
-            0
+            0,
         );
         $result = [];
         foreach ($seq as $i) {
@@ -535,7 +627,6 @@ class SeqTest extends AbstractTestCase
     {
         return [
             'empty' => [Seq::createEmpty(), true],
-            'empty for-do' => [Seq::create([]), true],
             'empty from' => [Seq::from([]), true],
             'not empty infinite' => [Seq::infinite(), false],
             'not empty init' => [Seq::init(fn () => yield 1), false],
@@ -577,7 +668,7 @@ class SeqTest extends AbstractTestCase
         return [
             // seq, expectedCount
             'count' => [Seq::createEmpty(), 0],
-            'count create' => [Seq::create([]), 0],
+            'count create' => [Seq::create([], fn ($i) => $i), 0],
             'count from' => [Seq::from([]), 0],
             'count from 2' => [Seq::from([1, 2]), 2],
             'count init' => [Seq::init(fn () => yield 1), 1],
@@ -707,12 +798,8 @@ class SeqTest extends AbstractTestCase
     public function testShouldCollectIntSequence(): void
     {
         $entity = new class([1, 2, 3]) {
-            /** @var array */
-            private $data;
-
-            public function __construct(array $data)
+            public function __construct(private readonly array $data)
             {
-                $this->data = $data;
             }
 
             public function toArray(): array
@@ -777,11 +864,11 @@ class SeqTest extends AbstractTestCase
 
     public function testShouldConcatIntSequence(): void
     {
-        $result = Seq::from([[1, 2, 3], [4, 5, 6]])
+        $result = Seq::from([[1, 2, 3], [4, 5, 6], 7, 8])
             ->concat()
             ->toArray();
 
-        $this->assertSame([1, 2, 3, 4, 5, 6], $result);
+        $this->assertSame([1, 2, 3, 4, 5, 6, 7, 8], $result);
     }
 
     public function testShouldConcatSequence(): void
@@ -796,13 +883,9 @@ class SeqTest extends AbstractTestCase
         $word = Seq::init(function () use ($data): iterable {
             yield from $data;
         })
-            ->map(function (int $item) use ($subData): iterable {
-                return $subData[$item];
-            })
+            ->map(fn (int $item): iterable => $subData[$item])
             ->concat()
-            ->reduce(function (string $word, string $subItem): string {
-                return $word . $subItem;
-            }, 'Word: ');
+            ->reduce(fn (string $word, string $subItem): string => $word . $subItem, 'Word: ');
 
         $this->assertSame('Word: abcdefg', $word);
     }
@@ -820,15 +903,11 @@ class SeqTest extends AbstractTestCase
             yield from $data;
         })
             ->map(fn ($i) => (int) $i)
-            ->map(function (int $item) use ($subData): iterable {
-                return $subData[$item];
-            })
+            ->map(fn (int $item): iterable => $subData[$item])
             ->concat()
             ->filter(fn ($l) => $l < 'f')
             ->map(fn ($l) => $l . ' ')
-            ->reduce(function (string $word, string $subItem): string {
-                return $word . $subItem;
-            }, 'Word: ');
+            ->reduce(fn (string $word, string $subItem): string => $word . $subItem, 'Word: ');
 
         $this->assertSame('Word: a b c d e ', $word);
     }
@@ -916,5 +995,428 @@ class SeqTest extends AbstractTestCase
             });
 
         $this->assertSame([0, 2, 4, 6, 8, 0, 3, 6, 9], $data);
+    }
+
+    public function testShouldTransformSeqToList(): void
+    {
+        $list = Seq::forDo('1..5', fn ($i) => $i)->toList();
+        $this->assertSame([1, 2, 3, 4, 5], $list->toArray());
+    }
+
+    public function testShouldTransformInfiniteSeqToList(): void
+    {
+        $list = Seq::forDo('1..Inf', fn ($i) => $i)->take(5)->toList();
+        $this->assertSame([1, 2, 3, 4, 5], $list->toArray());
+    }
+
+    public function testShouldNotTransformInfiniteSeqToList(): void
+    {
+        $this->expectException(OutOfBoundsException::class);
+
+        Seq::forDo('1..Inf', fn ($i) => $i)->toList();
+    }
+
+    public function testShouldCheckPredicateForAllItems(): void
+    {
+        $seq = Seq::range('1..5');
+
+        $this->assertTrue($seq->forAll(is_int(...)));
+        $this->assertFalse($seq->forAll(is_string(...)));
+    }
+
+    public function testShouldNotCheckPredicateInInfiniteSequence(): void
+    {
+        $seq = Seq::infinite();
+
+        $this->assertFalse($seq->forAll(is_string(...)));
+    }
+
+    public function testShouldSortSeq(): void
+    {
+        $seq = Seq::from([1, 3, 2, 5, 4, 0]);
+
+        $this->assertSame([0, 1, 2, 3, 4, 5], $seq->sort()->toArray());
+    }
+
+    public function testShouldNotSortInfiniteSeq(): void
+    {
+        $this->expectException(OutOfBoundsException::class);
+
+        Seq::infinite()->sort();
+    }
+
+    public function testShouldSortDescendingSeq(): void
+    {
+        $seq = Seq::from([1, 3, 2, 5, 4, 0]);
+
+        $this->assertSame([5, 4, 3, 2, 1, 0], $seq->sortDescending()->toArray());
+    }
+
+    public function testShouldSortSeqAscAndDesc(): void
+    {
+        $seq = Seq::from([1, 3, 2, 5, 4, 0]);
+
+        $this->assertSame(
+            $seq->sort()->toArray(),
+            $seq->sortDescending()->reverse()->toArray(),
+        );
+    }
+
+    public function testShouldSortSeqByCallback(): void
+    {
+        $seq = Seq::from(['a', 'ccc', '😍', 'eeeee', 'bb'])
+            ->sortBy(strlen(...));
+
+        $this->assertSame(['a', 'bb', 'ccc', '😍', 'eeeee'], $seq->toArray());
+    }
+
+    public function testShouldNotSortDescendingInfiniteSeq(): void
+    {
+        $this->expectException(OutOfBoundsException::class);
+
+        Seq::infinite()->sortDescending();
+    }
+
+    public function testShouldReverseGeneratedSequence(): void
+    {
+        $seq = Seq::forDo('1..2..Inf', fn ($i) => $i)
+            ->takeWhile(fn ($i) => $i < 10)
+            ->reverse();
+
+        $this->assertSame([9, 7, 5, 3, 1], $seq->toArray());
+    }
+
+    /** @dataProvider provideChunkBySize */
+    public function testShouldChunkSequenceBySize(int $size, array $data, array $expected): void
+    {
+        $chunks = Seq::from($data)
+            ->chunkBySize($size)
+            ->toArray();
+
+        $this->assertSame($expected, $chunks);
+    }
+
+    public function provideChunkBySize(): array
+    {
+        return [
+            // size, data, expected
+            '1' => [1, [1, 2, 3], [[1], [2], [3]]],
+            '2' => [2, [1, 2, 3], [[1, 2], [3]]],
+            '3' => [3, [1, 2, 3], [[1, 2, 3]]],
+        ];
+    }
+
+    public function testShouldChunkInfiniteSeq(): void
+    {
+        $result = Seq::infinite()
+            ->chunkBySize(5)
+            ->skip(1)
+            ->take(2)
+            ->reverse()
+            ->concat()
+            ->toArray();
+
+        $this->assertSame([11, 12, 13, 14, 15, 6, 7, 8, 9, 10], $result);
+    }
+
+    /** @dataProvider provideSplitData */
+    public function testShouldSplitSequenceIntoMultipleSequences(int $count, array $data, array $expected): void
+    {
+        $result = Seq::from($data)
+            ->splitInto($count)
+            ->toArray();
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function provideSplitData(): array
+    {
+        return [
+            // count, data, expected
+            'count 1' => [1, [1, 2, 3], [[1, 2, 3]]],
+            'count 2' => [2, [1, 2, 3], [[1, 2], [3]]],
+            'count 2 - even count' => [2, [1, 2, 3, 4], [[1, 2], [3, 4]]],
+            'count 3' => [3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [[1, 2, 3, 4], [5, 6, 7], [8, 9, 10]]],
+            'count 4' => [4, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [[1, 2, 3], [4, 5, 6], [7, 8], [9, 10]]],
+            'count 3 in 2 items' => [3, [1, 2], [[1], [2]]],
+            'count 5 in 17 items' => [
+                5,
+                Seq::range('1..17')->toArray(),
+                [
+                    [1, 2, 3, 4],
+                    [5, 6, 7, 8],
+                    [9, 10, 11],
+                    [12, 13, 14],
+                    [15, 16, 17],
+                ],
+            ],
+        ];
+    }
+
+    public function testShouldSortValuesBy(): void
+    {
+        $seq = Seq::from([
+            'a',
+            'eeeee',
+            'bb',
+            'ccc',
+            'dd',
+        ]);
+
+        $sorted = $seq->sortBy(strlen(...));
+
+        $this->assertNotEquals($seq, $sorted);
+        $this->assertSame(['a', 'bb', 'dd', 'ccc', 'eeeee'], $sorted->toArray());
+    }
+
+    public function testShouldSortValuesAndReverseThem(): void
+    {
+        $seq = Seq::from([
+            'a',
+            'eeeee',
+            'bb',
+            'ccc',
+            'dd',
+        ]);
+
+        $sorted = $seq->sortBy(strlen(...));
+        $this->assertNotEquals($seq, $sorted);
+        $this->assertSame(['a', 'bb', 'dd', 'ccc', 'eeeee'], $sorted->toArray());
+
+        $sorted = $seq
+            ->sortByDescending(strlen(...))
+            ->reverse();
+        $this->assertNotEquals($seq, $sorted);
+        $this->assertSame(['a', 'dd', 'bb', 'ccc', 'eeeee'], $sorted->toArray());
+    }
+
+    public function testShouldKeepOnlyUniqueValues(): void
+    {
+        $seq = Seq::from([1, 3, 5, 7, 2, 3, 5, 4, 8, 2]);
+        $unique = $seq->unique();
+
+        $this->assertNotEquals($seq, $unique);
+        $this->assertSame([1, 3, 5, 7, 2, 4, 8], $unique->toArray());
+    }
+
+    public function testShouldKeepOnlyUniqueValuesByCallback(): void
+    {
+        $seq = Seq::from([
+            new SimpleEntity(1),
+            new SimpleEntity(3),
+            new SimpleEntity(2),
+            new SimpleEntity(4),
+            new SimpleEntity(2),
+            new SimpleEntity(5),
+            new SimpleEntity(1),
+        ]);
+        $unique = $seq->uniqueBy(fn (SimpleEntity $e) => $e->getId());
+
+        $this->assertNotEquals($seq, $unique);
+        $this->assertEquals(
+            [
+                new SimpleEntity(1),
+                new SimpleEntity(3),
+                new SimpleEntity(2),
+                new SimpleEntity(4),
+                new SimpleEntity(5),
+            ],
+            $unique->toArray(),
+        );
+    }
+
+    public function testShouldMapObjectsToDifferentSequenceAndSumValues(): void
+    {
+        $seq = Seq::from([
+            new SimpleEntity(1),
+            new SimpleEntity(2),
+            new SimpleEntity(3),
+        ]);
+
+        $seq = $seq
+            ->filter(fn (SimpleEntity $v) => $v->getId() > 1)
+            ->map(fn (SimpleEntity $v) => $v->getId());
+        $sum = $seq->sum();
+
+        $this->assertSame(5, $sum);
+        $this->assertEquals([2, 3], $seq->toArray());
+    }
+
+    public function testShouldSumGenericSequenceOfSequenceCountsByCallback(): void
+    {
+        $seq1 = Seq::from([1, 2, 3]);
+        $seq2 = Seq::from(['one', 'two']);
+
+        $seq3 = Seq::of($seq1, $seq2);
+
+        $this->assertEquals(5, $seq3->sumBy(count(...)));
+    }
+
+    public function testShouldAppendSequences(): void
+    {
+        $seq1 = Seq::of(1, 'string', 2.1);
+        $this->assertEquals([1, 'string', 2.1], $seq1->toArray());
+
+        $values = [1, 2];
+        $values2 = ['three', 'four'];
+        $seq2 = Seq::of(...$values, ...$values2);
+        $this->assertEquals([1, 2, 'three', 'four'], $seq2->toArray());
+
+        $seq3 = $seq1->append($seq2);
+        $this->assertEquals([1, 'string', 2.1, 1, 2, 'three', 'four'], $seq3->toArray());
+    }
+
+    public function testShouldAppendDifferentSequences(): void
+    {
+        $seq1 = Seq::of(1, 2, 3);
+        $seq2 = DummySeq::from([4, 5, 6]);
+
+        $seq3 = $seq1->append($seq2);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $seq3->toArray());
+    }
+
+    public function testShouldCountValuesByCallback(): void
+    {
+        $seq = Seq::from([1, 3, 5, 7, 2, 3, 5, 4, 8, 2]);
+
+        $counts = $seq->countBy(fn ($v) => $v % 2 === 0 ? 'even' : 'odd');
+
+        $this->assertEquals(
+            [
+                new KVPair('odd', 6),
+                new KVPair('even', 4),
+            ],
+            $counts->toArray(),
+        );
+    }
+
+    public function testShouldGroupList(): void
+    {
+        $groupsSeq = Seq::from([1, 2, 3, 4, 5, 6, 7])
+            ->groupBy(fn (int $i) => $i % 2 === 0 ? 'even' : 'odd')
+            ->toArray();
+
+        $expected = [
+            'odd' => [1, 3, 5, 7],
+            'even' => [2, 4, 6],
+        ];
+
+        $groups = [];
+        foreach ($groupsSeq as $group) {
+            $this->assertInstanceOf(KVPair::class, $group);
+
+            $values = $group->getValue();
+            $this->assertInstanceOf(ISeq::class, $values);
+
+            $groups[$group->getKey()] = $values->toArray();
+        }
+
+        $this->assertEquals($expected, $groups);
+    }
+
+    public function testShouldFindMinInList(): void
+    {
+        $seq = Seq::from([2, 1, 3, 5]);
+
+        $this->assertSame(1, $seq->min());
+    }
+
+    public function testShouldFindMaxInList(): void
+    {
+        $seq = Seq::from([2, 1, 3, 5]);
+
+        $this->assertSame(5, $seq->max());
+    }
+
+    public function testShouldFindMinInListByCallback(): void
+    {
+        $seq = Seq::from([
+            new SimpleEntity(1),
+            new SimpleEntity(3),
+            new SimpleEntity(2),
+        ]);
+
+        $this->assertEquals(new SimpleEntity(1), $seq->minBy(fn (SimpleEntity $e) => $e->getId()));
+    }
+
+    public function testShouldFindMaxInListByCallback(): void
+    {
+        $seq = Seq::from([
+            new SimpleEntity(1),
+            new SimpleEntity(3),
+            new SimpleEntity(2),
+        ]);
+
+        $this->assertEquals(new SimpleEntity(3), $seq->maxBy(fn (SimpleEntity $e) => $e->getId()));
+    }
+
+    public function testShouldGenerateSequenceMultipleTimes(): void
+    {
+        $isGenerated = false;
+
+        $seq = Seq::init(function () use (&$isGenerated) {
+            $isGenerated = true;
+
+            yield 1;
+            yield 2;
+            yield 3;
+        });
+
+        $this->assertFalse($isGenerated);
+        $this->assertSame([1, 2, 3], $seq->toArray());
+        $this->assertTrue($isGenerated);
+
+        $isGenerated = false;
+        $this->assertSame([1, 2, 3], $seq->toArray());
+        $this->assertTrue($isGenerated);
+
+        $isGenerated = false;
+        foreach ($seq as $v) {
+            $this->assertTrue($isGenerated);
+        }
+
+        $isGenerated = false;
+        $seq2 = $seq
+            ->map(fn ($i) => $i)
+            ->filter(fn ($i) => $i % 2 === 0)
+            ->append(Seq::from([4, 6]));
+        $this->assertFalse($isGenerated);
+        $this->assertSame([2, 4, 6], $seq2->toArray());
+        $this->assertTrue($isGenerated);
+    }
+
+    public function testShouldMapSeqAndUseIndexInMapping(): void
+    {
+        $seq = Seq::from([1, 2, 3, 4, 5]);
+
+        $seq = $seq->mapi(fn ($v, $i) => $i * $v);
+
+        $this->assertSame([0, 2, 6, 12, 20], $seq->toArray());
+    }
+
+    public function testShouldMapGeneratedSeqAndUseIndexInMapping(): void
+    {
+        $seq = Seq::init(function () {
+            for ($i = 1; $i < 6; $i++) {
+                yield $i;
+            }
+        });
+
+        $seq = $seq->mapi(fn ($v, $i) => $i * $v);
+
+        $this->assertSame([0, 2, 6, 12, 20], $seq->toArray());
+    }
+
+    public function testShouldChangeInfiniteSequenceExampleFromReadme(): void
+    {
+        $result = Seq::infinite()               // 1, 2, ...
+            ->filter(fn ($i) => $i % 2 === 0)   // 2, 4, ...
+            ->skip(2)                     // 6, 8, ...
+            ->map(fn ($i) => $i * $i)           // 36, 64, ...
+            ->takeWhile(fn ($i) => $i < 100)    // 36, 64
+            ->reverse()                         // 64, 36
+            ->take(1);                     // 64
+
+        $this->assertSame([64], $result->toArray());
     }
 }

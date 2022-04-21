@@ -33,7 +33,7 @@ composer require mf/collections-php
 
 
 ## Requirements
-- `PHP ^8.0`
+- `PHP ^8.1`
 
 
 ## Base Interfaces
@@ -78,48 +78,28 @@ A _tuple_ is a grouping of unnamed but ordered values, possibly of different typ
 ## <a name="mutable-collections"></a>Mutable Collections
 
 ### Interfaces
-- `Mutable\ICollection`, `Mutable\IList`, `Mutable\IMap`
-- extends base version of Interface
-- adds methods for mutable Collections only
-
-### <a name="mutable-list"></a>Mutable\ListCollection
-- implements `Mutable\IList`
-- basic List Collection
+- `Mutable\Generic\ICollection`, `Mutable\Generic\IList`, `Mutable\Generic\IMap`
 
 ### Mutable\Generic\ListCollection
-- implements `Generic\IList`
-- extends `ListCollection`
-- has defined value type and validates it
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-```php
-// list will accept only string values
-$list = new Mutable\Generic\ListCollection('string');
-```
-
-### <a name="mutable-map"></a>Mutable\Map
-- implements `Mutable\IMap`
-- basic Map Collection
+- implements `Mutable\Generic\IList`
+- is `eager` as possible
 
 ### Mutable\Generic\Map
-- implements `Generic\IMap`
-- extends `Map`
-- has defined key and value type and validates it
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-```php
-// map will accept only string keys and int values
-$map = new Mutable\Generic\Map('string', 'int');
-```
+- implements `Mutable\Generic\IMap`
+- is `eager` as possible
 
 ### <a name="mutable-prioritized-collection"></a>Mutable\Generic\PrioritizedCollection
 - implements `IEnumerable`
 - holds items with `generic` type by `priority`
+- is `eager` as possible
 
 #### Example of strategies by priority
 For case when you want to apply `only the first strategy` which can do what you want.
 You can add strategies `dynamically` and still apply them `by priority` later. 
 ```php
 // initialization of strategies
-$strategies = new PrioritizedCollection(StrategyInterface::class);
+/** @phpstan-var PrioritizedCollection<StrategyInterface> $strategies */
+$strategies = new PrioritizedCollection();
 $strategies->add(new DefaultStrategy(), 1);
 
 // added later
@@ -136,7 +116,7 @@ foreach ($strategies as $strategy) {
 
 
 ## <a name="immutable-collections"></a>Immutable Collections
-- `internal state` of Immutable\Collection instance will `never change` from the outside
+- `internal state` of Immutable\Collection instance will `never change` from the outside (it is `readonly`)
 ```php
 $list = new Immutable\ListCollection();
 $listWith1 = $list->add(1);
@@ -149,55 +129,40 @@ echo $listWith1->count();   // 1
 - `$listWith1` is new instance of `Immutable\ListCollection` with value `1` 
 
 ### Interfaces
-- `Immutable\ICollection`, `Immutable\IList`, `Immutable\IMap`, `Immutable\ISeq`
-- extends base version of Interface
-- adds methods for immutable Collections only or alters method return value
+- `Immutable\Generic\ICollection`, `Immutable\Generic\IList`, `Immutable\Generic\IMap`, `Immutable\Generic\ISeq`, `Immutable\ITuple`
 
-### <a name="immutable-list"></a>Immutable\ListCollection
-- implements `Immutable\IList`
-- basic Immutable List Collection
+### <a name="immutable-list"></a>Immutable\Generic\ListCollection
+- implements `Immutable\Generic\IList`
+- is `eager` as possible
 
-### Immutable\Generic\ListCollection
-- implements `Generic\IList`
-- extends `Immutable\ListCollection`
-- has defined value type and validates it
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-```php
-// list will accept only string values
-$list = new Immutable\Generic\ListCollection('string');
-```
-
-### <a name="immutable-map"></a>Immutable\Map
-- implements `Immutable\IMap`
-- basic Immutable Map Collection
-
-### Immutable\Generic\Map
-- implements `Generic\IMap`
-- extends `Immutable\ListCollection`
-- has defined value type and validates it
-- adds possibility of usage `Arrow Functions` in `map()`, `filter()` and `reduce()` methods
-```php
-// map will accept only string values and int keys
-$map = new Immutable\Generic\Map('int', 'string');
-```
+### <a name="immutable-map"></a>Immutable\Generic\Map
+- implements `Immutable\Generic\IMap`
+- is `eager` as possible
 
 ### <a name="immutable-seq"></a>Immutable\Seq
-- implements `Immutable\ISeq`
-- basic Immutable Sequence
+- implements `Immutable\Generic\ISeq`
 - is `lazy` as possible (_even could be `Infinite`_)
-- allows `Arrow Functions` everywhere where `callable` is wanted
 ```php
-Seq::infinite()
-    ->filter(fn($i) => $i % 2 === 0)
-    ->map(fn($i) => $i * $i)
-    ->takeWhile(fn($i) => $i < 25)
-    ->toArray();
-// [4, 16]
+$seq = Seq::infinite()                         // 1, 2, ...
+    ->filter(fn ($i) => $i % 2 === 0)   // 2, 4, ...
+    ->skip(2)                           // 6, 8, ...
+    ->map(fn ($i) => $i * $i)           // 36, 64, ...
+    ->takeWhile(fn ($i) => $i < 100)    // 36, 64
+    ->reverse()                         // 64, 36
+    ->take(1);                          // 64
+// for now the Sequence is still lazy
+
+// this will generate (evaluate) the values
+$array = $seq->toArray();               // [64]
 ```
+
+### <a name="immutable-kvpair"></a>Immutable\Generic\KVPair
+- always has a `Key` and the `Value`
+- key is restricted to `int|string` so it may be used in the `foreach` as a key
+- can contain any values
 
 ### <a name="immutable-tuple"></a>Immutable\Tuple
 - implements `Immutable\ITuple`
-- basic Immutable Tuple
 - must have at least 2 values (_otherwise it is just a single value_)
 - is `eager` as possible
 - allows `destructuring`, `matching` and `parsing`/`formatting`
@@ -273,99 +238,13 @@ Tuple::mergeMatch(['string', 'string'], $base, 3); // throws \InvalidArgumentExc
 ```
 
 
-## Generic Collections
-- It's basically strictly validated Collection
-- To see more check: [MF/TypeValidator](https://github.com/MortalFlesh/TypeValidator)
-
-### Generic Interfaces
-- `Generic\ICollection`, `Generic\IList`, `Generic\IMap`
-- extends base version of Interface
-- adds generic functionality to Collections, which will validate types
-- each Generic Collection implements its Generic Interface
-
-
-## Arrow Functions
-
-### Usage:
-```php
-$map = new Mutable\Map();
-$map->set(1, 'one');
-$map[2] = 'two';
-
-$map->toArray(); // [1 => 'one', 2 => 'two']
-
-$map
-    ->filter(fn($v, $k) => $k > 1)
-    ->map(fn($v, $k) => $k . " - " . $v)
-    ->toArray(); // [2 => '2 - two']
-
-//against classic PHP
-
-$array = [1 => 'one', 2 => 'two'];
-
-array_map(
-    function ($k, $v) {
-        return $k . ' - ' . $v;
-    }, 
-    array_filter(
-        function ($k, $v) {
-            return $k > 1;
-        },
-        $array
-    )
-);
-```
-
-### With generics:
-```php
-class SimpleEntity
-{
-    private $id;
-
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-}
-
-$list = new Mutable\Generic\ListCollection(SimpleEntity::class);
-$list->add(new SimpleEntity(1));
-$list->add(new SimpleEntity(2));
-$list->add(new SimpleEntity(3));
-
-$sumOfIdsGreaterThan1 = $list
-    ->filter(fn($v, $i) => $v->getId() > 1) // filter entities with id > 1
-    ->map(fn($v, $i) => $v->getId())        // map filtered entities to just ids
-    ->reduce(fn($t, $v) => $t + $v);        // reduce ids to their sum
-
-echo $sumOfIdsGreaterThan1;     // 5
-```
-
-
-### Some performance tests:
-- benchmarks and memory usage tests ([here](https://github.com/MortalFlesh/PerformanceTests))
-
-## Lazy mapping
-- if your `Collection` get mapped and filtered many times (_for readability_), it is not a problem
+## Sequences and lazy mapping
+- if your `Sequence` get mapped and filtered many times (_for readability_), it is not a problem
     - `map -> map -> filter -> map -> filter -> map` will iterate the collection **only once** (_for applying all modifiers at once_)
     - this modification is done when another method is triggered, so adding new modifier is an **atomic** operation
+- all the values are generated on the fly, so it may end on out of memory exception
 
 
 ## Plans for next versions
-- in `ListCollection` and `Map` supports `iterable` instead of just `array` to allow `Seq`
-- add `Generic/Seq`
 - use `Symfony/Stopwatch` in unit tests
-- **IMap** change order of `key/value` in `map` and `filter` to `value/key` (**BC**)
 - _even better_ documentation ([current](https://github.com/MortalFlesh/MFCollectionsPHP/wiki))
-- **methods**:
-    - ICollection::forAll(callback):bool
-    - IMap::firstKey()
-    - IMap::firstValue() 
-    - IMap::first(callback|null): Tuple|null
-    - IList::first(callback|null): TValue|null
-    - ICollection::create(iterable<TKey, mixed> $source, (mixed value, TKey index) => TValue): string

@@ -2,15 +2,20 @@
 
 namespace MF\Collection;
 
+/** @phpstan-type RangeDefinition string|array<float|int|string> */
 class Range
 {
     public const INFINITE = 'Inf';
 
+    /**
+     * @phpstan-param RangeDefinition $range
+     * @phpstan-return array{0: int|float, 1: 'Inf'|int|float, 2: int|float}
+     */
     public static function parse(string|array $range): array
     {
         Assertion::true(
             is_string($range) || is_array($range),
-            'Range can only be set by array or by string.'
+            'Range can only be set by array or by string.',
         );
 
         if (is_string($range)) {
@@ -22,7 +27,7 @@ class Range
             $count,
             2,
             3,
-            'Range must have [start, end] or [start, step, end] items. %s values given.'
+            'Range must have [start, end] or [start, step, end] items. %s values given.',
         );
 
         if ($count === 2) {

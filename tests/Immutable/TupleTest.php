@@ -110,7 +110,7 @@ class TupleTest extends AbstractTestCase
     public function testShouldParseTupleFromStringAndExpectCorrectNumberOfItems(
         string $tuple,
         array $expectedArray,
-        string $expectedString
+        string $expectedString,
     ): void {
         $result = Tuple::parse($tuple, count($expectedArray));
 
@@ -130,7 +130,7 @@ class TupleTest extends AbstractTestCase
     public function testShouldNotParseTupleFromStringWithIncorrectNumberOfItems(
         string $tuple,
         int $expectedCount,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->expectException(TupleParseException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -206,7 +206,7 @@ class TupleTest extends AbstractTestCase
     public function testShouldParseTupleFromStringWithCorrectTypes(
         string $tuple,
         array $expectedTypes,
-        array $expected
+        array $expected,
     ): void {
         $tuple = Tuple::parseMatchTypes($tuple, $expectedTypes);
 
@@ -295,7 +295,7 @@ class TupleTest extends AbstractTestCase
         string $tuple,
         array $expectedTypes,
         string $expectedException,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedMessage);
@@ -489,7 +489,6 @@ class TupleTest extends AbstractTestCase
 
         $this->assertCount($expectedCount, $tuple);
         $this->assertSame($expectedCount, $tuple->count());
-        $this->assertSame($expectedCount, count($tuple));
     }
 
     public function provideTupleCount(): array
@@ -570,7 +569,7 @@ class TupleTest extends AbstractTestCase
     public function testShouldCheckWhetherTuplesMatchesTypes(
         ITuple $tuple,
         array $typesToMatch,
-        bool $shouldMatch
+        bool $shouldMatch,
     ): void {
         $result = $tuple->matchTypes($typesToMatch);
 
@@ -722,7 +721,7 @@ class TupleTest extends AbstractTestCase
         ITuple $base,
         array $additional,
         array $expectedTypes,
-        ITuple $expected
+        ITuple $expected,
     ): void {
         $result = Tuple::mergeMatch($expectedTypes, $base, ...$additional);
 
@@ -761,7 +760,7 @@ class TupleTest extends AbstractTestCase
         ITuple $base,
         array $additional,
         array $expectedTypes,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->expectException(TupleMatchException::class);
         $this->expectExceptionMessage($expectedMessage);
@@ -823,6 +822,22 @@ class TupleTest extends AbstractTestCase
                 Tuple::from([['foo bar & boo', 'Another \'complexString\''], 'simple']),
                 '(["foo bar & boo";"Another \'complexString\'"],simple)',
             ],
+        ];
+    }
+
+    /** @dataProvider provideEmptyTuple */
+    public function testShouldCheckIfTUpleIsEmpty(ITuple $tuple, bool $expected): void
+    {
+        $this->assertSame($expected, $tuple->isEmpty());
+    }
+
+    public function provideEmptyTuple(): array
+    {
+        return [
+            // tuple, isEmpty
+            'not-empty' => [Tuple::of('one', 'two'), false],
+            'empty strings' => [Tuple::of('', ''), true],
+            'nulls' => [Tuple::of(null, null), true],
         ];
     }
 }

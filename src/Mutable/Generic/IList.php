@@ -2,62 +2,162 @@
 
 namespace MF\Collection\Mutable\Generic;
 
-interface IList extends \MF\Collection\Generic\IList, \MF\Collection\Mutable\IList
+use MF\Collection\Immutable\Generic\ISeq;
+use MF\Collection\Immutable\Generic\KVPair;
+
+/**
+ * @phpstan-type TIndex int
+ * @phpstan-template TValue
+ *
+ * @phpstan-extends ICollection<TIndex, TValue>
+ */
+interface IList extends ICollection
 {
     /**
-     * @param mixed $values T: <TValue>
-     * @return IList
+     * @phpstan-param TValue $values
+     * @phpstan-return IList<TValue>
      */
-    public static function ofT(string $TValue, ...$values);
+    public static function of(mixed ...$values): IList;
 
     /**
-     * @param array $array T: <TValue>
-     * @return IList T: <TValue>
+     * @phpstan-param iterable<mixed, TValue> $source
+     * @phpstan-return IList<TValue>
      */
-    public static function fromT(string $TValue, array $array);
+    public static function from(iterable $source): IList;
 
     /**
-     * @param iterable $source T: <TValue>
-     * @param callable $creator (value:mixed,index:int):TValue
-     * @return IList T: <TValue>
+     * @phpstan-template T
+     *
+     * @phpstan-param iterable<int|string, T> $source
+     * @phpstan-param callable(T, int|string): TValue $creator
+     * @phpstan-return IList<TValue>
      */
-    public static function createT(string $TValue, iterable $source, callable $creator);
+    public static function create(iterable $source, callable $creator): IList;
+
+    /** @phpstan-return TValue|null */
+    public function first(): mixed;
 
     /**
-     * @deprecated
-     * @see IList::ofT()
+     * @phpstan-param callable(TValue, TIndex): bool $callback
+     * @phpstan-return TValue|null
      */
-    public static function of(mixed ...$values);
+    public function firstBy(callable $callback): mixed;
+
+    /** @phpstan-return TValue|null */
+    public function last(): mixed;
+
+    /** @phpstan-return TValue|null */
+    public function shift(): mixed;
+
+    /** @phpstan-return TValue|null */
+    public function pop(): mixed;
+
+    /** @phpstan-param TValue $value */
+    public function add(mixed $value): void;
+
+    /** @phpstan-param TValue $value */
+    public function unshift(mixed $value): void;
+
+    /** @phpstan-param TValue $value */
+    public function removeFirst(mixed $value): void;
+
+    /** @phpstan-param TValue $value */
+    public function removeAll(mixed $value): void;
 
     /**
-     * @deprecated
-     * @see IList::fromT()
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
      */
-    public static function from(array $array, bool $recursive = false);
+    public function map(callable $callback): void;
 
     /**
-     * @deprecated
-     * @see IList::createT()
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex): T $callback
      */
-    public static function create(iterable $source, callable $creator);
+    public function mapi(callable $callback): void;
+
+    /** @phpstan-param callable(TValue, TIndex=): bool $callback */
+    public function filter(callable $callback): void;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
+     * @phpstan-template State
+     *
+     * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
+     * @phpstan-param State $initialValue
+     * @phpstan-return State
      */
-    public function containsBy(callable $callback): bool;
+    public function reduce(callable $reducer, mixed $initialValue = null): mixed;
+
+    public function sort(): void;
+
+    public function sortDescending(): void;
+
+    /** @phpstan-param callable(TValue, TValue): int<-1, 1> $callback */
+    public function sortBy(callable $callback): void;
+
+    /** @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback */
+    public function sortByDescending(callable $callback): void;
+
+    /** Keeps only unique values inside the list. */
+    public function unique(): void;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):<TValue>
-     * @return IList T: <TValue>
+     * Keeps only unique values by a given callback inside the list.
+     *
+     * @phpstan-template Unique
+     *
+     * @phpstan-param callable(TValue, TIndex=): Unique $callback
      */
-    public function map(callable $callback, string $TValue = null);
+    public function uniqueBy(callable $callback): void;
+
+    /** Sort all items in a reverse order. */
+    public function reverse(): void;
+
+    public function sum(): int|float;
+
+    /** @phpstan-param callable(TValue, TIndex=): (int|float) $callback */
+    public function sumBy(callable $callback): int|float;
+
+    public function clear(): void;
+
+    /** @phpstan-param IList<TValue> $list */
+    public function append(IList $list): void;
 
     /**
-     * @param callable $callback (value:<TValue>,index:int):bool
-     * @return IList T: <TValue>
+     * @phpstan-template TKey of int|string
+     *
+     * @phpstan-param callable(TValue, TIndex=): TKey $callback
+     * @phpstan-return IList<KVPair<TKey, int>>
      */
-    public function filter(callable $callback);
+    public function countBy(callable $callback): IList;
 
-    /** @return \MF\Collection\Immutable\Generic\IList */
-    public function asImmutable();
+    /** @phpstan-return TValue|null */
+    public function min(): mixed;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
+    public function minBy(callable $callback): mixed;
+
+    /** @phpstan-return TValue|null */
+    public function max(): mixed;
+
+    /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue): T $callback
+     * @phpstan-return TValue|null
+     */
+    public function maxBy(callable $callback): mixed;
+
+    /** @phpstan-return \MF\Collection\Immutable\Generic\IList<TValue> */
+    public function asImmutable(): \MF\Collection\Immutable\Generic\IList;
+
+    /** @phpstan-return ISeq<TValue> */
+    public function toSeq(): ISeq;
 }

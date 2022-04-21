@@ -4,12 +4,8 @@ namespace MF\Collection\Fixtures;
 
 class ComplexEntity implements EntityInterface
 {
-    /** @var SimpleEntity */
-    private $simpleEntity;
-
-    public function __construct(SimpleEntity $simpleEntity)
+    public function __construct(private SimpleEntity $simpleEntity)
     {
-        $this->simpleEntity = $simpleEntity;
     }
 
     public function getSimpleEntity(): SimpleEntity

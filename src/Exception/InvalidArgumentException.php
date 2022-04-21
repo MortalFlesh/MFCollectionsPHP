@@ -6,10 +6,6 @@ use Assert\AssertionFailedException;
 
 class InvalidArgumentException extends \InvalidArgumentException implements CollectionExceptionInterface, AssertionFailedException
 {
-    private ?string $propertyPath;
-    private mixed $value;
-    private array $constraints;
-
     public static function forFailedAssertion(AssertionFailedException $e): self
     {
         return new static(
@@ -18,22 +14,20 @@ class InvalidArgumentException extends \InvalidArgumentException implements Coll
             $e->getPropertyPath(),
             $e->getValue(),
             $e->getConstraints(),
-            $e
+            $e,
         );
     }
 
+    /** @phpstan-param mixed[] $constraints */
     public function __construct(
         string $message,
         int $code = null,
-        ?string $propertyPath = null,
-        mixed $value = null,
-        array $constraints = null,
-        \Throwable $previous = null
+        private ?string $propertyPath = null,
+        private mixed $value = null,
+        private array $constraints = [],
+        \Throwable $previous = null,
     ) {
         parent::__construct($message, (int) $code, $previous);
-        $this->propertyPath = $propertyPath;
-        $this->value = $value;
-        $this->constraints = $constraints ?? [];
     }
 
     public function getPropertyPath(): ?string
@@ -46,6 +40,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Coll
         return $this->value;
     }
 
+    /** @phpstan-return mixed[] */
     public function getConstraints(): array
     {
         return $this->constraints;

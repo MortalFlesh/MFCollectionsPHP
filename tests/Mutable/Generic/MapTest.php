@@ -3,48 +3,49 @@
 namespace MF\Collection\Mutable\Generic;
 
 use MF\Collection\AbstractTestCase;
-use MF\Collection\Exception\BadMethodCallException;
-use MF\Collection\Exception\InvalidArgumentException;
-use MF\Collection\Fixtures\EntityInterface;
 use MF\Collection\Fixtures\SimpleEntity;
-use MF\Collection\Generic\ICollection;
-use MF\Collection\Generic\IMap;
-use MF\Collection\Mutable\ICollection as BaseCollectionInterface;
-use MF\Collection\Mutable\IMap as BaseMapInterface;
+use MF\Collection\Immutable\Generic\KVPair;
+use MF\Collection\Immutable\Tuple;
 
 class MapTest extends AbstractTestCase
 {
-    /** @var Map */
-    private $map;
+    /** @phpstan-var Map<int|string, mixed> */
+    private Map $map;
 
     protected function setUp(): void
     {
-        $this->map = new Map('string', 'int');
+        $this->map = new Map();
+    }
+
+    public function testShouldTransformMapToSeq(): void
+    {
+        $map = Map::from(['one' => 1, 'two' => 2]);
+
+        $result = $map->toSeq();
+
+        $map->set('three', 3);
+
+        $expected = [
+            Tuple::of('one', 1),
+            Tuple::of('two', 2),
+        ];
+
+        $this->assertEquals($expected, $result->toArray());
     }
 
     public function testShouldImplementsInterfaces(): void
     {
         $this->assertInstanceOf(IMap::class, $this->map);
-        $this->assertInstanceOf(BaseMapInterface::class, $this->map);
-        $this->assertInstanceOf(BaseCollectionInterface::class, $this->map);
         $this->assertInstanceOf(ICollection::class, $this->map);
         $this->assertInstanceOf(\ArrayAccess::class, $this->map);
         $this->assertInstanceOf(\IteratorAggregate::class, $this->map);
         $this->assertInstanceOf(\Countable::class, $this->map);
     }
 
-    public function testShouldThrowExceptionWhenBadCreateFunctionIsUsed(): void
-    {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('This method should not be used with Generic Map. Use fromKT instead.');
-
-        Map::from([]);
-    }
-
     public function testShouldCreateMapFromArray(): void
     {
         $array = ['key' => 1, 'key2' => 2];
-        $map = Map::fromKT('string', 'int', $array);
+        $map = Map::from($array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());
@@ -53,69 +54,16 @@ class MapTest extends AbstractTestCase
     public function testShouldCreateMapFromMixedArray(): void
     {
         $array = ['key' => 1, 2 => 'two'];
-        $map = Map::fromKT('mixed', 'any', $array);
+        $map = Map::from($array);
 
         $this->assertInstanceOf(Map::class, $map);
         $this->assertEquals($array, $map->toArray());
-    }
-
-    public function testShouldThrowExceptionWhenCreateMapFromArrayWithBadType(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $array = ['key' => 1, 'key2' => 2];
-        $map = Map::fromKT('int', 'int', $array);
-
-        $this->assertInstanceOf(Map::class, $map);
-        $this->assertEquals($array, $map->toArray());
-    }
-
-    /** @dataProvider invalidTypesProvider */
-    public function testShouldNotCreateGenericMap(string $keyType, string $valueType): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new Map($keyType, $valueType);
-    }
-
-    public function invalidTypesProvider(): array
-    {
-        return [
-            [
-                'keyType' => 'object',
-                'valueType' => 'int',
-            ],
-            [
-                'keyType' => 'array',
-                'valueType' => 'string',
-            ],
-            [
-                'keyType' => '',
-                'valueType' => 'string',
-            ],
-            [
-                'keyType' => 'float',
-                'valueType' => '',
-            ],
-            [
-                'keyType' => 'float',
-                'valueType' => '',
-            ],
-            [
-                'keyType' => 'string',
-                'valueType' => 'instance_of_',
-            ],
-            [
-                'keyType' => 'string',
-                'valueType' => 'instance_of_foo',
-            ],
-        ];
     }
 
     /** @dataProvider validTypesProvider */
     public function testShouldCreateGenericMap(string $keyType, string $valueType): void
     {
-        $map = new Map($keyType, $valueType);
+        $map = new Map();
 
         $this->assertInstanceOf(Map::class, $map);
     }
@@ -148,28 +96,14 @@ class MapTest extends AbstractTestCase
 
     public function testShouldCreateMapByCallback(): void
     {
-        $map = Map::createKT(
-            'int',
-            SimpleEntity::class,
+        $map = Map::create(
             explode(',', '1,2,3'),
-            function ($value) {
-                return new SimpleEntity((int) $value);
-            }
+            fn ($value) => new SimpleEntity((int) $value)
         );
 
-        $map = $map->map(fn ($k, $e) => $e->getId(), 'int');
+        $map->map(fn (SimpleEntity $e) => $e->getId());
 
         $this->assertSame([1, 2, 3], $map->toArray());
-    }
-
-    public function testShouldThrowBadMethodUseExceptionWhenCreatingMapByCallback(): void
-    {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('This method should not be used with Generic Map. Use createKT instead.');
-
-        Map::create([], function ($v) {
-            return $v;
-        });
     }
 
     /** @dataProvider addItemsProvider */
@@ -202,44 +136,6 @@ class MapTest extends AbstractTestCase
         ];
     }
 
-    /** @dataProvider invalidParamTypesProvider */
-    public function testShouldThrowInvalidArgumentExceptionOnBadTypeSet(mixed $key, mixed $value): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->map->set($key, $value);
-    }
-
-    public function invalidParamTypesProvider(): array
-    {
-        return [
-            [
-                'key' => 'string',
-                'value' => 'string',
-            ],
-            [
-                'key' => [],
-                'value' => 'string',
-            ],
-            [
-                'key' => 1,
-                'value' => false,
-            ],
-            [
-                'key' => 'string',
-                'value' => false,
-            ],
-            [
-                'key' => 'string',
-                'value' => 24.2,
-            ],
-            [
-                'key' => 'string',
-                'value' => [],
-            ],
-        ];
-    }
-
     public function testShouldContainsKey(): void
     {
         $keyExists = 'key';
@@ -251,24 +147,15 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsKey($keyDoesNotExist));
     }
 
-    /** @dataProvider invalidKeyTypesProvider */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsKeyWithInvalidType(mixed $key): void
+    public function testShouldContainsKeyByArrayAccess(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $keyExists = 'key';
+        $keyDoesNotExist = 'keyNotIn';
 
-        $this->map->containsKey($key);
-    }
+        $this->map->set($keyExists, 1);
 
-    public function invalidKeyTypesProvider(): array
-    {
-        return [
-            ['key' => 1],
-            ['key' => true],
-            ['key' => []],
-            ['key' => null],
-            ['key' => 2.5],
-            ['key' => new \stdClass()],
-        ];
+        $this->assertTrue(isset($this->map[$keyExists]));
+        $this->assertFalse(isset($this->map[$keyDoesNotExist]));
     }
 
     public function testShouldContainsValue(): void
@@ -289,28 +176,8 @@ class MapTest extends AbstractTestCase
 
         $this->map->set('key', $valueExists);
 
-        $this->assertTrue($this->map->containsBy(fn ($k, $v) => $v === $valueExists));
-        $this->assertFalse($this->map->containsBy(fn ($k, $v) => $v === $valueDoesNotExist));
-    }
-
-    /** @dataProvider invalidValueTypeProvider */
-    public function testShouldThrowInvalidArgumentExceptionOnContainsValueWithInvalidType(mixed $value): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->map->contains($value);
-    }
-
-    public function invalidValueTypeProvider(): array
-    {
-        return [
-            ['value' => ''],
-            ['value' => 2.5],
-            ['value' => false],
-            ['value' => []],
-            ['value' => new \stdClass()],
-            ['value' => null],
-        ];
+        $this->assertTrue($this->map->containsBy(fn ($v) => $v === $valueExists));
+        $this->assertFalse($this->map->containsBy(fn ($v) => $v === $valueDoesNotExist));
     }
 
     public function testShouldRemoveValueFromMap(): void
@@ -325,52 +192,39 @@ class MapTest extends AbstractTestCase
         $this->assertFalse($this->map->containsKey($key));
     }
 
-    /** @dataProvider invalidKeyTypesProvider */
-    public function testShouldThrowInvalidArgumentExceptionOnRemoveInvalidKeyType(mixed $key): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->map->remove($key);
-    }
-
     public function testShouldMapToNewMapWithSameGenericType(): void
     {
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->map(fn ($k, $v) => $v + 1);
+        $this->map->map(fn ($v, $k) => $v + 1);
 
-        $this->assertNotEquals($this->map, $newMap);
-        $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
+        $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $this->map->toArray());
     }
 
     public function testShouldMapToNewMap(): void
     {
-        $map = new Map('string', EntityInterface::class);
+        $map = new Map();
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map(fn ($k, $v) => $v->getId(), 'int');
+        $map->map(fn ($v) => $v->getId());
 
-        $this->assertNotSame($map, $newMap);
-
-        $this->assertInstanceOf(\MF\Collection\Mutable\Generic\Map::class, $newMap);
-        $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
+        $this->assertInstanceOf(\MF\Collection\Mutable\Generic\Map::class, $map);
+        $this->assertEquals(['one' => 1, 'two' => 2], $map->toArray());
     }
 
     public function testShouldMapToNewGenericMap(): void
     {
-        $map = new Map('string', EntityInterface::class);
+        $map = new Map();
         $map->set('one', new SimpleEntity(1));
         $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map(fn ($k, $v) => $v->getId(), 'int');
+        $map->map(fn ($v) => $v->getId());
 
-        $this->assertNotSame($map, $newMap);
-
-        $this->assertInstanceOf(Map::class, $newMap);
-        $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
+        $this->assertInstanceOf(Map::class, $map);
+        $this->assertEquals(['one' => 1, 'two' => 2], $map->toArray());
     }
 
     public function testShouldFilterItemsToNewMapByArrowFunction(): void
@@ -379,19 +233,9 @@ class MapTest extends AbstractTestCase
         $this->map->set('key2', 2);
         $this->map->set('key3', 3);
 
-        $newMap = $this->map->filter(fn ($k, $v) => $v > 1);
+        $this->map->filter(fn ($v) => $v > 1);
 
-        $this->assertNotEquals($this->map, $newMap);
-        $this->assertEquals(['key2' => 2, 'key3' => 3], $newMap->toArray());
-    }
-
-    public function testShouldThrowInvalidArgumentExceptionAfterFilterItemsToNewMapByArrowFunction(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $newMap = $this->map->filter(fn ($k, $v) => true);
-
-        $newMap->set(1, '');
+        $this->assertEquals(['key2' => 2, 'key3' => 3], $this->map->toArray());
     }
 
     public function testShouldCombineMapAndFilterToCreateNewMap(): void
@@ -399,12 +243,10 @@ class MapTest extends AbstractTestCase
         $this->map->set('key', 1);
         $this->map->set('key2', 2);
 
-        $newMap = $this->map
-            ->filter(fn ($k, $v) => $v > 1)
-            ->map(fn ($k, $v) => $v * 3);
+        $this->map->filter(fn ($v) => $v > 1);
+        $this->map->map(fn ($v) => $v * 3);
 
-        $this->assertNotEquals($this->map, $newMap);
-        $this->assertEquals(['key2' => 6], $newMap->toArray());
+        $this->assertEquals(['key2' => 6], $this->map->toArray());
     }
 
     public function testShouldGetKeysInGenericList(): void
@@ -442,7 +284,7 @@ class MapTest extends AbstractTestCase
 
         $immutable = $this->map->asImmutable();
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\IMap::class, $immutable);
+        $this->assertInstanceOf(\MF\Collection\Immutable\Generic\IMap::class, $immutable);
         $this->assertInstanceOf(\MF\Collection\Immutable\Generic\Map::class, $immutable);
 
         $this->assertEquals($this->map->toArray(), $immutable->toArray());
@@ -450,7 +292,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldReduceMapWithInitialValue(): void
     {
-        $map = new Map('string', 'int');
+        $map = new Map();
         $map->set('one', 1);
         $map->set('two', 2);
         $map->set('three', 3);
@@ -460,7 +302,7 @@ class MapTest extends AbstractTestCase
 
     public function testShouldReduceListWithInitialValueToOtherType(): void
     {
-        $map = new Map('string', 'int');
+        $map = new Map();
         $map->set('one', 1);
         $map->set('two', 2);
         $map->set('three', 3);
@@ -494,7 +336,7 @@ class MapTest extends AbstractTestCase
             };
         };
 
-        $callbacks = Map::fromKT('string', 'callable', [
+        $callbacks = Map::from([
             'trim' => 'trim',
             'toInt' => function ($input) {
                 return (int) $input;
@@ -507,5 +349,162 @@ class MapTest extends AbstractTestCase
         }, '  10');
 
         $this->assertSame(11, $result);
+    }
+
+    /** @dataProvider providePairs */
+    public function testShouldCreateMapFromPairs(iterable $pairs, array $expected): void
+    {
+        $map = Map::fromPairs($pairs);
+
+        $this->assertSame($expected, $map->toArray());
+    }
+
+    public function providePairs(): array
+    {
+        return [
+            // pairs, expected
+            'empty' => [[], []],
+            'arrays' => [
+                [
+                    ['one', 3],
+                    ['two', 2],
+                    ['one', 1],
+                ],
+                ['one' => 1, 'two' => 2],
+            ],
+            'kv pairs' => [
+                [
+                    new KVPair('one', 3),
+                    new KVPair('two', 2),
+                    new KVPair('one', 1),
+                ],
+                ['one' => 1, 'two' => 2],
+            ],
+            'tuples' => [
+                [
+                    Tuple::of('one', 3),
+                    Tuple::of('two', 2),
+                    Tuple::of('one', 1),
+                ],
+                ['one' => 1, 'two' => 2],
+            ],
+            'mix' => [
+                [
+                    ['one', 3],
+                    Tuple::of('two', 2),
+                    new KVPair('one', 1),
+                ],
+                ['one' => 1, 'two' => 2],
+            ],
+        ];
+    }
+
+    public function testShouldNotCreateMapFromInvalidPair(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Map::fromPairs(['invalid']);
+    }
+
+    public function testShouldFindValue(): void
+    {
+        $this->map->set('isThere', 'value');
+
+        $this->assertSame('value', $this->map->find('isThere'));
+        $this->assertNull($this->map->find('is Not There'));
+    }
+
+    public function testShouldNotGetValue(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->map->get('is Not There');
+    }
+
+    public function testShouldUnsetKeyByArrayAccess(): void
+    {
+        $this->map->set('key', 'value');
+
+        $this->assertTrue($this->map->containsKey('key'));
+
+        unset($this->map['key']);
+        $this->assertFalse($this->map->containsKey('key'));
+    }
+
+    public function testShouldCountMap(): void
+    {
+        $map = Map::from(['one' => 1, 'two' => 2]);
+
+        $this->assertCount(2, $map);
+    }
+
+    public function testShouldForeachItemInMap(): void
+    {
+        $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
+
+        $map->each(function ($value, $key): void {
+            if ($key === 1) {
+                $this->assertEquals('one', $value);
+            } elseif ($key === 2) {
+                $this->assertEquals('two', $value);
+            } elseif ($key === 'three') {
+                $this->assertEquals(3, $value);
+            }
+        });
+    }
+
+    public function testShouldCheckAllValues(): void
+    {
+        $map = Map::from([1 => 'one', 2 => 'two']);
+
+        $this->assertTrue($map->forAll(is_string(...)));
+        $this->assertFalse($map->forAll(is_int(...)));
+    }
+
+    public function testShouldImplodeValues(): void
+    {
+        $map = Map::from([1 => 'one', 2 => 'two']);
+
+        $this->assertSame('one_two', $map->implode('_'));
+    }
+
+    public function testShouldFindKey(): void
+    {
+        $map = Map::from([1 => 'one', 2 => 'two']);
+
+        $this->assertSame(1, $map->findKey('one'));
+        $this->assertNull($map->findKey('not there'));
+    }
+
+    public function testShouldGetPairsFromMap(): void
+    {
+        $pairs = Map::from([1 => 'one', 2 => 'two'])->pairs();
+        $expected = [
+            new KVPair(1, 'one'),
+            new KVPair(2, 'two'),
+        ];
+
+        $this->assertEquals($expected, $pairs->toArray());
+    }
+
+    public function testShouldTransformMapToList(): void
+    {
+        $list = Map::from([1 => 'one', 2 => 'two'])->toList();
+        $expected = [
+            Tuple::of(1, 'one'),
+            Tuple::of(2, 'two'),
+        ];
+
+        $this->assertEquals($expected, $list->toArray());
+    }
+
+    public function testShouldTransformMapToPairsAndUseKeysOnly(): void
+    {
+        $pairs = Map::from(['one' => 1, 'two' => 2])
+            ->pairs();
+
+        $pairs->map(KVPair::key(...));
+
+        $this->assertSame(['one', 'two'], $pairs->toArray());
     }
 }

@@ -4,10 +4,21 @@ namespace MF\Collection\Immutable;
 
 use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
-use MF\Collection\IEnumerable;
+use MF\Collection\Generic\IEnumerable;
 
+/**
+ * @phpstan-type TIndex int
+ * @phpstan-type TValue mixed
+ *
+ * @phpstan-extends IEnumerable<TIndex, TValue>
+ * @phpstan-extends \ArrayAccess<TIndex, TValue>
+ */
 interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 {
+    public static function fst(ITuple $tuple): mixed;
+
+    public static function snd(ITuple $tuple): mixed;
+
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z)
      *
@@ -48,8 +59,8 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Tuple::parseMatch('(1, 2, 3)', 'int', 'int')  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatch('(1, 2)', 'int', 'string')  // (int, string) expected but got (int, int)
      *
-     * @throws TupleParseException
      * @throws TupleMatchException
+     * @throws TupleParseException
      */
     public static function parseMatch(string $tuple, string $typeFirst, string $typeSecond, string ...$type): self;
 
@@ -76,8 +87,10 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Tuple::parseMatchTypes('(1, 2, 3)', ['int', 'int'])  // (int, int) expected but got (int, int, int)
      * Tuple::parseMatchTypes('(1, 2)', ['int', 'string'])  // (int, string) expected but got (int, int)
      *
-     * @throws TupleParseException
+     * @phpstan-param string[] $types
+     *
      * @throws TupleMatchException
+     * @throws TupleParseException
      */
     public static function parseMatchTypes(string $tuple, array $types): self;
 
@@ -91,97 +104,10 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
     /**
      * @example
      * Tuple::from([1, 2, 3])->toArray() -> [1, 2, 3]
+     *
+     * @phpstan-param mixed[] $values
      */
     public static function from(array $values): self;
-
-    /**
-     * @see Tuple::toString()
-     */
-    public function __toString(): string;
-
-    /**
-     * Transform tuple values into string (which is compatible with Tuple::parse() method)
-     * @see Tuple::parse()
-     */
-    public function toString(): string;
-
-    /**
-     * Transform tuple values into string which is supposed to be nice in URL and still compatible with Tuple::parse() method
-     * - no spaces
-     * - no superfluous quotes
-     *
-     * @see Tuple::parse()
-     */
-    public function toStringForUrl(): string;
-
-    public function toArray(): array;
-
-    /**
-     * Will return first value from tuple
-     *
-     * If you want to another values, you can use
-     * @see Tuple::second()
-     *
-     * For third, fourth, ... use destructuring
-     * [, , $third] = $tuple
-     */
-    public function first(): mixed;
-
-    /**
-     * Will return second value from tuple
-     *
-     * If you want to another values, you can use
-     * @see Tuple::first()
-     *
-     * For third, fourth, ... use destructuring
-     * [, , $third] = $tuple
-     */
-    public function second(): mixed;
-
-    /**
-     * Compares values of this Tuple with given Tuple and returns if they are same
-     *
-     * @example
-     * Tuple::from([1, 2])->isSame(Tuple::from([1, 2])) // true
-     * Tuple::from([1, 2])->isSame(Tuple::from([2, 1])) // false
-     */
-    public function isSame(ITuple $tuple): bool;
-
-    /**
-     * Checks whether this Tuple matches given types
-     * Types to match:
-     * - string
-     * - bool, boolean
-     * - int, integer
-     * - float, double
-     * - array
-     * - any, mixed, *
-     * - ?type (nullable type is any of the above with ? prefix)
-     *
-     * @example
-     * Tuple::from([1, 2])->match('int', 'int')        // true
-     * Tuple::from([1, 'foo'])->match('int', 'string') // true
-     * Tuple::from(['foo', 1])->match('int', 'string') // false
-     */
-    public function match(string $typeFirst, string $typeSecond, string ...$type): bool;
-
-    /**
-     * Checks whether this Tuple matches given types
-     * Types to match:
-     * - string
-     * - bool, boolean
-     * - int, integer
-     * - float, double
-     * - array
-     * - any, mixed, *
-     * - ?type (nullable type is any of the above with ? prefix)
-     *
-     * @example
-     * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
-     * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
-     * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
-     */
-    public function matchTypes(array $types): bool;
 
     /**
      * Merge base tuple with additional items
@@ -221,20 +147,107 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * Tuple::mergeMatch(['int', 'int'], Tuple::parse('(1, 2, 3)'), '4') // (int, int) expected but got (int, int, int, string)
      * Tuple::mergeMatch(['int', 'string'], Tuple::parse('(1, 2)'), 3)   // (int, string) expected but got (int, int, int)
      *
+     * @phpstan-param string[] $types
+     *
      * @throws TupleMatchException
      */
     public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple;
 
     /**
-     * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
-     * @param mixed $value
+     * @see Tuple::toString()
      */
-    public function offsetSet($offset, $value): void;
+    public function __toString(): string;
 
     /**
-     * @deprecated Altering existing tuple is not permitted
-     * @param mixed $offset
+     * Transform tuple values into string (which is compatible with Tuple::parse() method)
+     * @see Tuple::parse()
      */
-    public function offsetUnset($offset): void;
+    public function toString(): string;
+
+    /**
+     * Transform tuple values into string which is supposed to be nice in URL and still compatible with Tuple::parse() method
+     * - no spaces
+     * - no superfluous quotes
+     *
+     * @see Tuple::parse()
+     */
+    public function toStringForUrl(): string;
+
+    /** @phpstan-return mixed[] */
+    public function toArray(): array;
+
+    /**
+     * Will return first value from tuple
+     *
+     * If you want to another values, you can use
+     * @see Tuple::second()
+     *
+     * For third, fourth, ... use destructuring
+     * [$_, $_, $third] = $tuple
+     */
+    public function first(): mixed;
+
+    /**
+     * Will return second value from tuple
+     *
+     * If you want to another values, you can use
+     * @see Tuple::first()
+     *
+     * For third, fourth, ... use destructuring
+     * [$_, $_, $third] = $tuple
+     */
+    public function second(): mixed;
+
+    /**
+     * Compares values of this Tuple with given Tuple and returns if they are same
+     *
+     * @example
+     * Tuple::from([1, 2])->isSame(Tuple::from([1, 2])) // true
+     * Tuple::from([1, 2])->isSame(Tuple::from([2, 1])) // false
+     */
+    public function isSame(ITuple $tuple): bool;
+
+    /**
+     * Checks whether this Tuple matches given types
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, *
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::from([1, 2])->match('int', 'int')        // true
+     * Tuple::from([1, 'foo'])->match('int', 'string') // true
+     * Tuple::from(['foo', 1])->match('int', 'string') // false
+     */
+    public function match(string $typeFirst, string $typeSecond, string ...$type): bool;
+
+    /**
+     * Checks whether this Tuple matches given types
+     * Types to match:
+     * - string
+     * - bool, boolean
+     * - int, integer
+     * - float, double
+     * - array
+     * - any, mixed, * (any is nullable by default)
+     * - ?type (nullable type is any of the above with ? prefix)
+     *
+     * @example
+     * Tuple::from([1, 2])->matchTypes(['int', 'int'])        // true
+     * Tuple::from([1, 'foo'])->matchTypes(['int', 'string']) // true
+     * Tuple::from(['foo', 1])->matchTypes(['int', 'string']) // false
+     *
+     * @phpstan-param string[] $types
+     */
+    public function matchTypes(array $types): bool;
+
+    /** @deprecated Altering existing tuple is not permitted */
+    public function offsetSet(mixed $offset, mixed $value): void;
+
+    /** @deprecated Altering existing tuple is not permitted */
+    public function offsetUnset(mixed $offset): void;
 }
