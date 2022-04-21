@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 7.0.0 - 2022-04-21
 - [**BC**] Require php 8.1
 - [**BC**] Drop `recursive` option in `from` creators
 - [**BC**] Drop non-generic variants of the collections
