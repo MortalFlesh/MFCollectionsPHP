@@ -5,7 +5,7 @@ namespace MF\Collection\Helper;
 use MF\Collection\Exception\InvalidArgumentException;
 
 /** @internal */
-class Callback
+readonly class Callback
 {
     /**
      * @phpstan-template TOne

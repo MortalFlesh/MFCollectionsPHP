@@ -17,7 +17,7 @@ use MF\Collection\Immutable\Tuple;
  *
  * @phpstan-implements IMap<TKey, TValue>
  */
-class Map implements IMap
+readonly class Map implements IMap
 {
     /**
      * @phpstan-param iterable<TKey, TValue> $source
@@ -85,7 +85,7 @@ class Map implements IMap
     }
 
     /** @phpstan-param array<TKey, TValue> $mapArray */
-    public function __construct(private readonly array $mapArray = [])
+    public function __construct(private array $mapArray = [])
     {
     }
 
@@ -266,7 +266,7 @@ class Map implements IMap
      * @phpstan-template T
      *
      * @phpstan-param callable(TValue, TKey): T $callback
-     * @phpstan-return IMap<TKey, TValue>
+     * @phpstan-return IMap<TKey, T>
      */
     public function map(callable $callback): IMap
     {

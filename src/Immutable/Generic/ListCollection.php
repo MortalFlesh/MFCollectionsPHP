@@ -13,7 +13,7 @@ use MF\Collection\Helper\Collection;
  *
  * @phpstan-implements IList<TValue>
  */
-class ListCollection implements IList
+readonly class ListCollection implements IList
 {
     /**
      * @phpstan-template T
@@ -80,7 +80,7 @@ class ListCollection implements IList
     }
 
     /** @phpstan-param array<TIndex, TValue> $listArray */
-    public function __construct(private readonly array $listArray = [])
+    public function __construct(private array $listArray = [])
     {
     }
 

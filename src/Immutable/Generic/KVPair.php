@@ -9,7 +9,7 @@ use MF\Collection\Immutable\Tuple;
  * @phpstan-template TKey of int|string
  * @phpstan-template TValue
  */
-class KVPair
+readonly class KVPair
 {
     /**
      * @phpstan-param self<TKey, TValue> $pair
@@ -38,7 +38,7 @@ class KVPair
      * @phpstan-param TKey $key
      * @phpstan-param TValue $value
      */
-    public function __construct(private readonly int|string $key, private readonly mixed $value)
+    public function __construct(private int|string $key, private mixed $value)
     {
     }
 

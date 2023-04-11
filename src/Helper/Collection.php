@@ -5,7 +5,7 @@ namespace MF\Collection\Helper;
 use MF\Collection\Mutable\Generic\ICollection;
 
 /** @internal */
-class Collection
+readonly class Collection
 {
     /**
      * @phpstan-template TKey of int|string
