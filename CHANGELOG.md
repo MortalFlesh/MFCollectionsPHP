@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Require php 8.2 and update dependencies
 
 ## 7.0.0 - 2022-04-21
 - [**BC**] Require php 8.1

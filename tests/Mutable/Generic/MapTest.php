@@ -60,7 +60,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($array, $map->toArray());
     }
 
-    /** @dataProvider validTypesProvider */
+    /** @dataProvider provideValidTypes */
     public function testShouldCreateGenericMap(string $keyType, string $valueType): void
     {
         $map = new Map();
@@ -68,7 +68,7 @@ class MapTest extends AbstractTestCase
         $this->assertInstanceOf(Map::class, $map);
     }
 
-    public function validTypesProvider(): array
+    public static function provideValidTypes(): array
     {
         return [
             [
@@ -106,7 +106,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    /** @dataProvider addItemsProvider */
+    /** @dataProvider provideAddItems */
     public function testShouldAddItemsToMapArrayWay(string $key, int $value): void
     {
         $this->map[$key] = $value;
@@ -114,7 +114,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $this->map[$key]);
     }
 
-    /** @dataProvider addItemsProvider */
+    /** @dataProvider provideAddItems */
     public function testShouldAddItemsToMap(string $key, int $value): void
     {
         $this->map->set($key, $value);
@@ -122,7 +122,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $this->map->get($key));
     }
 
-    public function addItemsProvider(): array
+    public static function provideAddItems(): array
     {
         return [
             [
@@ -359,7 +359,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame($expected, $map->toArray());
     }
 
-    public function providePairs(): array
+    public static function providePairs(): array
     {
         return [
             // pairs, expected
@@ -442,7 +442,7 @@ class MapTest extends AbstractTestCase
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
-        $map->each(function ($value, $key): void {
+        $map->each(function (mixed $value, int|string $key = null): void {
             if ($key === 1) {
                 $this->assertEquals('one', $value);
             } elseif ($key === 2) {

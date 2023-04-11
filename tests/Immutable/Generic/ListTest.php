@@ -28,7 +28,7 @@ class ListTest extends AbstractTestCase
         $this->assertSame($expected, $chunks);
     }
 
-    public function provideChunkBySize(): array
+    public static function provideChunkBySize(): array
     {
         return [
             // size, data, expected
@@ -240,7 +240,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
         $this->list = $this->list->add('key3');
 
-        $newList = $this->list->filter(fn ($v, $i) => mb_strlen($v) > 3);
+        $newList = $this->list->filter(fn ($v, $i = null) => mb_strlen($v) > 3);
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
@@ -252,7 +252,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
 
         $newList = $this->list
-            ->filter(fn ($v, $i) => $v === 'key')
+            ->filter(fn ($v, $i = null) => $v === 'key')
             ->map(fn ($v) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
@@ -319,7 +319,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new SimpleEntity(3));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter(fn ($v, $i) => $v->getId() > 1)
+            ->filter(fn ($v, $i = null) => $v->getId() > 1)
             ->map(fn ($v) => $v->getId())
             ->reduce(fn ($t, $v) => $t + $v);
 
@@ -334,7 +334,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter(fn ($v, $i) => $v->getSimpleEntity()->getId() > 1)
+            ->filter(fn ($v, $i = null) => $v->getSimpleEntity()->getId() > 1)
             ->map(fn ($v) => $v->getSimpleEntity())
             ->reduce(fn ($t, $v) => $t + $v->getId());
 
@@ -502,7 +502,7 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
-        $list->each(function ($value, $i): void {
+        $list->each(function ($value, $i = null): void {
             if ($i === 0) {
                 $this->assertEquals('one', $value);
             } elseif ($i === 1) {
@@ -557,7 +557,7 @@ class ListTest extends AbstractTestCase
         ]);
 
         $list = $list
-            ->filter(fn (SimpleEntity $v, $i) => $v->getId() > 1)
+            ->filter(fn (SimpleEntity $v, $i = null) => $v->getId() > 1)
             ->map(fn (SimpleEntity $v) => $v->getId());
         $sum = $list->sum();
 
@@ -594,19 +594,37 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($list->forAll(is_string(...)));
     }
 
-    public function testShouldCountValuesByCallback(): void
+    /** @dataProvider provideOddsEvensValues */
+    public function testShouldCountValuesByCallback(array $values, ?int $expectedOdds, ?int $expectedEvens): void
     {
-        $list = ListCollection::from([1, 3, 5, 7, 2, 3, 5, 4, 8, 2]);
+        $list = ListCollection::from($values);
 
         $counts = $list->countBy(fn ($v) => $v % 2 === 0 ? 'even' : 'odd');
 
         $this->assertEquals(
-            [
-                new KVPair('odd', 6),
-                new KVPair('even', 4),
-            ],
+            array_filter([
+                $expectedOdds !== null ? new KVPair('odd', $expectedOdds) : null,
+                $expectedEvens !== null ? new KVPair('even', $expectedEvens) : null,
+            ]),
             $counts->toArray(),
         );
+    }
+
+    public static function provideOddsEvensValues(): array
+    {
+        return [
+            // values, expected
+            'odds/evens' => [
+                [1, 3, 5, 7, 2, 3, 5, 4, 8, 2],
+                6,
+                4,
+            ],
+            'odds' => [
+                [1, 3, 5, 7],
+                4,
+                null,
+            ],
+        ];
     }
 
     public function testShouldFindMinInList(): void
@@ -782,7 +800,7 @@ class ListTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideSplitData(): array
+    public static function provideSplitData(): array
     {
         return [
             // count, data, expected

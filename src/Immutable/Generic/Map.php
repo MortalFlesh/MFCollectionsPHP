@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use JetBrains\PhpStorm\Immutable;
 use MF\Collection\Assertion;
 use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
@@ -276,8 +277,7 @@ class Map implements IMap
             $map[$key] = $callback($v, $key);
         }
 
-        /** @phpstan-var array<TKey, TValue> $map */
-        return static::from($map);
+        return new static($map);
     }
 
     /**

@@ -36,16 +36,6 @@ parameters:
 			path: tests/Immutable/Generic/ListTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
-			count: 1
-			path: tests/Immutable/Generic/ListTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, array\\{0\\: string, 1\\: string, 2\\?\\: string\\}, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\{0\\: string, 1\\: string, 2\\?\\: string\\}\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
-			count: 1
-			path: tests/Immutable/Generic/ListTest.php
-
-		-
 			message: "#^Unable to resolve the template type T in call to method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:collect\\(\\)$#"
 			count: 1
 			path: tests/Immutable/Generic/ListTest.php
@@ -76,19 +66,9 @@ parameters:
 			path: tests/Immutable/Generic/SeqTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, iterable\\<int, string\\>, int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
-			count: 1
-			path: tests/Immutable/Generic/SeqTest.php
-
-		-
 			message: "#^Unable to resolve the template type T in call to method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\:\\:collect\\(\\)$#"
 			count: 1
 			path: tests/Immutable/Generic/SeqTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-empty\\-string given\\.$#"
-			count: 1
-			path: tests/Mutable/Generic/ListTest.php
 
 		-
 			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertSame\\(\\) with array\\{'one', 'two'\\} and array\\<int, MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<int\\|string, mixed\\>\\> will always evaluate to false\\.$#"
@@ -100,3 +80,22 @@ parameters:
 			count: 1
 			path: tests/Mutable/Generic/MapTest.php
 
+		-
+			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, iterable\\<int, string\\>, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<iterable\\<int, string\\>\\>\\=\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/SeqTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\<int, string\\>\\>\\:\\:reduce\\(\\) expects callable\\(string, array\\{0\\: string, 1\\: string, 2\\?\\: string\\}, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<array\\{0\\: string, 1\\: string, 2\\?\\: string\\}\\>\\=\\)\\: string, Closure\\(string, string\\)\\: string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-falsy\\-string given\\.$#"
+			count: 1
+			path: tests/Immutable/Generic/ListTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<mixed\\>\\:\\:map\\(\\) expects callable\\(mixed\\)\\: string, Closure\\(mixed, mixed\\)\\: non\\-falsy\\-string given\\.$#"
+			count: 1
+			path: tests/Mutable/Generic/ListTest.php

@@ -14,7 +14,7 @@ class RangeTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideValidRange(): array
+    public static function provideValidRange(): array
     {
         return [
             // range, expected
@@ -41,7 +41,7 @@ class RangeTest extends AbstractTestCase
         Range::parse($invalidInput);
     }
 
-    public function provideInvalidRange(): array
+    public static function provideInvalidRange(): array
     {
         return [
             // invalidRange, expectedMessage

@@ -17,7 +17,7 @@ class CallbackTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideCallbacks(): array
+    public static function provideCallbacks(): array
     {
         return [
             // callback, args, expected
@@ -28,10 +28,10 @@ class CallbackTest extends AbstractTestCase
             'mb_strlen with just a string' => [mb_strlen(...), ['used'], 4],
             'lambda' => [
                 function ($one, $two, $three, $four) {
-                    $this->assertSame('one', $one);
-                    $this->assertSame('two', $two);
-                    $this->assertSame('three', $three);
-                    $this->assertSame('four', $four);
+                    self::assertSame('one', $one);
+                    self::assertSame('two', $two);
+                    self::assertSame('three', $three);
+                    self::assertSame('four', $four);
 
                     return 'done';
                 },
@@ -40,10 +40,10 @@ class CallbackTest extends AbstractTestCase
             ],
             'lambda with optional args' => [
                 function ($one, $two, $three = null, $four = null) {
-                    $this->assertSame('one', $one);
-                    $this->assertSame('two', $two);
-                    $this->assertSame('three', $three);
-                    $this->assertNull($four);
+                    self::assertSame('one', $one);
+                    self::assertSame('two', $two);
+                    self::assertSame('three', $three);
+                    self::assertNull($four);
 
                     return 'done';
                 },
@@ -66,17 +66,19 @@ class CallbackTest extends AbstractTestCase
                 '1337',
             ],
             'invokable' => [
-                new class($this) {
-                    public function __construct(private readonly AbstractTestCase $tc)
+                new class(function (?string $one, ?string $two, ?string $three, ?string $four): void {
+                    self::assertSame('one', $one);
+                    self::assertSame('two', $two);
+                    self::assertSame('three', $three);
+                    self::assertNull($four);
+                }) {
+                    public function __construct(private \Closure $assert)
                     {
                     }
 
                     public function __invoke($one, $two, $three = null, $four = null)
                     {
-                        $this->tc->assertSame('one', $one);
-                        $this->tc->assertSame('two', $two);
-                        $this->tc->assertSame('three', $three);
-                        $this->tc->assertNull($four);
+                        call_user_func($this->assert, $one, $two, $three, $four);
 
                         return 'done';
                     }
