@@ -16,7 +16,7 @@ class KVPairTest extends AbstractTestCase
         $this->assertEquals($expected, $kvPair);
     }
 
-    public function provideTuple(): array
+    public static function provideTuple(): array
     {
         return [
             // tuple, expected

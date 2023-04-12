@@ -21,7 +21,7 @@ class PrioritizedCollectionTest extends AbstractTestCase
         $this->assertEquals($expectedItems, $result);
     }
 
-    public function provideItemsByPriority(): array
+    public static function provideItemsByPriority(): array
     {
         return [
             // items, expected items

@@ -10,7 +10,7 @@ use MF\Collection\Exception\TupleMatchException;
 use MF\Collection\Exception\TupleParseException;
 use MF\Collection\Immutable\Generic\Seq;
 
-class Tuple implements ITuple
+readonly class Tuple implements ITuple
 {
     private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
 
@@ -296,7 +296,7 @@ class Tuple implements ITuple
     }
 
     /** @phpstan-param mixed[] $values */
-    private function __construct(private readonly array $values)
+    private function __construct(private array $values)
     {
         try {
             Assertion::greaterOrEqualThan(

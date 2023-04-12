@@ -90,7 +90,7 @@ interface IMap extends ICollection, \ArrayAccess
      * @phpstan-template T
      *
      * @phpstan-param callable(TValue, TKey): T $callback
-     * @phpstan-return IMap<TKey, TValue>
+     * @phpstan-return IMap<TKey, T>
      */
     public function map(callable $callback): IMap;
 

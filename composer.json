@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-mbstring": "*",
         "beberlei/assert": "^3.0"
     },
@@ -24,7 +24,7 @@
         "phpstan/phpstan-beberlei-assert": "^1.0.1",
         "phpstan/phpstan-mockery": "^1.0",
         "phpstan/phpstan-phpunit": "^1.1",
-        "phpunit/phpunit": "^9.5.20",
+        "phpunit/phpunit": "^10.0.19",
         "symfony/var-dumper": "^6.0.6"
     },
     "autoload": {

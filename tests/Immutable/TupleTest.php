@@ -30,7 +30,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($tuple->toArray(), $tuple2->toArray());
     }
 
-    public function provideArrayTuple(): array
+    public static function provideArrayTuple(): array
     {
         return [
             // array, extected
@@ -65,7 +65,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expectedString, $result->toString());
     }
 
-    public function provideTuplesInString(): array
+    public static function provideTuplesInString(): array
     {
         return [
             // tuple, expectedArray, expectedString
@@ -138,7 +138,7 @@ class TupleTest extends AbstractTestCase
         Tuple::parse($tuple, $expectedCount);
     }
 
-    public function provideInvalidParseItems(): array
+    public static function provideInvalidParseItems(): array
     {
         return [
             // tuple, expectedItemsCount, expectedMessage
@@ -213,7 +213,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expected, $tuple->toArray());
     }
 
-    public function provideParseTypes(): array
+    public static function provideParseTypes(): array
     {
         return [
             // tuple, expectedTypes, expected
@@ -303,7 +303,7 @@ class TupleTest extends AbstractTestCase
         Tuple::parseMatchTypes($tuple, $expectedTypes);
     }
 
-    public function provideInvalidParseTypes(): array
+    public static function provideInvalidParseTypes(): array
     {
         return [
             // tuple, expectedTypes, expectedMessage
@@ -387,7 +387,7 @@ class TupleTest extends AbstractTestCase
         Tuple::parse($invalidTupleString);
     }
 
-    public function provideInvalidParse(): array
+    public static function provideInvalidParse(): array
     {
         $singleItemException = 'Tuple must have at least two values.';
 
@@ -419,7 +419,7 @@ class TupleTest extends AbstractTestCase
         Tuple::from($invalidTuple);
     }
 
-    public function provideInvalidTuple(): array
+    public static function provideInvalidTuple(): array
     {
         return [
             // invalid from
@@ -491,7 +491,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expectedCount, $tuple->count());
     }
 
-    public function provideTupleCount(): array
+    public static function provideTupleCount(): array
     {
         return [
             // tupleInput, expectedCount
@@ -536,7 +536,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($shouldBeSame, $result);
     }
 
-    public function provideSameTuples(): array
+    public static function provideSameTuples(): array
     {
         return [
             // one, two, shouldBeSame
@@ -576,7 +576,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($shouldMatch, $result);
     }
 
-    public function provideTuplesToMatch(): array
+    public static function provideTuplesToMatch(): array
     {
         return [
             // tuple, typesToMatch, shouldMatch
@@ -639,7 +639,7 @@ class TupleTest extends AbstractTestCase
         $tuple->matchTypes($types);
     }
 
-    public function provideInvalidTypes(): array
+    public static function provideInvalidTypes(): array
     {
         return [
             // invalid types
@@ -680,7 +680,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expected->toArray(), $result->toArray());
     }
 
-    public function provideTupleMerge(): array
+    public static function provideTupleMerge(): array
     {
         return [
             // base tuple, additional, expected
@@ -728,7 +728,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expected->toArray(), $result->toArray());
     }
 
-    public function provideTupleMergeMatch(): array
+    public static function provideTupleMergeMatch(): array
     {
         return [
             // base tuple, additional, expected types, expected message
@@ -768,7 +768,7 @@ class TupleTest extends AbstractTestCase
         Tuple::mergeMatch($expectedTypes, $base, ...$additional);
     }
 
-    public function provideTupleMergeDoNotMatch(): array
+    public static function provideTupleMergeDoNotMatch(): array
     {
         return [
             // base tuple, additional, expected types, expected message
@@ -801,7 +801,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($tuple->toArray(), $parsed->toArray());
     }
 
-    public function provideTupleForUrl(): array
+    public static function provideTupleForUrl(): array
     {
         return [
             // tuple, expected
@@ -831,7 +831,7 @@ class TupleTest extends AbstractTestCase
         $this->assertSame($expected, $tuple->isEmpty());
     }
 
-    public function provideEmptyTuple(): array
+    public static function provideEmptyTuple(): array
     {
         return [
             // tuple, isEmpty

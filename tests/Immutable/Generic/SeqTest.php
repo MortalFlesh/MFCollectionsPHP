@@ -26,7 +26,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame([1, 2, 3, 4], $result);
     }
 
-    /** @dataProvider seqProvider */
+    /** @dataProvider provideSeq */
     public function testShouldCreateSeqFrom(iterable $input, array $expectedKeys, array $expectedValues): void
     {
         $seq = Seq::from($input);
@@ -58,7 +58,7 @@ class SeqTest extends AbstractTestCase
         );
     }
 
-    public function seqProvider(): array
+    public static function provideSeq(): array
     {
         return [
             // input, expectedKeys, expectedValues
@@ -387,7 +387,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expectedValues, $values);
     }
 
-    /** @dataProvider rangeProvider */
+    /** @dataProvider provideRange */
     public function testShouldGenerateRange(mixed $range, array $expected): void
     {
         $result = Seq::range($range)->toArray();
@@ -395,7 +395,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function rangeProvider(): array
+    public static function provideRange(): array
     {
         return [
             // range, expected
@@ -615,7 +615,7 @@ class SeqTest extends AbstractTestCase
         Seq::from([1, 2, 3])->take(5)->toArray();
     }
 
-    /** @dataProvider isEmptyProvider */
+    /** @dataProvider provideIsEmpty */
     public function testShouldCheckIfSeqIfEmpty(ISeq $seq, bool $isEmpty): void
     {
         $result = $seq->isEmpty();
@@ -623,7 +623,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($isEmpty, $result);
     }
 
-    public function isEmptyProvider(): array
+    public static function provideIsEmpty(): array
     {
         return [
             'empty' => [Seq::createEmpty(), true],
@@ -655,7 +655,7 @@ class SeqTest extends AbstractTestCase
         ];
     }
 
-    /** @dataProvider countProvider */
+    /** @dataProvider provideCount */
     public function testShouldCountSeq(ISeq $seq, int $expected): void
     {
         $count = $seq->count();
@@ -663,7 +663,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expected, $count);
     }
 
-    public function countProvider(): array
+    public static function provideCount(): array
     {
         return [
             // seq, expectedCount
@@ -693,7 +693,7 @@ class SeqTest extends AbstractTestCase
             'count after takeUpTo 0' => [Seq::from([1, 2])->takeUpTo(0), 0],
             'count after takeWhile' => [Seq::infinite()->takeWhile(fn () => false), 0],
             'count forDo on infinite while' => [
-                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k) => $k < 100),
+                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k = null) => $k < 100),
                 10,
             ],
             'count forDo on infinite' => [
@@ -709,7 +709,7 @@ class SeqTest extends AbstractTestCase
                 1000,
             ],
             'large - count forDo on infinite while' => [
-                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k) => $k < 10000),
+                Seq::forDo('0..10..Inf', fn ($i) => yield $i => 'item_' . $i)->takeWhile(fn ($i, $k = null) => $k < 10000),
                 1000,
             ],
             'large - count forDo on infinite' => [
@@ -745,7 +745,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame(165, $sumOfSquaredOddNumbersFrom1to10);
     }
 
-    /** @dataProvider containsProvider */
+    /** @dataProvider provideContains */
     public function testShouldContainsValue(ISeq $seq, mixed $value, mixed $expected): void
     {
         $result = $seq->contains($value);
@@ -753,7 +753,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function containsProvider(): array
+    public static function provideContains(): array
     {
         return [
             /// seq, value, expected
@@ -767,7 +767,7 @@ class SeqTest extends AbstractTestCase
         ];
     }
 
-    /** @dataProvider containsProvider */
+    /** @dataProvider provideContains */
     public function testShouldContainsValueBy(ISeq $seq, mixed $value, mixed $expected): void
     {
         $result = $seq->containsBy($this->findByValue($value));
@@ -1096,7 +1096,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expected, $chunks);
     }
 
-    public function provideChunkBySize(): array
+    public static function provideChunkBySize(): array
     {
         return [
             // size, data, expected
@@ -1129,7 +1129,7 @@ class SeqTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideSplitData(): array
+    public static function provideSplitData(): array
     {
         return [
             // count, data, expected

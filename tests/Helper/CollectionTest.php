@@ -21,7 +21,7 @@ class CollectionTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideMutableCollection(): array
+    public static function provideMutableCollection(): array
     {
         return [
             // collection, expected
@@ -71,7 +71,7 @@ class CollectionTest extends AbstractTestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideImmutableCollection(): array
+    public static function provideImmutableCollection(): array
     {
         return [
             // collection, expected

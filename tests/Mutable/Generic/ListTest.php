@@ -62,7 +62,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals([1, 'string', 2.1, 1, 2, 'three', 'four'], $list1->toArray());
     }
 
-    /** @dataProvider validValuesProvider */
+    /** @dataProvider provideValidValues */
     public function testShouldCreateListFromValues(array $values): void
     {
         $list = ListCollection::from($values);
@@ -70,7 +70,7 @@ class ListTest extends AbstractTestCase
         $this->assertEquals($values, $list->toArray());
     }
 
-    public function validValuesProvider(): array
+    public static function provideValidValues(): array
     {
         return [
             ['values' => ['value', 'value2']],
@@ -209,7 +209,7 @@ class ListTest extends AbstractTestCase
         $this->list->add('key2');
         $this->list->add('key3');
 
-        $this->list->filter(fn ($v, $i) => mb_strlen($v) > 3);
+        $this->list->filter(fn ($v, $i = null) => mb_strlen($v) > 3);
 
         $this->assertEquals(['key2', 'key3'], $this->list->toArray());
     }
@@ -219,7 +219,7 @@ class ListTest extends AbstractTestCase
         $this->list->add('key');
         $this->list->add('key2');
 
-        $this->list->filter(fn ($v, $i) => $v === 'key');
+        $this->list->filter(fn ($v, $i = null) => $v === 'key');
         $this->list->map(fn ($v) => $v . '_');
 
         $this->assertEquals(['key_'], $this->list->toArray());
@@ -298,7 +298,7 @@ class ListTest extends AbstractTestCase
         $list->add(new SimpleEntity(2));
         $list->add(new SimpleEntity(3));
 
-        $list->filter(fn (SimpleEntity $v, $i) => $v->getId() > 1);
+        $list->filter(fn (SimpleEntity $v, $i = null) => $v->getId() > 1);
         $list->map(fn (SimpleEntity $v) => $v->getId());
         $sum = $list->sum();
 
@@ -313,7 +313,7 @@ class ListTest extends AbstractTestCase
         $list->add(new ComplexEntity(new SimpleEntity(2)));
         $list->add(new ComplexEntity(new SimpleEntity(3)));
 
-        $list->filter(fn (ComplexEntity $v, $i) => $v->getSimpleEntity()->getId() > 1);
+        $list->filter(fn (ComplexEntity $v, $i = null) => $v->getSimpleEntity()->getId() > 1);
         $list->map(fn (ComplexEntity $v) => $v->getSimpleEntity());
         $sum = $list->sumBy(fn (SimpleEntity $e) => $e->getId());
 
@@ -364,7 +364,7 @@ class ListTest extends AbstractTestCase
 
         $this->list->map(fn ($v) => $v + 1);            // 2, 3, 4
         $this->list->map(fn ($v) => $v * 2);            // 4, 6, 8
-        $this->list->filter(fn ($v, $i) => $v % 3 === 0);   // 6
+        $this->list->filter(fn ($v, $i = null) => $v % 3 === 0);   // 6
         $this->list->map(fn ($v) => $v - 1);            // 5
         $this->list->map(fn ($v) => (string) $v);       // '5'
 
@@ -503,7 +503,7 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::from(['one', 'two', 3]);
 
-        $list->each(function ($value, $i): void {
+        $list->each(function ($value, $i = null): void {
             if ($i === 0) {
                 $this->assertEquals('one', $value);
             } elseif ($i === 1) {

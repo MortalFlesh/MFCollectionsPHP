@@ -3,7 +3,7 @@
 namespace MF\Collection;
 
 /** @phpstan-type RangeDefinition string|array<float|int|string> */
-class Range
+readonly class Range
 {
     public const INFINITE = 'Inf';
 

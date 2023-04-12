@@ -2,6 +2,7 @@
 
 namespace MF\Collection\Immutable\Generic;
 
+use JetBrains\PhpStorm\Immutable;
 use MF\Collection\Assertion;
 use MF\Collection\Exception\BadMethodCallException;
 use MF\Collection\Exception\InvalidArgumentException;
@@ -16,7 +17,7 @@ use MF\Collection\Immutable\Tuple;
  *
  * @phpstan-implements IMap<TKey, TValue>
  */
-class Map implements IMap
+readonly class Map implements IMap
 {
     /**
      * @phpstan-param iterable<TKey, TValue> $source
@@ -84,7 +85,7 @@ class Map implements IMap
     }
 
     /** @phpstan-param array<TKey, TValue> $mapArray */
-    public function __construct(private readonly array $mapArray = [])
+    public function __construct(private array $mapArray = [])
     {
     }
 
@@ -265,7 +266,7 @@ class Map implements IMap
      * @phpstan-template T
      *
      * @phpstan-param callable(TValue, TKey): T $callback
-     * @phpstan-return IMap<TKey, TValue>
+     * @phpstan-return IMap<TKey, T>
      */
     public function map(callable $callback): IMap
     {
@@ -276,8 +277,7 @@ class Map implements IMap
             $map[$key] = $callback($v, $key);
         }
 
-        /** @phpstan-var array<TKey, TValue> $map */
-        return static::from($map);
+        return new static($map);
     }
 
     /**

@@ -71,7 +71,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame([1, 2, 3], $map->toArray());
     }
 
-    /** @dataProvider addItemsProvider */
+    /** @dataProvider provideAddItems */
     public function testShouldAddItemsToMap(string $key, int $value): void
     {
         $this->map = $this->map->set($key, $value);
@@ -80,7 +80,7 @@ class MapTest extends AbstractTestCase
         $this->assertEquals($value, $this->map->get($key));
     }
 
-    public function addItemsProvider(): array
+    public static function provideAddItems(): array
     {
         return [
             [
@@ -123,8 +123,8 @@ class MapTest extends AbstractTestCase
 
         $this->map = $this->map->set('key', $valueExists);
 
-        $this->assertTrue($this->map->containsBy(fn ($v, $k) => $v === $valueExists));
-        $this->assertFalse($this->map->containsBy(fn ($v, $k) => $v === $valueDoesNotExist));
+        $this->assertTrue($this->map->containsBy(fn ($v, $k = null) => $v === $valueExists));
+        $this->assertFalse($this->map->containsBy(fn ($v, $k = null) => $v === $valueDoesNotExist));
     }
 
     public function testShouldRemoveValueFromMap(): void
@@ -314,7 +314,7 @@ class MapTest extends AbstractTestCase
         $this->assertSame($expected, $map->toArray());
     }
 
-    public function providePairs(): array
+    public static function providePairs(): array
     {
         return [
             // pairs, expected
@@ -428,7 +428,7 @@ class MapTest extends AbstractTestCase
     {
         $map = Map::from([1 => 'one', 2 => 'two', 'three' => 3]);
 
-        $map->each(function ($value, $key): void {
+        $map->each(function ($value, $key = null): void {
             if ($key === 1) {
                 $this->assertEquals('one', $value);
             } elseif ($key === 2) {
