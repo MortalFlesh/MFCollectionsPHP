@@ -33,7 +33,7 @@ composer require mf/collections-php
 
 
 ## Requirements
-- `PHP ^8.1`
+- `PHP ^8.2`
 
 
 ## Base Interfaces
