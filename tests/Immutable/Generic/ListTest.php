@@ -259,6 +259,39 @@ class ListTest extends AbstractTestCase
         $this->assertEquals(['key_'], $newList->toArray());
     }
 
+    /** @dataProvider provideValuesToChooseByItsIdentity */
+    public function testShouldChooseNotNullValues(array $values, array $expected): void
+    {
+        $id = fn ($value) => $value;
+
+        $actual = ListCollection::from($values)
+            ->choose($id)
+            ->toArray();
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public static function provideValuesToChooseByItsIdentity(): array
+    {
+        return [
+            // values, expected
+            'empty' => [[], []],
+            'ints' => [[1, 2, 3], [1, 2, 3]],
+            'strings' => [['foo', 'bar'], ['foo', 'bar']],
+            'ints with nulls' => [[1, null, 2, 3, null], [1, 2, 3]],
+            'strings with nulls' => [[null, 'foo', 'bar', null], ['foo', 'bar']],
+        ];
+    }
+
+    public function testShouldChooseValuesByCallback(): void
+    {
+        $evenValues = ListCollection::from([1, 2, 3, 4, 5])
+            ->choose(fn (int $i) => $i % 2 === 0 ? $i : null)
+            ->toArray();
+
+        $this->assertSame([2, 4], $evenValues);
+    }
+
     public function testShouldNotMapListWithRequiredIndex(): void
     {
         $this->expectException(InvalidArgumentException::class);
