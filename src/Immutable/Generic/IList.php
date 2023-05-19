@@ -99,6 +99,14 @@ interface IList extends ICollection
     public function filter(callable $callback): IList;
 
     /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex=): (T|null) $callback
+     * @phpstan-return IList<T>
+     */
+    public function choose(callable $callback): IList;
+
+    /**
      * @phpstan-template State
      *
      * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
