@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `Immutable\Generic\IList::choose` method
+- Add `Immutable\Generic\ListCollection::choose` method
 
 ## 7.0.0 - 2022-04-21
 - [**BC**] Require php 8.1

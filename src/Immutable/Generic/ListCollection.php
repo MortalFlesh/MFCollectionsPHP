@@ -307,6 +307,26 @@ class ListCollection implements IList
     }
 
     /**
+     * @phpstan-template T
+     *
+     * @phpstan-param callable(TValue, TIndex=): (T|null) $callback
+     * @phpstan-return IList<T>
+     */
+    public function choose(callable $callback): IList
+    {
+        $listArray = [];
+        $callback = Callback::curry($callback);
+
+        foreach ($this as $i => $v) {
+            if (($value = $callback($v, $i)) !== null) {
+                $listArray[] = $value;
+            }
+        }
+
+        return new static($listArray);
+    }
+
+    /**
      * @phpstan-template State
      *
      * @phpstan-param callable(State, TValue, TIndex=, IList<TValue>=): State $reducer
