@@ -317,7 +317,7 @@ class ListCollection implements IList
         rsort($this->listArray);
     }
 
-    /** @phpstan-param callable(TValue, TValue): int<-1, 1> $callback */
+    /** @phpstan-param callable(TValue, TValue): (string|int|float) $callback */
     public function sortBy(callable $callback): void
     {
         $callback = Callback::curry($callback);
@@ -328,7 +328,7 @@ class ListCollection implements IList
         );
     }
 
-    /** @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback */
+    /** @phpstan-param callable(TValue, TIndex=): (string|int|float) $callback */
     public function sortByDescending(callable $callback): void
     {
         $callback = Callback::curry($callback);
