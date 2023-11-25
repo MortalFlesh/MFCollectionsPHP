@@ -670,7 +670,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
+     * @phpstan-param callable(TValue, TValue): (string|int|float) $callback
      * @phpstan-return ISeq<TValue>
      *
      * @throws OutOfBoundsException
@@ -695,7 +695,7 @@ class Seq implements ISeq
     }
 
     /**
-     * @phpstan-param callable(TValue): int<-1, 1> $callback
+     * @phpstan-param callable(TValue): (string|int|float) $callback
      * @phpstan-return ISeq<TValue>
      *
      * @throws OutOfBoundsException

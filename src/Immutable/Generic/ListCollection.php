@@ -364,7 +364,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @phpstan-param callable(TValue, TValue): int<-1, 1> $callback
+     * @phpstan-param callable(TValue, TValue): (string|int|float) $callback
      * @phpstan-return IList<TValue>
      */
     public function sortBy(callable $callback): IList
@@ -381,7 +381,7 @@ class ListCollection implements IList
     }
 
     /**
-     * @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback
+     * @phpstan-param callable(TValue, TIndex=): (string|int|float) $callback
      * @phpstan-return IList<TValue>
      */
     public function sortByDescending(callable $callback): IList
