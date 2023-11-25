@@ -94,10 +94,10 @@ interface IList extends ICollection
 
     public function sortDescending(): void;
 
-    /** @phpstan-param callable(TValue, TValue): int<-1, 1> $callback */
+    /** @phpstan-param callable(TValue, TValue): (string|int|float) $callback */
     public function sortBy(callable $callback): void;
 
-    /** @phpstan-param callable(TValue, TIndex=): int<-1, 1> $callback */
+    /** @phpstan-param callable(TValue, TIndex=): (string|int|float) $callback */
     public function sortByDescending(callable $callback): void;
 
     /** Keeps only unique values inside the list. */
