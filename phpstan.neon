@@ -23,21 +23,6 @@ parameters:
             path: src/Immutable/Generic/ListCollection.php
 
         -
-            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\:\\:reduce\\(\\) expects callable\\(array, mixed, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\=\\)\\: array, Closure\\(array, string\\)\\: array given\\.$#"
-            count: 1
-            path: src/Immutable/Tuple.php
-
-        -
-            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\>, TValue, int\\=, MF\\\\Collection\\\\Mutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\>, Closure\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap, mixed, int\\)\\: MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\> given\\.$#"
-            count: 1
-            path: src/Mutable/Generic/ListCollection.php
-
-        -
-            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(float\\|int, TValue, int\\=, MF\\\\Collection\\\\Mutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: float\\|int, Closure\\(float\\|int, mixed, int\\)\\: float\\|int given\\.$#"
-            count: 1
-            path: src/Mutable/Generic/ListCollection.php
-
-        -
             message: "#^Method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ListCollection\\:\\:groupBy\\(\\) should return MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<TGroup of int\\|string, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<TValue\\>\\>\\> but returns MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\KVPair\\<TGroup of int\\|string, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<TValue\\>\\>\\>\\>\\.$#"
             count: 1
             path: src/Immutable/Generic/ListCollection.php
@@ -48,10 +33,19 @@ parameters:
             path: src/Immutable/Generic/ListCollection.php
 
         -
-            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(float\\|int, TValue, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: float\\|int, Closure\\(float\\|int, mixed, int\\)\\: float\\|int given\\.$#"
+            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(float\\|int, TValue, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: \\(float\\|int\\), Closure\\(float\\|int, mixed, int\\)\\: \\(float\\|int\\) given\\.$#"
             count: 1
             path: src/Immutable/Generic/ListCollection.php
 
+        -
+            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\>, TValue, int\\=, MF\\\\Collection\\\\Mutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\>, Closure\\(MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap, mixed, int\\)\\: MF\\\\Collection\\\\Immutable\\\\Generic\\\\IMap\\<int\\|string, mixed\\> given\\.$#"
+            count: 1
+            path: src/Mutable/Generic/ListCollection.php
+
+        -
+            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Mutable\\\\Generic\\\\ListCollection\\<TValue\\>\\:\\:reduce\\(\\) expects callable\\(float\\|int, TValue, int\\=, MF\\\\Collection\\\\Mutable\\\\Generic\\\\IList\\<TValue\\>\\=\\)\\: \\(float\\|int\\), Closure\\(float\\|int, mixed, int\\)\\: \\(float\\|int\\) given\\.$#"
+            count: 1
+            path: src/Mutable/Generic/ListCollection.php
 
         # Tuple
         -
@@ -59,11 +53,12 @@ parameters:
             count: 3
             path: src/Immutable/Tuple.php
 
-        # Seq
         -
-            message: '#Argument of an invalid type mixed supplied for foreach, only iterables are supported.#'
+            message: "#^Parameter \\#1 \\$reducer of method MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\:\\:reduce\\(\\) expects callable\\(array, mixed, int\\=, MF\\\\Collection\\\\Immutable\\\\Generic\\\\ISeq\\<mixed\\>\\=\\)\\: array, Closure\\(array, string\\)\\: array given\\.$#"
             count: 1
-            path: src/Immutable/Generic/Seq.php
+            path: src/Immutable/Tuple.php
+
+        # Seq
 
         -
             message: '#Parameter \#1 \$modifier of method MF\\Collection\\Immutable\\Generic\\Seq<TValue>::.*?\(\) expects .*?: .*? given.#'
