@@ -2,9 +2,11 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 7.2.0 - 2023-11-28
 - Add `Immutable/Generic/IList::partition` method
 
-## 7.1.1- 2023-11-25
+## 7.1.1 - 2023-11-25
 - Fix return type of `sortBy` and `sortByDescending` methods
 
 ## 7.1.0 - 2023-05-19
