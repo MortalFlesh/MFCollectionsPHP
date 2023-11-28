@@ -847,4 +847,48 @@ class ListTest extends AbstractTestCase
 
         $this->assertSame([0, 2, 6, 12, 20], $list->toArray());
     }
+
+    /** @dataProvider provideListForPartition */
+    public function testShouldPartitionList(IList $list, callable $predicate, array $expected): void
+    {
+        $actual = $list->partition($predicate);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public static function provideListForPartition(): array
+    {
+        return [
+            // list, predicate, expected
+            'empty' => [
+                new ListCollection(),
+                fn (int $i) => $i % 2 === 0,
+                [new ListCollection(), new ListCollection()],
+            ],
+            'even/odd' => [
+                Seq::range('0..10')->toList(),
+                fn (int $i) => $i % 2 === 0,
+                [
+                    ListCollection::from([0, 2, 4, 6, 8, 10]),
+                    ListCollection::from([1, 3, 5, 7, 9]),
+                ],
+            ],
+            'even/odd (no odds)' => [
+                Seq::range('0..10')->toList()->filter(fn (int $i) => $i % 2 === 0),
+                fn (int $i) => $i % 2 === 0,
+                [
+                    ListCollection::from([0, 2, 4, 6, 8, 10]),
+                    ListCollection::from([]),
+                ],
+            ],
+            'objects' => [
+                Seq::range('0..10')->toList()->map(SimpleEntity::create(...)),
+                fn (SimpleEntity $entity) => $entity->getId() > 5,
+                [
+                    Seq::range('6..10')->toList()->map(SimpleEntity::create(...)),
+                    Seq::range('0..5')->toList()->map(SimpleEntity::create(...)),
+                ],
+            ],
+        ];
+    }
 }
