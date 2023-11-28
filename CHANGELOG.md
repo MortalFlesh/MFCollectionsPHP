@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 8.2.0 - 2023-11-25
 - Add `Immutable/Generic/IList::partition` method
 
 ## 8.1.1 - 2023-11-25
