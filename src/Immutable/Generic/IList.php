@@ -247,6 +247,15 @@ interface IList extends ICollection
      */
     public function maxBy(callable $callback): mixed;
 
+    /**
+     * Splits the collection into two collections, containing the elements for which the given predicate returns True and False respectively.
+     * Element order is preserved in both of the created lists.
+     *
+     * @phpstan-param callable(TValue, TIndex=): bool $predicate
+     * @phpstan-return array{0:IList<TValue>, 1: IList<TValue>}
+     */
+    public function partition(callable $predicate): array;
+
     /** @phpstan-return \MF\Collection\Mutable\Generic\IList<TValue> */
     public function asMutable(): \MF\Collection\Mutable\Generic\IList;
 
