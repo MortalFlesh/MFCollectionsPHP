@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         colors="true"
-         bootstrap="vendor/autoload.php"
->
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" colors="true"
+         bootstrap="vendor/autoload.php">
 
     <coverage>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
         <report>
             <clover outputFile="./code-coverage/clover.xml"/>
             <html outputDirectory="./code-coverage" highLowerBound="90"/>
         </report>
     </coverage>
+
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
 
     <php>
         <!-- E_ALL = 30719 -->
