@@ -34,7 +34,7 @@ class PrioritizedCollection implements IEnumerable
         $items = $this->items;
         usort(
             $items,
-            fn (Tuple $a, Tuple $b) => $b->second() <=> $a->second()
+            fn(Tuple $a, Tuple $b) => $b->second() <=> $a->second(),
         );
 
         foreach ($items as [$item]) {

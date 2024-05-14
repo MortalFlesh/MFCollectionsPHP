@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class LogicException extends \LogicException implements CollectionExceptionInterface
-{
-}
+class LogicException extends \LogicException implements CollectionExceptionInterface {}

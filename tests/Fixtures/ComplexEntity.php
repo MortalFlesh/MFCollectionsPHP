@@ -4,9 +4,7 @@ namespace MF\Collection\Fixtures;
 
 class ComplexEntity implements EntityInterface
 {
-    public function __construct(private SimpleEntity $simpleEntity)
-    {
-    }
+    public function __construct(private SimpleEntity $simpleEntity) {}
 
     public function getSimpleEntity(): SimpleEntity
     {

@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class TupleException extends InvalidArgumentException implements TupleExceptionInterface
-{
-}
+class TupleException extends InvalidArgumentException implements TupleExceptionInterface {}

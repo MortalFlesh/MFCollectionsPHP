@@ -23,7 +23,7 @@ readonly class Callback
         $all = $ref->getNumberOfParameters();
         $required = $ref->getNumberOfRequiredParameters();
 
-        return fn (...$args) => $callback(...self::prepareArgs($all, $required, $args));
+        return fn(...$args) => $callback(...self::prepareArgs($all, $required, $args));
     }
 
     /** @see https://stackoverflow.com/questions/13071186/how-to-get-the-number-of-parameters-of-a-run-time-determined-callable */

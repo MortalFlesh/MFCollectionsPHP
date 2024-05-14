@@ -72,9 +72,7 @@ class CallbackTest extends AbstractTestCase
                     self::assertSame('three', $three);
                     self::assertNull($four);
                 }) {
-                    public function __construct(private \Closure $assert)
-                    {
-                    }
+                    public function __construct(private \Closure $assert) {}
 
                     public function __invoke($one, $two, $three = null, $four = null)
                     {

@@ -54,7 +54,6 @@
         ],
         "analyze": [
             "@cs",
-            "vendor/bin/ecs check-markdown README.md --ansi",
             "@phpstan"
         ],
         "cs": "vendor/bin/ecs check --ansi",

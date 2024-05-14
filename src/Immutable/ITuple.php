@@ -15,6 +15,11 @@ use MF\Collection\Generic\IEnumerable;
  */
 interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
 {
+    /**
+     * @see Tuple::toString()
+     */
+    public function __toString(): string;
+
     public static function fst(ITuple $tuple): mixed;
 
     public static function snd(ITuple $tuple): mixed;
@@ -34,7 +39,7 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      *
      * @throws TupleParseException
      */
-    public static function parse(string $tuple, int $expectedItemsCount = null): self;
+    public static function parse(string $tuple, ?int $expectedItemsCount = null): self;
 
     /**
      * Parse "(x, y, ... z)" string into Tuple(x, y, z) and validates items types
@@ -152,11 +157,6 @@ interface ITuple extends IEnumerable, \ArrayAccess, \Stringable
      * @throws TupleMatchException
      */
     public static function mergeMatch(array $types, ITuple $base, mixed ...$additional): ITuple;
-
-    /**
-     * @see Tuple::toString()
-     */
-    public function __toString(): string;
 
     /**
      * Transform tuple values into string (which is compatible with Tuple::parse() method)

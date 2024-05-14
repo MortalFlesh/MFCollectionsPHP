@@ -12,6 +12,12 @@ use MF\Collection\Immutable\Tuple;
 readonly class KVPair
 {
     /**
+     * @phpstan-param TKey $key
+     * @phpstan-param TValue $value
+     */
+    public function __construct(private int|string $key, private mixed $value) {}
+
+    /**
      * @phpstan-param self<TKey, TValue> $pair
      * @phpstan-return TKey
      */
@@ -34,14 +40,6 @@ readonly class KVPair
         return new static($tuple->first(), $tuple->second());
     }
 
-    /**
-     * @phpstan-param TKey $key
-     * @phpstan-param TValue $value
-     */
-    public function __construct(private int|string $key, private mixed $value)
-    {
-    }
-
     /** @phpstan-return TKey */
     public function getKey(): int|string
     {
@@ -54,7 +52,7 @@ readonly class KVPair
         return $this->value;
     }
 
-    public function asTuple(): ITUple
+    public function asTuple(): ITuple
     {
         return Tuple::of($this->key, $this->value);
     }

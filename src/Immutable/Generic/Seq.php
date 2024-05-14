@@ -29,6 +29,12 @@ class Seq implements ISeq
 
     private bool $isInfinite = false;
 
+    /** @phpstan-param DataSource $iterable */
+    public function __construct(private readonly iterable|\Closure $iterable)
+    {
+        $this->modifiers = [];
+    }
+
     /**
      * @phpstan-template T
      * @phpstan-param ISeq<T|iterable<T>> $seq
@@ -259,12 +265,6 @@ class Seq implements ISeq
         );
     }
 
-    /** @phpstan-param DataSource $iterable */
-    public function __construct(private readonly iterable|\Closure $iterable)
-    {
-        $this->modifiers = [];
-    }
-
     /** @phpstan-return ISeq<TValue> */
     private function setIsInfinite(bool $isInfinite = true): ISeq
     {
@@ -479,7 +479,7 @@ class Seq implements ISeq
 
     private function clone(): static
     {
-        return clone ($this);
+        return clone $this;
     }
 
     private function addModifier(SeqModifier $type, mixed $modifier): static
@@ -687,7 +687,7 @@ class Seq implements ISeq
 
             usort(
                 $items,
-                fn (mixed $a, mixed $b): int => $callback($a) <=> $callback($b)
+                fn(mixed $a, mixed $b): int => $callback($a) <=> $callback($b),
             );
 
             yield from $items;
@@ -712,7 +712,7 @@ class Seq implements ISeq
 
             usort(
                 $items,
-                fn (mixed $a, mixed $b): int => $callback($b) <=> $callback($a)
+                fn(mixed $a, mixed $b): int => $callback($b) <=> $callback($a),
             );
 
             yield from $items;
@@ -795,7 +795,7 @@ class Seq implements ISeq
     public function sum(): int|float
     {
         return $this->reduce(
-            fn (int|float $sum, mixed $value) => $sum + $value,
+            fn(int|float $sum, mixed $value) => $sum + $value,
             0,
         );
     }
@@ -806,7 +806,7 @@ class Seq implements ISeq
         $callback = Callback::curry($callback);
 
         return $this->reduce(
-            fn (int|float $sum, mixed $value) => $sum + $callback($value),
+            fn(int|float $sum, mixed $value) => $sum + $callback($value),
             0,
         );
     }

@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class TupleParseException extends TupleException
-{
-}
+class TupleParseException extends TupleException {}

@@ -7,9 +7,7 @@ use MF\Collection\Immutable\Generic\ISeq;
 
 class DummySeq implements ISeq
 {
-    public function __construct(private readonly iterable $source)
-    {
-    }
+    public function __construct(private readonly iterable $source) {}
 
     public function forAll(callable $predicate): bool
     {

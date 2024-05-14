@@ -41,7 +41,7 @@ class ListTest extends AbstractTestCase
     public function testShouldGroupList(): void
     {
         $groups = ListCollection::from([1, 2, 3, 4, 5, 6, 7])
-            ->groupBy(fn (int $i) => $i % 2 === 0 ? 'even' : 'odd')
+            ->groupBy(fn(int $i) => $i % 2 === 0 ? 'even' : 'odd')
             ->toArray();
 
         $expected = [
@@ -55,7 +55,7 @@ class ListTest extends AbstractTestCase
     public function testShouldGroupListAndUseOnlyEvenValues(): void
     {
         $eventValues = ListCollection::from([1, 2, 3, 4, 5, 6, 7])
-            ->groupBy(fn (int $i) => $i % 2 === 0 ? 'even' : 'odd')
+            ->groupBy(fn(int $i) => $i % 2 === 0 ? 'even' : 'odd')
             ->map(KVPair::value(...))
             ->last()
             ->toArray();
@@ -103,10 +103,10 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::create(
             explode(',', '1,2,3'),
-            fn ($value) => new SimpleEntity((int) $value)
+            fn($value) => new SimpleEntity((int) $value),
         );
 
-        $list = $list->map(fn ($e) => $e->getId());
+        $list = $list->map(fn($e) => $e->getId());
 
         $this->assertSame([1, 2, 3], $list->toArray());
     }
@@ -152,7 +152,7 @@ class ListTest extends AbstractTestCase
 
     public function testShouldGetFirstValueByArrowFunction(): void
     {
-        $findSecond = fn ($value) => $value === 'second';
+        $findSecond = fn($value) => $value === 'second';
 
         $this->assertNull($this->list->firstBy($findSecond));
 
@@ -175,7 +175,7 @@ class ListTest extends AbstractTestCase
         $this->assertFalse($this->list->contains('value'));
 
         $this->list = $this->list->add('value');
-        $this->assertTrue($this->list->containsBy(fn ($v) => $v === 'value'));
+        $this->assertTrue($this->list->containsBy(fn($v) => $v === 'value'));
     }
 
     public function testShouldRemoveFirstValue(): void
@@ -228,7 +228,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
         $this->list = $this->list->add('key3');
 
-        $newList = $this->list->map(fn ($v) => $v . '_');
+        $newList = $this->list->map(fn($v) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_', 'key2_', 'key3_'], $newList->toArray());
@@ -240,7 +240,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
         $this->list = $this->list->add('key3');
 
-        $newList = $this->list->filter(fn ($v, $i = null) => mb_strlen($v) > 3);
+        $newList = $this->list->filter(fn($v, $i = null) => mb_strlen($v) > 3);
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key2', 'key3'], $newList->toArray());
@@ -252,8 +252,8 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key2');
 
         $newList = $this->list
-            ->filter(fn ($v, $i = null) => $v === 'key')
-            ->map(fn ($v) => $v . '_');
+            ->filter(fn($v, $i = null) => $v === 'key')
+            ->map(fn($v) => $v . '_');
 
         $this->assertNotEquals($this->list, $newList);
         $this->assertEquals(['key_'], $newList->toArray());
@@ -262,7 +262,7 @@ class ListTest extends AbstractTestCase
     /** @dataProvider provideValuesToChooseByItsIdentity */
     public function testShouldChooseNotNullValues(array $values, array $expected): void
     {
-        $id = fn ($value) => $value;
+        $id = fn($value) => $value;
 
         $actual = ListCollection::from($values)
             ->choose($id)
@@ -286,7 +286,7 @@ class ListTest extends AbstractTestCase
     public function testShouldChooseValuesByCallback(): void
     {
         $evenValues = ListCollection::from([1, 2, 3, 4, 5])
-            ->choose(fn (int $i) => $i % 2 === 0 ? $i : null)
+            ->choose(fn(int $i) => $i % 2 === 0 ? $i : null)
             ->toArray();
 
         $this->assertSame([2, 4], $evenValues);
@@ -298,7 +298,7 @@ class ListTest extends AbstractTestCase
 
         $this->list = $this->list->add('key');
 
-        $this->list->map(fn ($v, $i) => $v . '_');
+        $this->list->map(fn($v, $i) => $v . '_');
     }
 
     public function testShouldIterateValues(): void
@@ -319,7 +319,7 @@ class ListTest extends AbstractTestCase
         $this->list = $this->list->add('key');
         $this->list = $this->list->add('key2');
 
-        $this->assertEquals('key|key2|', $this->list->reduce(fn ($t, $c) => $t . $c . '|'));
+        $this->assertEquals('key|key2|', $this->list->reduce(fn($t, $c) => $t . $c . '|'));
     }
 
     public function testShouldReduceGenericListOfListCounts(): void
@@ -331,7 +331,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add($list1);
         $list = $list->add($list2);
 
-        $this->assertEquals(5, $list->reduce(fn ($t, $c) => $t + $c->count()));
+        $this->assertEquals(5, $list->reduce(fn($t, $c) => $t + $c->count()));
     }
 
     public function testShouldGetMutableGenericListAsImmutableGenericList(): void
@@ -340,7 +340,7 @@ class ListTest extends AbstractTestCase
 
         $mutable = $this->list->asMutable();
 
-        $this->assertInstanceOf(\MF\Collection\Mutable\Generic\ListCollection::class, $mutable);
+        $this->assertInstanceOf(MutableListCollection::class, $mutable);
         $this->assertEquals($this->list->toArray(), $mutable->toArray());
     }
 
@@ -352,9 +352,9 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new SimpleEntity(3));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter(fn ($v, $i = null) => $v->getId() > 1)
-            ->map(fn ($v) => $v->getId())
-            ->reduce(fn ($t, $v) => $t + $v);
+            ->filter(fn($v, $i = null) => $v->getId() > 1)
+            ->map(fn($v) => $v->getId())
+            ->reduce(fn($t, $v) => $t + $v);
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
@@ -367,9 +367,9 @@ class ListTest extends AbstractTestCase
         $list = $list->add(new ComplexEntity(new SimpleEntity(3)));
 
         $sumOfIdsGreaterThan1 = $list
-            ->filter(fn ($v, $i = null) => $v->getSimpleEntity()->getId() > 1)
-            ->map(fn ($v) => $v->getSimpleEntity())
-            ->reduce(fn ($t, $v) => $t + $v->getId());
+            ->filter(fn($v, $i = null) => $v->getSimpleEntity()->getId() > 1)
+            ->map(fn($v) => $v->getSimpleEntity())
+            ->reduce(fn($t, $v) => $t + $v->getId());
 
         $this->assertEquals(5, $sumOfIdsGreaterThan1);
     }
@@ -381,7 +381,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(2);
         $list = $list->add(3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce(fn ($t, $v) => $t + $v, 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $list->reduce(fn($t, $v) => $t + $v, 10));
     }
 
     public function testShouldReduceListWithInitialValueToOtherType(): void
@@ -391,7 +391,7 @@ class ListTest extends AbstractTestCase
         $list = $list->add(2);
         $list = $list->add(3);
 
-        $this->assertEquals('123', $list->reduce(fn ($t, $v) => $t . $v, ''));
+        $this->assertEquals('123', $list->reduce(fn($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void
@@ -566,7 +566,7 @@ class ListTest extends AbstractTestCase
             new SimpleEntity(5),
             new SimpleEntity(1),
         ]);
-        $unique = $list->uniqueBy(fn (SimpleEntity $e) => $e->getId());
+        $unique = $list->uniqueBy(fn(SimpleEntity $e) => $e->getId());
 
         $this->assertNotEquals($list, $unique);
         $this->assertEquals(
@@ -590,8 +590,8 @@ class ListTest extends AbstractTestCase
         ]);
 
         $list = $list
-            ->filter(fn (SimpleEntity $v, $i = null) => $v->getId() > 1)
-            ->map(fn (SimpleEntity $v) => $v->getId());
+            ->filter(fn(SimpleEntity $v, $i = null) => $v->getId() > 1)
+            ->map(fn(SimpleEntity $v) => $v->getId());
         $sum = $list->sum();
 
         $this->assertSame(5, $sum);
@@ -632,7 +632,7 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::from($values);
 
-        $counts = $list->countBy(fn ($v) => $v % 2 === 0 ? 'even' : 'odd');
+        $counts = $list->countBy(fn($v) => $v % 2 === 0 ? 'even' : 'odd');
 
         $this->assertEquals(
             array_filter([
@@ -682,7 +682,7 @@ class ListTest extends AbstractTestCase
             new SimpleEntity(2),
         ]);
 
-        $this->assertEquals(new SimpleEntity(1), $list->minBy(fn (SimpleEntity $e) => $e->getId()));
+        $this->assertEquals(new SimpleEntity(1), $list->minBy(fn(SimpleEntity $e) => $e->getId()));
     }
 
     public function testShouldFindMaxInListByCallback(): void
@@ -693,7 +693,7 @@ class ListTest extends AbstractTestCase
             new SimpleEntity(2),
         ]);
 
-        $this->assertEquals(new SimpleEntity(3), $list->maxBy(fn (SimpleEntity $e) => $e->getId()));
+        $this->assertEquals(new SimpleEntity(3), $list->maxBy(fn(SimpleEntity $e) => $e->getId()));
     }
 
     public function testShouldAppendLists(): void
@@ -713,9 +713,7 @@ class ListTest extends AbstractTestCase
     public function testShouldCollectIntList(): void
     {
         $entity = new class([1, 2, 3]) {
-            public function __construct(private readonly array $data)
-            {
-            }
+            public function __construct(private readonly array $data) {}
 
             public function toArray(): array
             {
@@ -724,7 +722,7 @@ class ListTest extends AbstractTestCase
         };
 
         $result = ListCollection::of($entity)
-            ->collect((fn ($s) => $s->toArray()))
+            ->collect(fn($s) => $s->toArray())
             ->toArray();
 
         $this->assertSame([1, 2, 3], $result);
@@ -740,9 +738,9 @@ class ListTest extends AbstractTestCase
         ];
 
         $word = ListCollection::from($data)
-            ->collect(fn (int $item) => $subData[$item])
+            ->collect(fn(int $item) => $subData[$item])
             ->reduce(
-                fn (string $word, string $subItem) => $word . $subItem,
+                fn(string $word, string $subItem) => $word . $subItem,
                 'Word: ',
             );
 
@@ -759,12 +757,12 @@ class ListTest extends AbstractTestCase
         ];
 
         $word = ListCollection::from($data)
-            ->map(fn (string $i) => (int) $i)
-            ->collect(fn (int $item) => $subData[$item])
-            ->filter(fn ($l) => $l < 'f')
-            ->map(fn ($l) => $l . ' ')
+            ->map(fn(string $i) => (int) $i)
+            ->collect(fn(int $item) => $subData[$item])
+            ->filter(fn($l) => $l < 'f')
+            ->map(fn($l) => $l . ' ')
             ->reduce(
-                fn (string $word, string $subItem) => $word . $subItem,
+                fn(string $word, string $subItem) => $word . $subItem,
                 'Word: ',
             );
 
@@ -790,10 +788,10 @@ class ListTest extends AbstractTestCase
         ];
 
         $word = ListCollection::from($data)
-            ->map(fn (int $item) => $subData[$item])
+            ->map(fn(int $item) => $subData[$item])
             ->concat()
             ->reduce(
-                fn (string $word, string $subItem) => $word . $subItem,
+                fn(string $word, string $subItem) => $word . $subItem,
                 'Word: ',
             );
 
@@ -810,13 +808,13 @@ class ListTest extends AbstractTestCase
         ];
 
         $word = ListCollection::from($data)
-            ->map(fn ($i) => (int) $i)
-            ->map(fn (int $item) => $subData[$item])
+            ->map(fn($i) => (int) $i)
+            ->map(fn(int $item) => $subData[$item])
             ->concat()
-            ->filter(fn ($l) => $l < 'f')
-            ->map(fn ($l) => $l . ' ')
+            ->filter(fn($l) => $l < 'f')
+            ->map(fn($l) => $l . ' ')
             ->reduce(
-                fn (string $word, string $subItem) => $word . $subItem,
+                fn(string $word, string $subItem) => $word . $subItem,
                 'Word: ',
             );
 
@@ -861,7 +859,7 @@ class ListTest extends AbstractTestCase
     {
         $list = ListCollection::from([1, 2, 3, 4, 5]);
 
-        $list = $list->mapi(fn ($v, $i) => $i * $v);
+        $list = $list->mapi(fn($v, $i) => $i * $v);
 
         $this->assertSame([0, 2, 6, 12, 20], $list->toArray());
     }
@@ -880,20 +878,20 @@ class ListTest extends AbstractTestCase
             // list, predicate, expected
             'empty' => [
                 new ListCollection(),
-                fn (int $i) => $i % 2 === 0,
+                fn(int $i) => $i % 2 === 0,
                 [new ListCollection(), new ListCollection()],
             ],
             'even/odd' => [
                 Seq::range('0..10')->toList(),
-                fn (int $i) => $i % 2 === 0,
+                fn(int $i) => $i % 2 === 0,
                 [
                     ListCollection::from([0, 2, 4, 6, 8, 10]),
                     ListCollection::from([1, 3, 5, 7, 9]),
                 ],
             ],
             'even/odd (no odds)' => [
-                Seq::range('0..10')->toList()->filter(fn (int $i) => $i % 2 === 0),
-                fn (int $i) => $i % 2 === 0,
+                Seq::range('0..10')->toList()->filter(fn(int $i) => $i % 2 === 0),
+                fn(int $i) => $i % 2 === 0,
                 [
                     ListCollection::from([0, 2, 4, 6, 8, 10]),
                     ListCollection::from([]),
@@ -901,7 +899,7 @@ class ListTest extends AbstractTestCase
             ],
             'objects' => [
                 Seq::range('0..10')->toList()->map(SimpleEntity::create(...)),
-                fn (SimpleEntity $entity) => $entity->getId() > 5,
+                fn(SimpleEntity $entity) => $entity->getId() > 5,
                 [
                     Seq::range('6..10')->toList()->map(SimpleEntity::create(...)),
                     Seq::range('0..5')->toList()->map(SimpleEntity::create(...)),

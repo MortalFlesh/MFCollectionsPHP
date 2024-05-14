@@ -46,11 +46,11 @@ abstract class AbstractTestCase extends TestCase
 
     protected function findByKeyOrValue(mixed $needle): \Closure
     {
-        return fn ($key, $value) => $key === $needle || $value === $needle;
+        return fn($key, $value) => $key === $needle || $value === $needle;
     }
 
     protected function findByValue(mixed $needle): \Closure
     {
-        return fn ($value) => $value === $needle;
+        return fn($value) => $value === $needle;
     }
 }

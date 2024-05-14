@@ -658,14 +658,14 @@ class TupleTest extends AbstractTestCase
 
     public function testShouldUnpackTuples(): void
     {
-        $format = fn (string $title, string $value) => sprintf('%s: %s', $title, $value);
+        $format = fn(string $title, string $value) => sprintf('%s: %s', $title, $value);
 
         $values = [
             Tuple::of('title', 'value'),
             Tuple::of('type', 'great'),
         ];
 
-        $result = array_map(fn (Tuple $tuple) => $format(...$tuple), $values);
+        $result = array_map(fn(Tuple $tuple) => $format(...$tuple), $values);
 
         $this->assertSame(['title: value', 'type: great'], $result);
     }

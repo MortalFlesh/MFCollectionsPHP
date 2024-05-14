@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class OutOfBoundsException extends \OutOfBoundsException implements CollectionExceptionInterface
-{
-}
+class OutOfBoundsException extends \OutOfBoundsException implements CollectionExceptionInterface {}
