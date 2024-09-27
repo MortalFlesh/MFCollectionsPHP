@@ -67,7 +67,7 @@ parameters:
 
         -
             message: '#Parameter \#3 \$index of method MF\\Collection\\Immutable\\Generic\\Seq<TValue>::mapiValue\(\) expects int, mixed given.#'
-            count: 2
+            count: 1
             path: src/Immutable/Generic/Seq.php
 
         -
@@ -87,7 +87,7 @@ parameters:
 
         -
             message: '#Generator expects key type int, mixed given.#'
-            count: 2
+            count: 1
             path: src/Immutable/Generic/Seq.php
 
         -

@@ -251,7 +251,7 @@ class ListCollection implements IList
             $list[$i] = $callback($v);
         }
 
-        /* @phpstan-var array<TIndex, TValue> $list */
+        /** @phpstan-var array<TIndex, TValue> $list */
         $this->listArray = $list;
     }
 
@@ -269,7 +269,7 @@ class ListCollection implements IList
             $list[$i] = $callback($v, $i);
         }
 
-        /* @phpstan-var array<TIndex, TValue> $list */
+        /** @phpstan-var array<TIndex, TValue> $list */
         $this->listArray = $list;
     }
 

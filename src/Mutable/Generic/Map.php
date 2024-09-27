@@ -60,7 +60,7 @@ class Map implements IMap
                 throw new InvalidArgumentException('Value is not a pair');
             }
 
-            /*
+            /**
              * @phpstan-var TKey $key
              * @phpstan-var TValue $value
              */
@@ -267,7 +267,7 @@ class Map implements IMap
             $map[$key] = $callback($v, $key);
         }
 
-        /* @phpstan-var array<TKey, TValue> $map */
+        /** @phpstan-var array<TKey, TValue> $map */
         $this->mapArray = $map;
     }
 
