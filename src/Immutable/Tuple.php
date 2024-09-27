@@ -14,6 +14,28 @@ readonly class Tuple implements ITuple
 {
     private const MINIMAL_TUPLE_ITEMS_COUNT = 2;
 
+    /** @phpstan-param mixed[] $values */
+    private function __construct(private array $values)
+    {
+        try {
+            Assertion::greaterOrEqualThan(
+                count($values),
+                self::MINIMAL_TUPLE_ITEMS_COUNT,
+                'Tuple must have at least two values.',
+            );
+        } catch (AssertionFailedException $e) {
+            throw TupleException::forFailedAssertion($e);
+        }
+    }
+
+    /**
+     * @see Tuple::toString()
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
+    }
+
     public static function fst(ITuple $tuple): mixed
     {
         return $tuple->first();
@@ -39,7 +61,7 @@ readonly class Tuple implements ITuple
      *
      * @throws TupleParseException
      */
-    public static function parse(string $tuple, int $expectedItemsCount = null): ITuple
+    public static function parse(string $tuple, ?int $expectedItemsCount = null): ITuple
     {
         try {
             return self::parseTuple($tuple, $expectedItemsCount);
@@ -65,7 +87,7 @@ readonly class Tuple implements ITuple
         $cache = [];
 
         /** @var string[] $parts */
-        $parts = Seq::init(fn () => explode(',', trim($tuple, '()')))
+        $parts = Seq::init(fn() => explode(',', trim($tuple, '()')))
             ->reduce(function (array $matches, string $match) use (&$cache) {
                 $trimmedMatch = ltrim($match);
                 $isStart = (str_starts_with($trimmedMatch, '"') || str_starts_with($trimmedMatch, "'"))
@@ -91,8 +113,8 @@ readonly class Tuple implements ITuple
         unset($cache);
 
         $values = Seq::from($parts)
-            ->map(fn (string $value) => trim($value))
-            ->filter(fn ($match) => $match !== '')
+            ->map(fn(string $value) => trim($value))
+            ->filter(fn($match) => $match !== '')
             ->map(self::mapParsedItem(...))
             ->toArray();
 
@@ -295,20 +317,6 @@ readonly class Tuple implements ITuple
         return $mergedTuple;
     }
 
-    /** @phpstan-param mixed[] $values */
-    private function __construct(private array $values)
-    {
-        try {
-            Assertion::greaterOrEqualThan(
-                count($values),
-                self::MINIMAL_TUPLE_ITEMS_COUNT,
-                'Tuple must have at least two values.',
-            );
-        } catch (AssertionFailedException $e) {
-            throw TupleException::forFailedAssertion($e);
-        }
-    }
-
     public function count(): int
     {
         return count($this->values);
@@ -332,14 +340,6 @@ readonly class Tuple implements ITuple
     }
 
     /**
-     * @see Tuple::toString()
-     */
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    /**
      * Transform tuple values into string (which is compatible with Tuple::parse() method)
      * @see Tuple::parse()
      */
@@ -348,7 +348,7 @@ readonly class Tuple implements ITuple
         return $this->formatToString(
             ', ',
             '; ',
-            fn (string $value): string => sprintf('"%s"', $value)
+            fn(string $value): string => sprintf('"%s"', $value),
         );
     }
 
@@ -367,9 +367,9 @@ readonly class Tuple implements ITuple
         return $this->formatToString(
             ',',
             ';',
-            fn (string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
+            fn(string $value): string => $this->isMatching('/^[a-zA-Z0-9.\-_ ]+$/', $value)
                 ? $value
-                : sprintf('"%s"', $value)
+                : sprintf('"%s"', $value),
         );
     }
 
@@ -547,7 +547,7 @@ readonly class Tuple implements ITuple
     /** @phpstan-return \Closure(string): string */
     private function normalizeType(): \Closure
     {
-        return fn (string $type): string => Seq::create(
+        return fn(string $type): string => Seq::create(
             explode('|', $type),
             function (string $type): iterable {
                 if (str_starts_with($type, '?')) {
@@ -557,7 +557,7 @@ readonly class Tuple implements ITuple
                 yield ltrim($type, '?');
             },
         )
-            ->map(fn (string $type) => match ($type) {
+            ->map(fn(string $type) => match ($type) {
                 'integer' => 'int',
                 'boolean' => 'bool',
                 'double' => 'float',

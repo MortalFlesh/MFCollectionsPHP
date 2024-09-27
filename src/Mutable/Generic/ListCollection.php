@@ -18,6 +18,12 @@ use MF\Collection\Immutable\Generic\Seq;
  */
 class ListCollection implements IList
 {
+    /** @phpstan-param array<TIndex, TValue> $listArray */
+    public function __construct(private array $listArray = [])
+    {
+        $this->listArray = array_values($this->listArray);
+    }
+
     /**
      * @phpstan-param TValue $values
      * @phpstan-return IList<TValue>
@@ -59,12 +65,6 @@ class ListCollection implements IList
         }
 
         return $list;
-    }
-
-    /** @phpstan-param array<TIndex, TValue> $listArray */
-    public function __construct(private array $listArray = [])
-    {
-        $this->listArray = array_values($this->listArray);
     }
 
     public function count(): int
@@ -234,7 +234,7 @@ class ListCollection implements IList
     /** @phpstan-param TValue $value */
     public function removeAll(mixed $value): void
     {
-        $this->filter(fn (mixed $val): bool => $value !== $val);
+        $this->filter(fn(mixed $val): bool => $value !== $val);
     }
 
     /**
@@ -324,7 +324,7 @@ class ListCollection implements IList
 
         usort(
             $this->listArray,
-            fn (mixed $a, mixed $b): int => $callback($a) <=> $callback($b)
+            fn(mixed $a, mixed $b): int => $callback($a) <=> $callback($b),
         );
     }
 
@@ -335,7 +335,7 @@ class ListCollection implements IList
 
         usort(
             $this->listArray,
-            fn (mixed $a, mixed $b): int => $callback($b) <=> $callback($a)
+            fn(mixed $a, mixed $b): int => $callback($b) <=> $callback($a),
         );
     }
 
@@ -388,7 +388,7 @@ class ListCollection implements IList
         $callback = Callback::curry($callback);
 
         return $this->reduce(
-            fn (int|float $sum, mixed $value, int $i): int|float => $sum + $callback($value, $i),
+            fn(int|float $sum, mixed $value, int $i): int|float => $sum + $callback($value, $i),
             0,
         );
     }

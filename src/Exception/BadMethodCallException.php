@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class BadMethodCallException extends \BadMethodCallException implements CollectionExceptionInterface
-{
-}
+class BadMethodCallException extends \BadMethodCallException implements CollectionExceptionInterface {}

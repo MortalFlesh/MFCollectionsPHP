@@ -20,6 +20,9 @@ use MF\Collection\Immutable\Tuple;
  */
 class Map implements IMap
 {
+    /** @phpstan-param array<TKey, TValue> $mapArray */
+    public function __construct(private array $mapArray = []) {}
+
     /**
      * @phpstan-param iterable<TKey, TValue> $source
      * @phpstan-return IMap<TKey, TValue>
@@ -84,11 +87,6 @@ class Map implements IMap
         }
 
         return $map;
-    }
-
-    /** @phpstan-param array<TKey, TValue> $mapArray */
-    public function __construct(private array $mapArray = [])
-    {
     }
 
     public function count(): int
@@ -250,7 +248,7 @@ class Map implements IMap
     public function pairs(): IList
     {
         /** @phpstan-var IList<KVPair<TKey, TValue>> $pairs */
-        $pairs = ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+        $pairs = ListCollection::create($this, fn($value, $key) => new KVPair($key, $value));
 
         return $pairs;
     }
@@ -320,7 +318,7 @@ class Map implements IMap
     public function toList(): IList
     {
         /** @phpstan-var IList<ITuple> $list */
-        $list = ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+        $list = ListCollection::create($this, fn($value, $key) => Tuple::of($key, $value));
 
         return $list;
     }

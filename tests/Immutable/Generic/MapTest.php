@@ -63,10 +63,10 @@ class MapTest extends AbstractTestCase
     {
         $map = Map::create(
             explode(',', '1,2,3'),
-            fn ($value) => new SimpleEntity((int) $value)
+            fn($value) => new SimpleEntity((int) $value),
         );
 
-        $map = $map->map(fn ($e, $k) => $e->getId());
+        $map = $map->map(fn($e, $k) => $e->getId());
 
         $this->assertSame([1, 2, 3], $map->toArray());
     }
@@ -123,8 +123,8 @@ class MapTest extends AbstractTestCase
 
         $this->map = $this->map->set('key', $valueExists);
 
-        $this->assertTrue($this->map->containsBy(fn ($v, $k = null) => $v === $valueExists));
-        $this->assertFalse($this->map->containsBy(fn ($v, $k = null) => $v === $valueDoesNotExist));
+        $this->assertTrue($this->map->containsBy(fn($v, $k = null) => $v === $valueExists));
+        $this->assertFalse($this->map->containsBy(fn($v, $k = null) => $v === $valueDoesNotExist));
     }
 
     public function testShouldRemoveValueFromMap(): void
@@ -145,7 +145,7 @@ class MapTest extends AbstractTestCase
         $this->map = $this->map->set('key2', 2);
         $this->map = $this->map->set('key3', 3);
 
-        $newMap = $this->map->map(fn ($v, $k) => $v + 1);
+        $newMap = $this->map->map(fn($v, $k) => $v + 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key' => 2, 'key2' => 3, 'key3' => 4], $newMap->toArray());
@@ -157,11 +157,11 @@ class MapTest extends AbstractTestCase
         $map = $map->set('one', new SimpleEntity(1));
         $map = $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map(fn ($v, $k) => $v->getId());
+        $newMap = $map->map(fn($v, $k) => $v->getId());
 
         $this->assertNotSame($map, $newMap);
 
-        $this->assertInstanceOf(\MF\Collection\Immutable\Generic\Map::class, $newMap);
+        $this->assertInstanceOf(Map::class, $newMap);
         $this->assertEquals(['one' => 1, 'two' => 2], $newMap->toArray());
     }
 
@@ -171,7 +171,7 @@ class MapTest extends AbstractTestCase
         $map = $map->set('one', new SimpleEntity(1));
         $map = $map->set('two', new SimpleEntity(2));
 
-        $newMap = $map->map(fn ($v, $k) => $v->getId());
+        $newMap = $map->map(fn($v, $k) => $v->getId());
 
         $this->assertNotSame($map, $newMap);
 
@@ -185,7 +185,7 @@ class MapTest extends AbstractTestCase
         $this->map = $this->map->set('key2', 2);
         $this->map = $this->map->set('key3', 3);
 
-        $newMap = $this->map->filter(fn ($v, $k) => $v > 1);
+        $newMap = $this->map->filter(fn($v, $k) => $v > 1);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 2, 'key3' => 3], $newMap->toArray());
@@ -197,8 +197,8 @@ class MapTest extends AbstractTestCase
         $this->map = $this->map->set('key2', 2);
 
         $newMap = $this->map
-            ->filter(fn ($v, $k) => $v > 1)
-            ->map(fn ($v, $k) => $v * 3);
+            ->filter(fn($v, $k) => $v > 1)
+            ->map(fn($v, $k) => $v * 3);
 
         $this->assertNotEquals($this->map, $newMap);
         $this->assertEquals(['key2' => 6], $newMap->toArray());
@@ -230,7 +230,7 @@ class MapTest extends AbstractTestCase
         $this->map = $this->map->set('key2', 2);
         $this->map = $this->map->set('key3', 3);
 
-        $this->assertEquals(6, $this->map->reduce(fn ($t, $c) => $t + $c));
+        $this->assertEquals(6, $this->map->reduce(fn($t, $c) => $t + $c));
     }
 
     public function testShouldGetImmutableGenericMapAsMutableGenericMap(): void
@@ -252,7 +252,7 @@ class MapTest extends AbstractTestCase
         $map = $map->set('two', 2);
         $map = $map->set('three', 3);
 
-        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce(fn ($t, $v) => $t + $v, 10));
+        $this->assertEquals(10 + 1 + 2 + 3, $map->reduce(fn($t, $v) => $t + $v, 10));
     }
 
     public function testShouldReduceListWithInitialValueToOtherType(): void
@@ -262,7 +262,7 @@ class MapTest extends AbstractTestCase
         $map = $map->set('two', 2);
         $map = $map->set('three', 3);
 
-        $this->assertEquals('123', $map->reduce(fn ($t, $v) => $t . $v, ''));
+        $this->assertEquals('123', $map->reduce(fn($t, $v) => $t . $v, ''));
     }
 
     public function testShouldClearCollection(): void

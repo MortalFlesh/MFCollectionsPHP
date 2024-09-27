@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Fixtures;
 
-interface EntityInterface
-{
-}
+interface EntityInterface {}

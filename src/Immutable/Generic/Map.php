@@ -19,6 +19,9 @@ use MF\Collection\Immutable\Tuple;
  */
 readonly class Map implements IMap
 {
+    /** @phpstan-param array<TKey, TValue> $mapArray */
+    public function __construct(private array $mapArray = []) {}
+
     /**
      * @phpstan-param iterable<TKey, TValue> $source
      * @phpstan-return IMap<TKey, TValue>
@@ -55,7 +58,7 @@ readonly class Map implements IMap
                 throw new InvalidArgumentException('Value is not a pair');
             }
 
-            /**
+            /*
              * @phpstan-var TKey $key
              * @phpstan-var TValue $value
              */
@@ -82,11 +85,6 @@ readonly class Map implements IMap
         }
 
         return new static($mapArray);
-    }
-
-    /** @phpstan-param array<TKey, TValue> $mapArray */
-    public function __construct(private array $mapArray = [])
-    {
     }
 
     public function count(): int
@@ -257,7 +255,7 @@ readonly class Map implements IMap
     public function pairs(): IList
     {
         /** @phpstan-var IList<KVPair<TKey, TValue>> $pairs */
-        $pairs = ListCollection::create($this, fn ($value, $key) => new KVPair($key, $value));
+        $pairs = ListCollection::create($this, fn($value, $key) => new KVPair($key, $value));
 
         return $pairs;
     }
@@ -330,7 +328,7 @@ readonly class Map implements IMap
     public function toList(): IList
     {
         /** @phpstan-var IList<ITuple> $list */
-        $list = ListCollection::create($this, fn ($value, $key) => Tuple::of($key, $value));
+        $list = ListCollection::create($this, fn($value, $key) => Tuple::of($key, $value));
 
         return $list;
     }

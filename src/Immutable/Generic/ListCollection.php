@@ -15,6 +15,9 @@ use MF\Collection\Helper\Collection;
  */
 readonly class ListCollection implements IList
 {
+    /** @phpstan-param array<TIndex, TValue> $listArray */
+    public function __construct(private array $listArray = []) {}
+
     /**
      * @phpstan-template T
      * @phpstan-param IList<T|iterable<T>> $list
@@ -77,11 +80,6 @@ readonly class ListCollection implements IList
         }
 
         return new static($listArray);
-    }
-
-    /** @phpstan-param array<TIndex, TValue> $listArray */
-    public function __construct(private array $listArray = [])
-    {
     }
 
     public function count(): int
@@ -249,7 +247,7 @@ readonly class ListCollection implements IList
      */
     public function removeAll(mixed $value): IList
     {
-        return $this->filter(fn (mixed $val): bool => $value !== $val);
+        return $this->filter(fn(mixed $val): bool => $value !== $val);
     }
 
     /**
@@ -374,7 +372,7 @@ readonly class ListCollection implements IList
 
         usort(
             $sorted,
-            fn (mixed $a, mixed $b): int => $callback($a) <=> $callback($b)
+            fn(mixed $a, mixed $b): int => $callback($a) <=> $callback($b),
         );
 
         return static::from($sorted);
@@ -391,7 +389,7 @@ readonly class ListCollection implements IList
 
         usort(
             $sorted,
-            fn (mixed $a, mixed $b): int => $callback($b) <=> $callback($a)
+            fn(mixed $a, mixed $b): int => $callback($b) <=> $callback($a),
         );
 
         return static::from($sorted);
@@ -455,7 +453,7 @@ readonly class ListCollection implements IList
         $callback = Callback::curry($callback);
 
         return $this->reduce(
-            fn (int|float $sum, mixed $value, int $i): int|float => $sum + $callback($value, $i),
+            fn(int|float $sum, mixed $value, int $i): int|float => $sum + $callback($value, $i),
             0,
         );
     }
@@ -574,7 +572,7 @@ readonly class ListCollection implements IList
         $callback = Callback::curry($callback);
 
         /** @phsptan-var IList<iterable<T>> $collected */
-        $collected = $this->map(fn (mixed $v): iterable => $callback($v));
+        $collected = $this->map(fn(mixed $v): iterable => $callback($v));
         /** @phpstan-var IList<T> $concatenated */
         $concatenated = $collected->concat();
 

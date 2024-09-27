@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-interface CollectionExceptionInterface extends \Throwable
-{
-}
+interface CollectionExceptionInterface extends \Throwable {}

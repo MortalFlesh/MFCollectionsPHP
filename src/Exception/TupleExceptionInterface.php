@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-interface TupleExceptionInterface extends CollectionExceptionInterface
-{
-}
+interface TupleExceptionInterface extends CollectionExceptionInterface {}

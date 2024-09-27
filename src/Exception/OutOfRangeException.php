@@ -2,6 +2,4 @@
 
 namespace MF\Collection\Exception;
 
-class OutOfRangeException extends \OutOfRangeException implements CollectionExceptionInterface
-{
-}
+class OutOfRangeException extends \OutOfRangeException implements CollectionExceptionInterface {}
